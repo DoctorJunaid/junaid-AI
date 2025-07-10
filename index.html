@@ -9,7 +9,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <!-- Three.js script removed -->
     <style>
         :root {
             --primary-color: #4f46e5;
@@ -27,7 +26,7 @@
             overflow: hidden;
         }
         
-        /* --- NEW: 2D Blob Animation --- */
+        /* --- OPTIMIZED 2D Blob Animation --- */
         .blob-container {
             position: fixed;
             top: 0;
@@ -36,74 +35,57 @@
             height: 100%;
             overflow: hidden;
             z-index: -1;
-            filter: blur(40px); /* This creates the soft, merged look */
         }
 
         @keyframes move {
-            0% { transform: translate(-10vw, -10vh) rotate(0deg) scale(1); border-radius: 47% 53% 70% 30% / 30% 50% 50% 70%; }
-            25% { transform: translate(30vw, 20vh) rotate(90deg) scale(1.2); border-radius: 67% 33% 58% 42% / 40% 60% 40% 60%; }
-            50% { transform: translate(10vw, 50vh) rotate(180deg) scale(0.9); border-radius: 40% 60% 40% 60% / 67% 33% 58% 42%; }
-            75% { transform: translate(-20vw, 10vh) rotate(270deg) scale(1.1); border-radius: 50% 50% 50% 50% / 50% 50% 50% 50%; }
-            100% { transform: translate(-10vw, -10vh) rotate(360deg) scale(1); border-radius: 47% 53% 70% 30% / 30% 50% 50% 70%; }
+            from { transform: translate(-15vw, -15vh) rotate(0deg) scale(1.1); }
+            to { transform: translate(15vw, 15vh) rotate(360deg) scale(1); }
         }
 
         .blob {
             position: absolute;
-            opacity: 0.6;
-            animation: move 30s infinite alternate;
+            opacity: 0.5;
+            animation: move 40s infinite alternate;
+            border-radius: 50%;
+            filter: blur(40px);
+            will-change: transform;
         }
         
-        .blob:nth-child(1) {
-            top: 20%; left: 20%; width: 30vw; height: 30vw;
-            background-color: #8b5cf6;
-            animation-duration: 25s;
-        }
-        .blob:nth-child(2) {
-            top: 60%; left: 10%; width: 25vw; height: 25vw;
-            background-color: #3b82f6;
-            animation-duration: 35s;
-            animation-delay: -10s;
-        }
-        .blob:nth-child(3) {
-            top: 10%; left: 70%; width: 20vw; height: 20vw;
-            background-color: #ec4899;
-            animation-duration: 28s;
-            animation-delay: -5s;
-        }
-         .blob:nth-child(4) {
-            top: 50%; left: 60%; width: 35vw; height: 35vw;
-            background-color: #f59e0b;
-            animation-duration: 40s;
-            animation-delay: -15s;
-        }
+        .blob:nth-child(1) { top: 20%; left: 20%; width: 30vmax; height: 30vmax; background-color: #8b5cf6; animation-duration: 35s; }
+        .blob:nth-child(2) { top: 60%; left: 10%; width: 25vmax; height: 25vmax; background-color: #3b82f6; animation-duration: 45s; animation-delay: -10s; }
+        .blob:nth-child(3) { top: 10%; left: 70%; width: 20vmax; height: 20vmax; background-color: #ec4899; animation-duration: 38s; animation-delay: -5s; }
+        .blob:nth-child(4) { top: 50%; left: 60%; width: 35vmax; height: 35vmax; background-color: #f59e0b; animation-duration: 50s; animation-delay: -15s; }
 
         .main-container {
             position: relative;
             z-index: 1;
             width: 100%;
             height: 100vh;
-            padding: 1rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            padding: 0.5rem; /* Responsive padding */
         }
+        @media (min-width: 640px) { .main-container { padding: 1rem; } }
+
         .glass-container {
-            background: rgba(255, 255, 255, 0.65);
-            backdrop-filter: blur(16px) saturate(1.8);
-            -webkit-backdrop-filter: blur(16px) saturate(1.8);
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(16px) saturate(1.5);
+            -webkit-backdrop-filter: blur(16px) saturate(1.5);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             width: 100%;
-            max-width: 7xl;
+            max-width: 80rem; /* Increased max-width */
             height: 100%;
             display: flex;
-            border-radius: 1.5rem;
+            border-radius: 1rem;
             overflow: hidden;
-            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.2);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
         }
+        @media (min-width: 768px) { .glass-container { border-radius: 1.5rem; } }
+
         .sidebar {
-            background: rgba(249, 250, 251, 0.85);
+            background: rgba(249, 250, 251, 0.9);
             border-right: 1px solid rgba(229, 231, 235, 0.6);
+            transition: transform 0.3s ease-in-out;
         }
+        
         .custom-scrollbar::-webkit-scrollbar { width: 6px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 3px; }
@@ -111,45 +93,44 @@
 
         .message-user .message-bubble { background-color: var(--primary-color); color: white; }
         .message-ai .message-bubble { background-color: var(--bg-primary); color: var(--text-primary); border: 1px solid #e5e7eb; }
-        .message-bubble { padding: 0.75rem 1.25rem; border-radius: 1.5rem; max-width: 80%; word-wrap: break-word; }
+        .message-bubble { padding: 0.75rem 1.25rem; border-radius: 1.5rem; max-width: 85%; word-wrap: break-word; }
         .message-user { justify-content: flex-end; }
         .message-ai { justify-content: flex-start; }
         
-        .btn-primary { background-color: var(--primary-color); color: white; transition: background-color 0.2s; }
-        .btn-primary:hover { background-color: #4338ca; }
-        .btn-primary:disabled { background-color: #a5b4fc; cursor: not-allowed; }
-
-        .typing-indicator .typing-dot {
-            width: 8px; height: 8px; background-color: #9ca3af;
-            border-radius: 50%; display: inline-block;
-            animation: typing-blink 1.4s infinite both;
+        .btn-primary { background-color: var(--primary-color); color: white; transition: background-color 0.2s, transform 0.2s; }
+        .btn-primary:hover { background-color: #4338ca; transform: scale(1.05); }
+        .btn-primary:active { transform: scale(0.98); }
+        .btn-primary:disabled { background-color: #a5b4fc; cursor: not-allowed; transform: scale(1); }
+        
+        /* --- ENHANCED Input Field --- */
+        #input-area {
+            background-color: rgba(243, 244, 246, 0.8);
+            border-radius: 1.25rem;
+            border: 1px solid transparent;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
         }
-        .typing-indicator .typing-dot:nth-child(2) { animation-delay: 0.2s; }
-        .typing-indicator .typing-dot:nth-child(3) { animation-delay: 0.4s; }
-        @keyframes typing-blink {
-            0% { opacity: 0.2; }
-            20% { opacity: 1; }
-            100% { opacity: 0.2; }
+        #input-area:focus-within {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
         }
         #message-input {
-            background-color: rgba(243, 244, 246, 0.8);
-            border-radius: 1rem;
-            border: 2px solid transparent;
-            transition: border-color 0.2s, background-color 0.2s;
+            background-color: transparent;
+            overflow-y: hidden; /* Hide scrollbar by default */
+            resize: none; /* Disable manual resizing */
         }
         #message-input:focus {
             outline: none;
-            border-color: var(--primary-color);
-            background-color: #ffffff;
         }
         
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
+            from { opacity: 0; transform: translateY(5px); }
             to { opacity: 1; transform: translateY(0); }
         }
         .prose > * {
-            animation: fadeIn 0.5s ease-out forwards;
+            animation: fadeIn 0.3s ease-in-out forwards;
             opacity: 0;
+            will-change: transform, opacity;
         }
     </style>
 </head>
@@ -163,14 +144,19 @@
     
     <div class="main-container">
         <div class="glass-container">
-            <!-- Sidebar and Main Content Structure (Unchanged) -->
-            <aside class="w-64 sidebar p-4 flex-col justify-between hidden md:flex">
+            <!-- Sidebar for Mobile & Desktop -->
+            <aside id="sidebar" class="absolute md:relative inset-y-0 left-0 z-30 w-64 sidebar p-4 flex-col justify-between flex -translate-x-full md:translate-x-0">
                 <div>
-                    <div class="flex items-center space-x-3 p-2">
-                        <div class="w-10 h-10 rounded-full flex items-center justify-center bg-indigo-500 text-white">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.373 3.373 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path></svg>
+                    <div class="flex items-center justify-between p-2">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 rounded-full flex items-center justify-center bg-indigo-500 text-white shrink-0">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.373 3.373 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path></svg>
+                            </div>
+                            <h2 class="text-xl font-bold text-gray-800">Junaid AI</h2>
                         </div>
-                        <h2 class="text-xl font-bold text-gray-800">Junaid AI</h2>
+                        <button id="close-sidebar-btn" class="md:hidden text-gray-500 hover:text-gray-800">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                        </button>
                     </div>
                     <nav class="mt-8 space-y-2">
                         <a href="#" id="new-chat-btn" class="flex items-center space-x-3 px-3 py-2 text-gray-700 font-medium rounded-lg hover:bg-gray-200/50 transition-colors">
@@ -194,49 +180,40 @@
                     </a>
                 </div>
             </aside>
+            <!-- Overlay for mobile sidebar -->
+            <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-20 hidden md:hidden"></div>
 
             <div class="flex-1 flex flex-col bg-transparent">
-                <header class="p-4 md:p-6 border-b border-gray-200/30 bg-white/10 shrink-0">
+                <header class="p-4 border-b border-gray-200/30 bg-white/10 shrink-0">
                     <div class="flex items-center justify-between">
-                        <div class="flex items-center space-x-3 md:space-x-4">
-                            <div class="md:hidden">
-                                <button onclick="showComingSoon()" class="text-gray-700"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg></button>
-                            </div>
+                        <div class="flex items-center space-x-3">
+                            <button id="open-sidebar-btn" class="md:hidden text-gray-700">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                            </button>
                             <div>
-                                <h1 class="text-xl md:text-2xl font-bold text-gray-900">Junaid AI</h1>
-                                <div class="flex items-center space-x-2 text-sm text-gray-600">
+                                <h1 class="text-lg md:text-xl font-bold text-gray-900">Junaid AI</h1>
+                                <div class="flex items-center space-x-2 text-xs text-gray-600">
                                     <div class="w-2 h-2 bg-green-500 rounded-full"></div>
                                     <span>Online</span>
                                 </div>
                             </div>
                         </div>
-                        <div class="flex items-center space-x-4">
-                            <button onclick="showComingSoon()" class="hidden md:flex items-center space-x-2 px-4 py-2 bg-white/50 border border-gray-300/50 rounded-lg text-sm font-medium hover:bg-white/80 transition-colors">
-                                <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12s-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.368a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z"></path></svg>
-                                <span>Share</span>
-                            </button>
-                            <div class="px-4 py-2 bg-blue-50/80 text-blue-700 rounded-full text-sm font-medium">Enterprise v2.6.0</div>
-                        </div>
+                        <div class="px-3 py-1.5 bg-blue-100/80 text-blue-800 rounded-full text-xs sm:text-sm font-medium">Enterprise v2.9.0</div>
                     </div>
                 </header>
 
                 <main id="chat-messages" class="flex-1 p-4 md:p-6 overflow-y-auto custom-scrollbar">
                 </main>
 
-                <footer class="p-4 md:p-6 border-t border-gray-200/30 bg-white/10 shrink-0">
+                <footer class="p-2 sm:p-4 border-t border-gray-200/30 bg-white/10 shrink-0">
                     <form id="chat-form" class="flex items-end space-x-2 sm:space-x-4">
-                        <textarea id="message-input" placeholder="Ask me anything..." autocomplete="off" rows="1" class="w-full resize-none custom-scrollbar p-3 sm:p-4"></textarea>
-                        <button type="submit" id="send-button" class="btn-primary h-12 w-12 sm:h-14 sm:w-14 rounded-xl sm:rounded-2xl flex items-center justify-center shrink-0 p-0">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path></svg>
-                        </button>
-                    </form>
-                    <div class="mt-3 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-gray-600">
-                        <p class="text-center sm:text-left">Press <kbd class="px-1.5 py-0.5 border border-gray-300/50 rounded bg-gray-100/50">Enter</kbd> to send, <kbd class="px-1.5 py-0.5 border border-gray-300/50 rounded bg-gray-100/50">Shift+Enter</kbd> for a new line.</p>
-                        <div class="hidden sm:flex items-center space-x-2">
-                            <span>Secured with SSL</span>
-                            <svg class="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" /></svg>
+                        <div id="input-area" class="flex-1 flex items-center p-1 pr-2">
+                            <textarea id="message-input" placeholder="Ask me anything..." autocomplete="off" rows="1" class="w-full p-2 sm:p-2.5 bg-transparent"></textarea>
+                            <button type="submit" id="send-button" class="btn-primary h-10 w-10 sm:h-12 sm:w-12 rounded-full flex items-center justify-center shrink-0 p-0">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path></svg>
+                            </button>
                         </div>
-                    </div>
+                    </form>
                 </footer>
             </div>
         </div>
@@ -251,7 +228,27 @@
     </div>
 
     <script>
-        // --- Chat Application Logic (with Animated Text) ---
+        // --- UI & Interactivity Logic ---
+        const sidebar = document.getElementById('sidebar');
+        const openSidebarBtn = document.getElementById('open-sidebar-btn');
+        const closeSidebarBtn = document.getElementById('close-sidebar-btn');
+        const sidebarOverlay = document.getElementById('sidebar-overlay');
+
+        function openSidebar() {
+            sidebar.classList.remove('-translate-x-full');
+            sidebarOverlay.classList.remove('hidden');
+        }
+
+        function closeSidebar() {
+            sidebar.classList.add('-translate-x-full');
+            sidebarOverlay.classList.add('hidden');
+        }
+
+        openSidebarBtn.addEventListener('click', openSidebar);
+        closeSidebarBtn.addEventListener('click', closeSidebar);
+        sidebarOverlay.addEventListener('click', closeSidebar);
+        
+        // --- Chat Application Logic ---
         const chatForm = document.getElementById('chat-form');
         const messageInput = document.getElementById('message-input');
         const sendButton = document.getElementById('send-button');
@@ -308,11 +305,11 @@
             function showNextElement() {
                 if (i < elements.length) {
                     const el = elements[i];
-                    el.style.animationDelay = `${i * 0.1}s`; // Stagger animation
+                    el.style.animationDelay = `${i * 0.05}s`;
                     proseContainer.appendChild(el);
                     i++;
                     chatMessages.scrollTop = chatMessages.scrollHeight;
-                    setTimeout(showNextElement, 100); // Adjust delay between lines
+                    setTimeout(showNextElement, 50);
                 }
             }
             showNextElement();
@@ -379,9 +376,18 @@
         }
 
         function autoGrowTextarea() {
-            messageInput.style.height = 'auto';
-            const newHeight = Math.min(messageInput.scrollHeight, 200);
-            messageInput.style.height = newHeight + 'px';
+            const maxHeight = 128; // Max height in pixels
+            messageInput.style.height = 'auto'; // Reset height to calculate scrollHeight correctly
+            
+            const scrollHeight = messageInput.scrollHeight;
+            
+            if (scrollHeight > maxHeight) {
+                messageInput.style.height = maxHeight + 'px';
+                messageInput.style.overflowY = 'auto'; // Show scrollbar
+            } else {
+                messageInput.style.height = scrollHeight + 'px';
+                messageInput.style.overflowY = 'hidden'; // Hide scrollbar
+            }
         }
 
         function startNewChat() {
@@ -389,6 +395,9 @@
             responseCounter = 0;
             chatMessages.innerHTML = '';
             loadWelcomeMessage();
+            if (window.innerWidth < 768) {
+                closeSidebar();
+            }
         }
 
         function showComingSoon() {
