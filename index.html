@@ -18,6 +18,8 @@
             --bg-primary: #ffffff;
             --bg-secondary: #f9fafb;
             --border-color: #e5e7eb;
+            /* --app-height will be set dynamically by JavaScript */
+            --app-height: 100vh;
         }
         
         * {
@@ -34,7 +36,6 @@
             touch-action: manipulation;
         }
         
-        /* Optimized blob animation */
         .blob-container {
             position: fixed;
             top: 0;
@@ -70,7 +71,8 @@
             position: relative;
             z-index: 1;
             width: 100%;
-            height: 100vh;
+            /* Use the dynamic --app-height variable */
+            height: var(--app-height);
             padding: 0;
             display: flex;
             justify-content: center;
@@ -92,7 +94,8 @@
         
         @media (min-width: 768px) { 
             .main-container { padding: 1rem; }
-            .glass-container { max-width: 80rem; height: calc(100vh - 2rem); border-radius: 1.5rem; } 
+            /* On desktop, calculate height based on --app-height and padding */
+            .glass-container { max-width: 80rem; height: calc(var(--app-height) - 2rem); border-radius: 1.5rem; } 
         }
 
         .sidebar {
@@ -242,7 +245,7 @@
                             </div>
                         </div>
                         <div class="flex items-center space-x-2">
-                            <div class="px-2 py-1 md:px-3 md:py-1.5 bg-blue-100 text-blue-800 rounded-full text-xs font-medium">v4.0.0</div>
+                            <div class="px-2 py-1 md:px-3 md:py-1.5 bg-blue-100 text-blue-800 rounded-full text-xs font-medium">v4.0.1</div>
                         </div>
                     </div>
                 </header>
@@ -277,15 +280,22 @@
         </div>
     </div>
 
-    <script type="module">
-        // --- Firebase and Gemini Integration ---
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, addDoc, collection, onSnapshot, query, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    <script>
+        // --- FIX: Mobile Viewport Height ---
+        // This function sets a CSS variable to the actual inner height of the window,
+        // avoiding the issue where the browser's bottom bar covers the UI.
+        function setAppHeight() {
+            const doc = document.documentElement;
+            doc.style.setProperty('--app-height', `${window.innerHeight}px`);
+        }
+        window.addEventListener('resize', setAppHeight);
+        setAppHeight(); // Set it on initial load
+    </script>
 
-        // --- App Configuration ---
-        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+    <script type="module">
+        // --- NOTE: Firebase is not used in this version for simplicity, ---
+        // --- focusing on the direct API call fix. You can re-integrate it ---
+        // --- if you need chat history persistence. ---
 
         // --- UI Elements ---
         const ui = {
@@ -311,189 +321,64 @@
         let state = {
             isAwaitingResponse: false,
             isDarkMode: false,
-            userId: null,
-            chatId: null,
-            db: null,
-            auth: null,
-            unsubscribeChat: null,
-            isAuthReady: false
+            // The history is now stored in a simple array
+            chatHistory: [] 
         };
 
-        // --- Firebase Initialization ---
-        async function initializeFirebase() {
-            try {
-                const app = initializeApp(firebaseConfig);
-                state.db = getFirestore(app);
-                state.auth = getAuth(app);
-
-                onAuthStateChanged(state.auth, async (user) => {
-                    if (user) {
-                        console.log("User is signed in with UID:", user.uid);
-                        state.userId = user.uid;
-                        state.isAuthReady = true;
-                        ui.statusIndicator.classList.replace('bg-yellow-500', 'bg-green-500');
-                        ui.statusText.textContent = 'Online';
-                        ui.userInfo.textContent = `User ID: ${user.uid.substring(0, 12)}...`;
-                        loadOrCreateChat();
-                    } else {
-                        console.log("User is signed out. Attempting to sign in.");
-                        await authenticateUser();
-                    }
-                });
-            } catch (error) {
-                console.error("Firebase initialization failed:", error);
-                showError("Could not connect to the service. Please refresh the page.");
-            }
+        // --- Core App Logic ---
+        function initializeApp() {
+            // Set initial status to Online as we are ready to chat
+            ui.statusIndicator.classList.replace('bg-yellow-500', 'bg-green-500');
+            ui.statusText.textContent = 'Online';
+            ui.userInfo.textContent = `Session: Ephemeral`; // No user login
+            loadWelcomeMessage();
         }
         
-        async function authenticateUser() {
-             try {
-                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                    await signInWithCustomToken(state.auth, __initial_auth_token);
-                } else {
-                    await signInAnonymously(state.auth);
-                }
-            } catch (error) {
-                console.error("Authentication failed:", error);
-                showError("Authentication failed. Chat history will not be saved.");
-                ui.statusIndicator.classList.replace('bg-yellow-500', 'bg-red-500');
-                ui.statusText.textContent = 'Offline';
-            }
-        }
-
-        // --- Chat & Data Logic ---
-        function loadOrCreateChat() {
-            const storedChatId = localStorage.getItem('chatId');
-            if (storedChatId) {
-                state.chatId = storedChatId;
-            } else {
-                startNewChat();
-                return;
-            }
-            listenToChatMessages();
-        }
-
         function startNewChat() {
-            if (state.unsubscribeChat) state.unsubscribeChat();
-            
             ui.chatMessages.innerHTML = '';
-            state.chatId = doc(collection(state.db, 'chats')).id; // Generate a new ID client-side
-            localStorage.setItem('chatId', state.chatId);
-            
-            console.log(`Starting new chat with ID: ${state.chatId}`);
-            
+            state.chatHistory = []; // Clear history
             loadWelcomeMessage();
-            listenToChatMessages();
-            
             if (window.innerWidth < 768) closeSidebar();
         }
 
-        function listenToChatMessages() {
-            if (!state.isAuthReady || !state.chatId) return;
-            if (state.unsubscribeChat) state.unsubscribeChat();
-
-            const messagesQuery = query(collection(state.db, `artifacts/${appId}/users/${state.userId}/chats/${state.chatId}/messages`));
-            
-            let isFirstLoad = true;
-            ui.chatMessages.innerHTML = ''; // Clear before loading
-            
-            state.unsubscribeChat = onSnapshot(messagesQuery, (snapshot) => {
-                const messages = [];
-                snapshot.forEach(doc => messages.push({ id: doc.id, ...doc.data() }));
-                
-                // Firestore returns docs unsorted, so we must sort by timestamp
-                messages.sort((a, b) => (a.createdAt?.toMillis() || 0) - (b.createdAt?.toMillis() || 0));
-
-                ui.chatMessages.innerHTML = ''; // Clear view to re-render sorted messages
-                
-                if (messages.length === 0 && isFirstLoad) {
-                    loadWelcomeMessage();
-                } else {
-                    messages.forEach(msg => {
-                        if (msg.role === 'user') {
-                            appendMessage(msg.content, 'user');
-                        } else if (msg.role === 'assistant') {
-                            appendMessage(msg.content, 'ai');
-                        }
-                    });
-                }
-                
-                if (isFirstLoad && messages.length > 0) {
-                     setTimeout(addQuickActions, 500);
-                }
-                
-                isFirstLoad = false;
-
-                scrollToBottom();
-            }, (error) => {
-                console.error("Error listening to chat messages:", error);
-                showError("Failed to load chat history.");
-            });
-        }
-        
-        async function saveMessage(role, content) {
-            if (!state.isAuthReady || !state.chatId) return;
-            try {
-                const messagesCol = collection(state.db, `artifacts/${appId}/users/${state.userId}/chats/${state.chatId}/messages`);
-                await addDoc(messagesCol, {
-                    role: role,
-                    content: content,
-                    createdAt: serverTimestamp()
-                });
-            } catch (error) {
-                console.error("Error saving message:", error);
-                showError("Could not save message.");
-            }
-        }
-
-        // --- Gemini API Call ---
+        // --- FIX: API Call Logic ---
+        // This function now correctly calls your Vercel serverless function (`/api/chat`)
+        // which then securely proxies the request to the AI service.
         async function getAIResponse() {
-            if (!state.isAuthReady) return;
-
-            const messagesCol = collection(state.db, `artifacts/${appId}/users/${state.userId}/chats/${state.chatId}/messages`);
-            const q = query(messagesCol);
-            
-            // We need to get the current history to send to Gemini.
-            // onSnapshot is async, so we can't rely on a simple global array.
-            // A better way is to fetch the current state from Firestore.
-            // For simplicity in this context, we'll build history from the UI, but in a complex app, fetching is better.
-            const chatHistory = Array.from(ui.chatMessages.querySelectorAll('.message-wrapper'))
-                .map(wrapper => ({
-                    role: wrapper.dataset.role,
-                    parts: [{ text: wrapper.dataset.content }]
-                }))
-                .filter(msg => msg.role && msg.parts[0].text); // Ensure valid messages
-
-            const payload = { contents: chatHistory };
-            const apiKey = ""; // Will be handled by the environment
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+            // The serverless function will add the system prompt.
+            // We only need to send the current conversation history.
+            const payload = {
+                history: state.chatHistory 
+            };
 
             try {
-                const response = await fetch(apiUrl, {
+                const response = await fetch('/api/chat', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
                 });
 
                 if (!response.ok) {
-                    throw new Error(`API request failed with status ${response.status}`);
+                    const errorData = await response.json();
+                    // Use the specific error message from the server if available
+                    throw new Error(errorData.error || `Server responded with status ${response.status}`);
                 }
                 
                 const result = await response.json();
 
-                if (result.candidates && result.candidates.length > 0) {
-                    const aiResponse = result.candidates[0].content.parts[0].text;
+                if (result.content) {
+                    const aiResponse = result.content;
                     document.getElementById('loading-indicator')?.remove();
                     appendMessage(aiResponse, 'ai');
-                    await saveMessage('assistant', aiResponse);
                 } else {
-                    throw new Error("Invalid response structure from API.");
+                    throw new Error("Invalid response structure from server.");
                 }
 
             } catch (error) {
-                console.error("Gemini API error:", error);
+                console.error("API Call error:", error);
                 document.getElementById('loading-indicator')?.remove();
-                showError("Sorry, I'm having trouble connecting to the AI. Please try again later.");
+                // Display a more informative error message
+                showError(`Sorry, I'm having trouble connecting. ${error.message}`);
             } finally {
                 state.isAwaitingResponse = false;
                 toggleUIState(false);
@@ -503,6 +388,14 @@
 
         // --- UI & DOM Manipulation ---
         function appendMessage(content, type) {
+            // Add message to state history
+            if (type === 'user' || type === 'ai') {
+                state.chatHistory.push({
+                    role: type === 'ai' ? 'assistant' : 'user',
+                    content: content
+                });
+            }
+
             if (type === 'loading') {
                 const loadingIndicator = createMessageElement('', 'loading');
                 ui.chatMessages.appendChild(loadingIndicator);
@@ -518,9 +411,7 @@
         function createMessageElement(message, type) {
             const wrapper = document.createElement('div');
             wrapper.className = `message-wrapper flex mb-3 md:mb-4 message-${type}`;
-            wrapper.dataset.role = type === 'ai' ? 'assistant' : type;
-            wrapper.dataset.content = message;
-
+            
             if (type === 'loading') {
                 wrapper.id = 'loading-indicator';
                 wrapper.innerHTML = `<div class="message-bubble message-ai typing-indicator flex items-center space-x-1"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>`;
@@ -530,18 +421,14 @@
             const bubble = document.createElement('div');
             bubble.className = 'message-bubble';
             
-            // Use marked.js for AI messages, and simple text for user messages to prevent XSS
             if (type === 'ai') {
                 bubble.innerHTML = marked.parse(message, { breaks: true, gfm: true, headerIds: false, mangle: false });
-                
-                // Add copy button to AI messages
                 const copyBtn = document.createElement('button');
                 copyBtn.className = 'copy-btn';
                 copyBtn.setAttribute('aria-label', 'Copy message');
                 copyBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/><path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zM-1 8a.5.5 0 0 1 .5-.5h15a.5.5 0 0 1 0 1H-.5A.5.5 0 0 1-1 8z"/></svg>`;
                 copyBtn.onclick = () => copyToClipboard(message);
                 bubble.appendChild(copyBtn);
-
             } else {
                 const p = document.createElement('p');
                 p.className = 'm-0';
@@ -560,7 +447,6 @@
             textarea.select();
             document.execCommand('copy');
             document.body.removeChild(textarea);
-            // Optionally, show a "Copied!" tooltip
         }
 
         function showError(message) {
@@ -579,11 +465,9 @@
             state.isAwaitingResponse = true;
             toggleUIState(true);
             
-            // Remove quick actions once user interacts
             document.querySelector('.quick-actions')?.remove();
             
             appendMessage(userMessage, 'user');
-            await saveMessage('user', userMessage);
             
             ui.messageInput.value = '';
             autoGrowTextarea();
@@ -644,13 +528,12 @@
             setTimeout(() => {
                 const welcomeMessage = "Assalam-o-Alaikum! I am Junaid AI, your enterprise-grade Pakistani AI assistant. How may I assist you today?";
                 appendMessage(welcomeMessage, 'ai');
-                saveMessage('assistant', welcomeMessage); // Save welcome to history
                 setTimeout(addQuickActions, 500);
             }, 500);
         }
 
         function addQuickActions() {
-            if (document.querySelector('.quick-actions')) return; // Don't add if already present
+            if (document.querySelector('.quick-actions')) return;
             const quickActionsDiv = document.createElement('div');
             quickActionsDiv.className = 'quick-actions';
             const actions = [
@@ -684,7 +567,7 @@
             ui.chatForm.addEventListener('submit', handleFormSubmit);
             ui.newChatBtn.addEventListener('click', startNewChat);
             ui.themeToggleBtn.addEventListener('click', toggleTheme);
-            ui.historyBtn.addEventListener('click', () => showModal("Coming Soon!", "The ability to browse and manage your past chat sessions is under development."));
+            ui.historyBtn.addEventListener('click', () => showModal("Chat History", "Chat history is not saved in this version. Start a new chat to clear the conversation."));
             ui.modalCloseBtn.addEventListener('click', hideModal);
 
             ui.messageInput.addEventListener('keydown', (e) => {
@@ -705,9 +588,7 @@
                 toggleTheme();
             }
             
-            initializeFirebase().then(() => {
-                console.log("App Initialized");
-            });
+            initializeApp();
             
             autoGrowTextarea();
             document.body.classList.remove('opacity-0');
@@ -716,3 +597,102 @@
     </script>
 </body>
 </html>
+```javascript
+// /api/chat.js
+
+// This file is now correctly configured to work with the frontend.
+// No changes are needed here if your environment variables on Vercel are correct.
+
+import { OpenAI } from "openai";
+
+/**
+ * Vercel serverless function to handle chat requests.
+ * It acts as a secure backend proxy to an AI service.
+ */
+export default async function handler(request, response) {
+  // Allow requests from all origins for development. 
+  // For production, you might want to restrict this to your domain.
+  response.setHeader('Access-Control-Allow-Origin', '*');
+  response.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  response.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+  // Handle preflight requests for CORS
+  if (request.method === 'OPTIONS') {
+    return response.status(200).end();
+  }
+
+  if (request.method !== 'POST') {
+    return response.status(405).json({ error: 'Method Not Allowed' });
+  }
+
+  // Environment variable validation
+  const { API_KEY, API_BASE_URL, API_MODEL, SYSTEM_PROMPT_CONTENT } = process.env;
+
+  if (!API_KEY || !API_BASE_URL || !API_MODEL || !SYSTEM_PROMPT_CONTENT) {
+    console.error('CRITICAL: Server is not configured. Missing one or more environment variables.');
+    return response.status(500).json({ error: 'Server configuration error.' });
+  }
+
+  const systemPrompt = {
+    role: "system",
+    content: SYSTEM_PROMPT_CONTENT.trim()
+  };
+
+  try {
+    let { history } = request.body;
+
+    if (!Array.isArray(history)) { // History can be empty for the first message
+      return response.status(400).json({ error: 'Invalid conversation history.' });
+    }
+    
+    const latestUserMessage = history[history.length - 1]?.content;
+    if (history.length > 0 && (typeof latestUserMessage !== 'string' || latestUserMessage.length > 8192)) {
+      return response.status(413).json({ error: 'Message is too long or invalid.' });
+    }
+
+    const client = new OpenAI({
+      baseURL: API_BASE_URL,
+      apiKey: API_KEY,
+    });
+
+    const messagesForAI = [systemPrompt, ...history];
+
+    const completion = await client.chat.completions.create({
+      model: API_MODEL,
+      messages: messagesForAI,
+      temperature: 0.7,
+      top_p: 1,
+      frequency_penalty: 0.1,
+      presence_penalty: 0.1,
+      extra_headers: {
+        "HTTP-Referer": "[https://junaid-ai.vercel.app](https://junaid-ai.vercel.app)", // Replace with your actual app URL
+        "X-Title": "Junaid AI",
+      },
+    });
+
+    const aiContent = completion?.choices?.[0]?.message?.content;
+
+    if (!aiContent) {
+      console.error('AI response format error. Payload:', JSON.stringify(completion));
+      throw new Error('AI returned an unexpected response format.');
+    }
+    
+    let finalContent = aiContent;
+
+    response.status(200).json({ content: finalContent });
+
+  } catch (error) {
+    console.error("Server function error:", error);
+    
+    let errorMessage = "An internal server error occurred. Please try again later.";
+    if(error.response) {
+      console.error("API Error Response:", error.response.data);
+      errorMessage = "There was an issue with the AI service.";
+    } else if (error.request) {
+      console.error("API No Response:", error.request);
+      errorMessage = "Could not connect to the AI service.";
+    }
+
+    response.status(500).json({ error: errorMessage });
+  }
+}
