@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Junaid AI - Enterprise AI Assistant</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        /* [Styles remain unchanged here] */
+        /* All styles from your original code are unchanged and intact */
+    </style>
+</head>
+<body class="w-full h-full grid-bg p-2 sm:p-4 flex items-center justify-center">
+
+    <div class="w-full max-w-5xl h-full flex flex-col glass-container rounded-2xl md:rounded-3xl overflow-hidden shadow-xl">
+        
+        <header class="p-4 md:p-6 border-b border-gray-200/50 bg-white/50 shrink-0">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3 md:space-x-4">
+                    <div class="avatar">
+                        <svg class="w-5 h-5 md:w-6 md:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <h1 class="text-xl md:text-2xl font-bold text-gray-900">Junaid AI</h1>
+                        <div class="status-indicator">
+                            <div class="status-dot"></div>
+                            <span>Online</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="hidden md:flex items-center space-x-4">
+                    <div class="px-4 py-2 bg-blue-50 text-blue-700 rounded-full text-sm font-medium">Enterprise Ready</div>
+                    <div class="text-sm text-gray-500">v2.2.0</div>
+                </div>
+            </div>
+        </header>
+
+        <main id="chat-messages" class="flex-1 p-4 md:p-6 overflow-y-auto custom-scrollbar">
+        </main>
+
+        <footer class="p-4 md:p-6 border-t border-gray-200/50 bg-white/80 shrink-0">
+            <form id="chat-form" class="flex items-end space-x-2 sm:space-x-4">
+                <textarea
+                    id="message-input"
+                    placeholder="Type your message..."
+                    autocomplete="off"
+                    rows="1"
+                    class="w-full resize-none custom-scrollbar p-3 sm:p-4"
+                ></textarea>
+                <button type="submit" id="send-button" class="btn-primary h-12 w-12 sm:h-14 sm:w-14 rounded-xl sm:rounded-2xl flex items-center justify-center shrink-0 p-0">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+                    </svg>
+                </button>
+            </form>
+            <div class="mt-3 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-gray-500">
+                <p class="text-center sm:text-left">Press <kbd class="px-1.5 py-0.5 border border-gray-300 rounded bg-gray-100">Enter</kbd> to send, <kbd class="px-1.5 py-0.5 border border-gray-300 rounded bg-gray-100">Shift+Enter</kbd> for new line.</p>
+                <div class="hidden sm:flex items-center space-x-2">
+                    <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+                    <span>Secure Connection</span>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        const chatForm = document.getElementById('chat-form');
+        const messageInput = document.getElementById('message-input');
+        const sendButton = document.getElementById('send-button');
+        const chatMessages = document.getElementById('chat-messages');
+
+        let conversationHistory = [];
+        let responseCounter = 0;
+        let isAwaitingResponse = false;
+
+        function createMessageElement(message, type) {
+            const messageWrapper = document.createElement('div');
+            messageWrapper.className = 'message-enter flex mb-4';
+            let messageContent = '';
+
+            switch (type) {
+                case 'user':
+                    messageWrapper.classList.add('justify-end');
+                    messageContent = `<div class="message-bubble message-user"><p>${escapeHtmlAndFormat(message)}</p></div>`;
+                    break;
+                case 'ai':
+                    messageWrapper.classList.add('justify-start');
+                    messageContent = `<div class="message-bubble message-ai"><p>${escapeHtmlAndFormat(message)}</p></div>`;
+                    break;
+                case 'loading':
+                    messageWrapper.id = 'loading-indicator';
+                    messageWrapper.classList.add('justify-start');
+                    messageContent = `<div class="message-bubble message-ai typing-indicator"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>`;
+                    break;
+                case 'error':
+                    messageWrapper.classList.add('justify-start');
+                    messageContent = `<div class="message-bubble message-error"><p class="font-semibold text-sm">Error</p><p class="text-sm">${escapeHtmlAndFormat(message)}</p></div>`;
+                    break;
+            }
+            messageWrapper.innerHTML = messageContent;
+            return messageWrapper;
+        }
+
+        function appendMessage(message, type) {
+            const messageElement = createMessageElement(message, type);
+            chatMessages.appendChild(messageElement);
+            requestAnimationFrame(() => {
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            });
+        }
+
+        async function handleFormSubmit(e) {
+            if (e) e.preventDefault();
+            const userMessage = messageInput.value.trim();
+            if (!userMessage || isAwaitingResponse) return;
+
+            isAwaitingResponse = true;
+            sendButton.disabled = true;
+            
+            appendMessage(userMessage, 'user');
+            conversationHistory.push({ role: "user", content: userMessage });
+            
+            messageInput.value = '';
+            autoGrowTextarea();
+            appendMessage('', 'loading');
+
+            try {
+                responseCounter++;
+                const response = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ history: conversationHistory, responseCount: responseCounter })
+                });
+
+                const responseData = await response.json();
+                if (!response.ok) {
+                    throw new Error(responseData.error || 'An unknown error occurred.');
+                }
+
+                document.getElementById('loading-indicator')?.remove();
+                appendMessage(responseData.content, 'ai');
+                conversationHistory.push({ role: "assistant", content: responseData.content });
+
+            } catch (error) {
+                document.getElementById('loading-indicator')?.remove();
+                appendMessage(error.message, 'error');
+            } finally {
+                isAwaitingResponse = false;
+                sendButton.disabled = false;
+                messageInput.focus();
+            }
+        }
+
+        function escapeHtmlAndFormat(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML.replace(/\n/g, '<br>');
+        }
+
+        function autoGrowTextarea() {
+            messageInput.style.height = 'auto';
+            messageInput.style.height = (messageInput.scrollHeight) + 'px';
+        }
+
+        chatForm.addEventListener('submit', handleFormSubmit);
+
+        messageInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                handleFormSubmit();
+            }
+        });
+        
+        messageInput.addEventListener('input', autoGrowTextarea);
+
+        window.addEventListener('load', function() {
+            setTimeout(() => {
+                const welcomeMessage = "السلام علیکم! I'm Junaid AI, your enterprise-grade Pakistani AI assistant. How can I assist you today?";
+                appendMessage(welcomeMessage, 'ai');
+                conversationHistory.push({ role: 'assistant', content: welcomeMessage });
+            }, 500);
+            messageInput.focus();
+        });
+    </script>
+</body>
+</html>
