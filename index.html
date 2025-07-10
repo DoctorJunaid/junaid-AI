@@ -102,7 +102,6 @@
         .btn-primary:active { transform: scale(0.98); }
         .btn-primary:disabled { background-color: #a5b4fc; cursor: not-allowed; transform: scale(1); }
         
-        /* --- ENHANCED Input Field --- */
         #input-area {
             background-color: rgba(243, 244, 246, 0.8);
             border-radius: 1.25rem;
@@ -116,22 +115,43 @@
         }
         #message-input {
             background-color: transparent;
-            overflow-y: hidden; /* Hide scrollbar by default */
-            resize: none; /* Disable manual resizing */
+            overflow-y: hidden;
+            resize: none;
         }
         #message-input:focus {
             outline: none;
         }
         
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(5px); }
+        /* --- NEW & ENHANCED ANIMATIONS --- */
+        @keyframes popIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .message-bubble {
+            animation: popIn 0.3s ease-out forwards;
+        }
+
+        @keyframes lineFadeIn {
+            from { opacity: 0; transform: translateY(8px); }
             to { opacity: 1; transform: translateY(0); }
         }
         .prose > * {
-            animation: fadeIn 0.3s ease-in-out forwards;
+            animation: lineFadeIn 0.4s ease-out forwards;
             opacity: 0;
             will-change: transform, opacity;
         }
+        
+        @keyframes typing-breath {
+            0%, 100% { transform: scale(0.8); opacity: 0.5; }
+            50% { transform: scale(1.1); opacity: 1; }
+        }
+        .typing-indicator .typing-dot {
+            width: 8px; height: 8px; background-color: #9ca3af;
+            border-radius: 50%; display: inline-block;
+            animation: typing-breath 1.5s infinite both;
+        }
+        .typing-indicator .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+        .typing-indicator .typing-dot:nth-child(3) { animation-delay: 0.4s; }
     </style>
 </head>
 <body>
@@ -198,7 +218,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="px-3 py-1.5 bg-blue-100/80 text-blue-800 rounded-full text-xs sm:text-sm font-medium">Enterprise v2.9.0</div>
+                        <div class="px-3 py-1.5 bg-blue-100/80 text-blue-800 rounded-full text-xs sm:text-sm font-medium">Enterprise v3.0.0</div>
                     </div>
                 </header>
 
