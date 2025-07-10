@@ -2,12 +2,12 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Junaid AI - Enterprise AI Assistant</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
         :root {
@@ -17,16 +17,24 @@
             --text-secondary: #6b7280;
             --bg-primary: #ffffff;
             --bg-secondary: #f9fafb;
+            --border-color: #e5e7eb;
         }
+        
+        * {
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
+        }
+        
         body {
             font-family: 'Inter', sans-serif;
             color: var(--text-primary);
             margin: 0;
             background-color: #f7f8fc;
             overflow: hidden;
+            touch-action: manipulation;
         }
         
-        /* --- OPTIMIZED 2D Blob Animation --- */
+        /* Optimized blob animation */
         .blob-container {
             position: fixed;
             top: 0;
@@ -38,125 +46,135 @@
         }
 
         @keyframes move {
-            from { transform: translate(-15vw, -15vh) rotate(0deg) scale(1.1); }
-            to { transform: translate(15vw, 15vh) rotate(360deg) scale(1); }
+            0% { transform: translate(-10vw, -10vh) rotate(0deg) scale(1); }
+            25% { transform: translate(10vw, -5vh) rotate(90deg) scale(1.1); }
+            50% { transform: translate(5vw, 10vh) rotate(180deg) scale(0.9); }
+            75% { transform: translate(-5vw, 5vh) rotate(270deg) scale(1.05); }
+            100% { transform: translate(-10vw, -10vh) rotate(360deg) scale(1); }
         }
 
         .blob {
             position: absolute;
-            opacity: 0.5;
-            animation: move 40s infinite alternate;
+            opacity: 0.3;
+            animation: move 30s infinite linear;
             border-radius: 50%;
-            filter: blur(40px);
+            filter: blur(20px);
             will-change: transform;
         }
         
-        .blob:nth-child(1) { top: 20%; left: 20%; width: 30vmax; height: 30vmax; background-color: #8b5cf6; animation-duration: 35s; }
-        .blob:nth-child(2) { top: 60%; left: 10%; width: 25vmax; height: 25vmax; background-color: #3b82f6; animation-duration: 45s; animation-delay: -10s; }
-        .blob:nth-child(3) { top: 10%; left: 70%; width: 20vmax; height: 20vmax; background-color: #ec4899; animation-duration: 38s; animation-delay: -5s; }
-        .blob:nth-child(4) { top: 50%; left: 60%; width: 35vmax; height: 35vmax; background-color: #f59e0b; animation-duration: 50s; animation-delay: -15s; }
+        .blob:nth-child(1) { top: 20%; left: 20%; width: 20vmax; height: 20vmax; background: linear-gradient(45deg, #8b5cf6, #a855f7); animation-duration: 25s; }
+        .blob:nth-child(2) { top: 60%; left: 10%; width: 15vmax; height: 15vmax; background: linear-gradient(45deg, #3b82f6, #2563eb); animation-duration: 35s; animation-delay: -8s; }
+        .blob:nth-child(3) { top: 10%; left: 70%; width: 18vmax; height: 18vmax; background: linear-gradient(45deg, #ec4899, #db2777); animation-duration: 28s; animation-delay: -5s; }
 
         .main-container {
             position: relative;
             z-index: 1;
             width: 100%;
             height: 100vh;
-            padding: 0.5rem; /* Responsive padding */
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
-        @media (min-width: 640px) { .main-container { padding: 1rem; } }
 
         .glass-container {
-            background: rgba(255, 255, 255, 0.75);
-            backdrop-filter: blur(16px) saturate(1.5);
-            -webkit-backdrop-filter: blur(16px) saturate(1.5);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px) saturate(1.2);
+            -webkit-backdrop-filter: blur(12px) saturate(1.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
             width: 100%;
-            max-width: 80rem; /* Increased max-width */
             height: 100%;
             display: flex;
-            border-radius: 1rem;
+            border-radius: 0;
             overflow: hidden;
-            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
-        }
-        @media (min-width: 768px) { .glass-container { border-radius: 1.5rem; } }
-
-        .sidebar {
-            background: rgba(249, 250, 251, 0.9);
-            border-right: 1px solid rgba(229, 231, 235, 0.6);
-            transition: transform 0.3s ease-in-out;
+            box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
         }
         
-        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        @media (min-width: 768px) { 
+            .main-container { padding: 1rem; }
+            .glass-container { max-width: 80rem; height: calc(100vh - 2rem); border-radius: 1.5rem; } 
+        }
+
+        .sidebar {
+            background: rgba(249, 250, 251, 0.95);
+            border-right: 1px solid rgba(229, 231, 235, 0.6);
+            transition: transform 0.2s ease-out;
+            backdrop-filter: blur(8px);
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 3px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 2px; }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
 
-        .message-user .message-bubble { background-color: var(--primary-color); color: white; }
-        .message-ai .message-bubble { background-color: var(--bg-primary); color: var(--text-primary); border: 1px solid #e5e7eb; }
-        .message-bubble { padding: 0.75rem 1.25rem; border-radius: 1.5rem; max-width: 85%; word-wrap: break-word; }
+        .message-user .message-bubble { background: linear-gradient(135deg, var(--primary-color), #6366f1); color: white; box-shadow: 0 2px 8px rgba(79, 70, 229, 0.3); }
+        .message-ai .message-bubble { background-color: var(--bg-primary); color: var(--text-primary); border: 1px solid var(--border-color); box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05); }
+        .message-bubble { padding: 0.75rem 1rem; border-radius: 1.25rem; max-width: 85%; word-wrap: break-word; font-size: 0.9rem; line-height: 1.5; position: relative; }
         .message-user { justify-content: flex-end; }
         .message-ai { justify-content: flex-start; }
         
-        .btn-primary { background-color: var(--primary-color); color: white; transition: background-color 0.2s, transform 0.2s; }
-        .btn-primary:hover { background-color: #4338ca; transform: scale(1.05); }
-        .btn-primary:active { transform: scale(0.98); }
-        .btn-primary:disabled { background-color: #a5b4fc; cursor: not-allowed; transform: scale(1); }
+        .btn-primary { background: linear-gradient(135deg, var(--primary-color), #6366f1); color: white; transition: all 0.2s ease; border: none; outline: none; }
+        .btn-primary:hover:not(:disabled) { transform: scale(1.05); box-shadow: 0 4px 12px rgba(79, 70, 229, 0.4); }
+        .btn-primary:active:not(:disabled) { transform: scale(0.98); }
+        .btn-primary:disabled { background: #a5b4fc; cursor: not-allowed; transform: scale(1); opacity: 0.7; }
         
-        #input-area {
-            background-color: rgba(243, 244, 246, 0.8);
-            border-radius: 1.25rem;
-            border: 1px solid transparent;
-            transition: border-color 0.2s, box-shadow 0.2s;
-            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-        }
-        #input-area:focus-within {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
-        }
-        #message-input {
-            background-color: transparent;
-            overflow-y: hidden;
-            resize: none;
-        }
-        #message-input:focus {
-            outline: none;
-        }
+        #input-area { background-color: rgba(255, 255, 255, 0.9); border-radius: 1rem; border: 1px solid rgba(229, 231, 235, 0.5); transition: all 0.2s ease; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); }
+        #input-area:focus-within { border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15); }
+        #message-input { background-color: transparent; overflow-y: hidden; resize: none; font-size: 16px; }
+        #message-input:focus { outline: none; }
         
-        /* --- NEW & ENHANCED ANIMATIONS --- */
-        @keyframes popIn {
-            from { opacity: 0; transform: scale(0.9); }
-            to { opacity: 1; transform: scale(1); }
-        }
-        .message-bubble {
-            animation: popIn 0.3s ease-out forwards;
-        }
-
-        @keyframes lineFadeIn {
-            from { opacity: 0; transform: translateY(8px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .prose > * {
-            animation: lineFadeIn 0.4s ease-out forwards;
-            opacity: 0;
-            will-change: transform, opacity;
-        }
+        @keyframes slideInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         
-        @keyframes typing-breath {
-            0%, 100% { transform: scale(0.8); opacity: 0.5; }
-            50% { transform: scale(1.1); opacity: 1; }
-        }
-        .typing-indicator .typing-dot {
-            width: 8px; height: 8px; background-color: #9ca3af;
-            border-radius: 50%; display: inline-block;
-            animation: typing-breath 1.5s infinite both;
-        }
+        .message-wrapper { animation: slideInUp 0.3s ease-out forwards; }
+        .typing-indicator { animation: fadeIn 0.2s ease-out; }
+        
+        @keyframes pulse { 0%, 100% { transform: scale(1); opacity: 0.7; } 50% { transform: scale(1.2); opacity: 1; } }
+        
+        .typing-indicator .typing-dot { width: 6px; height: 6px; background-color: #9ca3af; border-radius: 50%; display: inline-block; animation: pulse 1.2s infinite; margin: 0 1px; }
         .typing-indicator .typing-dot:nth-child(2) { animation-delay: 0.2s; }
         .typing-indicator .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+        
+        .dark-mode { --text-primary: #f9fafb; --text-secondary: #d1d5db; --bg-primary: #1f2937; --bg-secondary: #111827; --border-color: #374151; }
+        .dark-mode body { background-color: #0c111c; }
+        .dark-mode .glass-container { background: rgba(31, 41, 55, 0.85); border-color: rgba(55, 65, 81, 0.5); }
+        .dark-mode .sidebar { background: rgba(17, 24, 39, 0.95); border-right-color: rgba(55, 65, 81, 0.5); }
+        .dark-mode .sidebar button, .dark-mode .sidebar a { color: var(--text-secondary); }
+        .dark-mode .sidebar button:hover, .dark-mode .sidebar a:hover { background-color: rgba(55, 65, 81, 0.7); color: var(--text-primary); }
+        .dark-mode h2, .dark-mode h1 { color: var(--text-primary); }
+        .dark-mode #open-sidebar-btn { color: var(--text-secondary); }
+        .dark-mode header, .dark-mode footer { border-color: rgba(55, 65, 81, 0.5); }
+        .dark-mode #input-area { background-color: rgba(55, 65, 81, 0.8); border-color: rgba(75, 85, 99, 0.5); }
+        .dark-mode #message-input::placeholder { color: #9ca3af; }
+        .dark-mode .quick-action { background: rgba(99, 102, 241, 0.15); border-color: rgba(99, 102, 241, 0.4); color: #a5b4fc; }
+        .dark-mode .quick-action:hover { background: rgba(99, 102, 241, 0.25); }
+        
+        .quick-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; margin: 1rem 0; animation: fadeIn 0.5s ease-out; }
+        .quick-action { background: rgba(79, 70, 229, 0.1); border: 1px solid rgba(79, 70, 229, 0.3); color: var(--primary-color); padding: 0.5rem 1rem; border-radius: 1rem; font-size: 0.8rem; font-weight: 500; transition: all 0.2s ease; cursor: pointer; }
+        .quick-action:hover { background: rgba(79, 70, 229, 0.2); transform: translateY(-1px); }
+        
+        .copy-btn {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            padding: 4px;
+            border-radius: 50%;
+            background-color: rgba(0,0,0,0.05);
+            color: var(--text-secondary);
+            opacity: 0;
+            transition: opacity 0.2s, background-color 0.2s;
+            cursor: pointer;
+            border: none;
+        }
+        .message-ai:hover .copy-btn { opacity: 1; }
+        .copy-btn:hover { background-color: rgba(0,0,0,0.1); }
+        .dark-mode .copy-btn { background-color: rgba(255,255,255,0.08); }
+        .dark-mode .copy-btn:hover { background-color: rgba(255,255,255,0.15); }
+
     </style>
 </head>
-<body>
+<body class="opacity-0 transition-opacity duration-300">
     <div class="blob-container">
-        <div class="blob"></div>
         <div class="blob"></div>
         <div class="blob"></div>
         <div class="blob"></div>
@@ -164,72 +182,80 @@
     
     <div class="main-container">
         <div class="glass-container">
-            <!-- Sidebar for Mobile & Desktop -->
+            <!-- Sidebar -->
             <aside id="sidebar" class="absolute md:relative inset-y-0 left-0 z-30 w-64 sidebar p-4 flex-col justify-between flex -translate-x-full md:translate-x-0">
                 <div>
                     <div class="flex items-center justify-between p-2">
                         <div class="flex items-center space-x-3">
-                            <div class="w-10 h-10 rounded-full flex items-center justify-center bg-indigo-500 text-white shrink-0">
+                            <div class="w-10 h-10 rounded-full flex items-center justify-center bg-gradient-to-br from-indigo-500 to-purple-600 text-white shrink-0">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.373 3.373 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path></svg>
                             </div>
-                            <h2 class="text-xl font-bold text-gray-800">Junaid AI</h2>
+                            <h2 class="text-xl font-bold">Junaid AI</h2>
                         </div>
-                        <button id="close-sidebar-btn" class="md:hidden text-gray-500 hover:text-gray-800">
+                        <button id="close-sidebar-btn" aria-label="Close sidebar" class="md:hidden text-gray-500 hover:text-gray-800 p-1">
                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                         </button>
                     </div>
+                    
                     <nav class="mt-8 space-y-2">
-                        <a href="#" id="new-chat-btn" class="flex items-center space-x-3 px-3 py-2 text-gray-700 font-medium rounded-lg hover:bg-gray-200/50 transition-colors">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+                        <button id="new-chat-btn" class="flex items-center space-x-3 px-3 py-2 font-medium rounded-lg transition-colors w-full text-left">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
                             <span>New Chat</span>
-                        </a>
-                        <a href="#" onclick="showComingSoon()" class="flex items-center space-x-3 px-3 py-2 text-gray-700 font-medium rounded-lg hover:bg-gray-200/50 transition-colors">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
-                            <span>Past Conversations</span>
-                        </a>
+                        </button>
+                        <button id="theme-toggle-btn" class="flex items-center space-x-3 px-3 py-2 font-medium rounded-lg transition-colors w-full text-left">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                            <span>Dark Mode</span>
+                        </button>
+                        <button id="history-btn" class="flex items-center space-x-3 px-3 py-2 font-medium rounded-lg transition-colors w-full text-left">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                            <span>Chat History</span>
+                        </button>
                     </nav>
                 </div>
+                
                 <div class="space-y-2">
-                    <a href="#" onclick="showComingSoon()" class="flex items-center space-x-3 px-3 py-2 text-gray-600 rounded-lg hover:bg-gray-200/50 transition-colors">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
-                        <span>Profile & Settings</span>
-                    </a>
-                    <a href="https://github.com/doctorjunaid/junaid-ai" target="_blank" class="flex items-center space-x-3 px-3 py-2 text-gray-600 rounded-lg hover:bg-gray-200/50 transition-colors">
-                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.865 8.168 6.839 9.492.5.092.682-.217.682-.482 0-.237-.009-.868-.014-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.031-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.378.203 2.398.1 2.651.64.7 1.03 1.595 1.03 2.688 0 3.848-2.338 4.695-4.566 4.942.359.308.678.92.678 1.855 0 1.338-.012 2.419-.012 2.745 0 .267.18.577.688.48C19.135 20.168 22 16.418 22 12A10 10 0 0012 2z" clip-rule="evenodd" /></svg>
+                     <div id="user-info" class="px-3 py-2 text-xs text-gray-400 truncate"></div>
+                    <a href="https://github.com/doctorjunaid/junaid-ai" target="_blank" rel="noopener noreferrer" class="flex items-center space-x-3 px-3 py-2 rounded-lg transition-colors">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.865 8.168 6.839 9.492.5.092.682-.217.682-.482 0-.237-.009-.868-.014-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.031-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.378.203 2.398.1 2.651.64.7 1.03 1.595 1.03 2.688 0 3.848-2.338 4.695-4.566 4.942.359.308.678.92.678 1.855 0 1.338-.012 2.419-.012 2.745 0 .267.18.577.688.48C19.135 20.168 22 16.418 22 12A10 10 0 0012 2z" clip-rule="evenodd" /></svg>
                         <span>View on GitHub</span>
                     </a>
                 </div>
             </aside>
+            
             <!-- Overlay for mobile sidebar -->
             <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-20 hidden md:hidden"></div>
 
             <div class="flex-1 flex flex-col bg-transparent">
-                <header class="p-4 border-b border-gray-200/30 bg-white/10 shrink-0">
+                <!-- Header -->
+                <header class="p-3 md:p-4 border-b shrink-0">
                     <div class="flex items-center justify-between">
                         <div class="flex items-center space-x-3">
-                            <button id="open-sidebar-btn" class="md:hidden text-gray-700">
+                            <button id="open-sidebar-btn" aria-label="Open sidebar" class="md:hidden p-1">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
                             </button>
                             <div>
-                                <h1 class="text-lg md:text-xl font-bold text-gray-900">Junaid AI</h1>
-                                <div class="flex items-center space-x-2 text-xs text-gray-600">
-                                    <div class="w-2 h-2 bg-green-500 rounded-full"></div>
-                                    <span>Online</span>
+                                <h1 class="text-lg md:text-xl font-bold">Junaid AI</h1>
+                                <div class="flex items-center space-x-2 text-xs">
+                                    <div id="status-indicator" class="w-2 h-2 bg-yellow-500 rounded-full"></div>
+                                    <span id="status-text">Connecting...</span>
                                 </div>
                             </div>
                         </div>
-                        <div class="px-3 py-1.5 bg-blue-100/80 text-blue-800 rounded-full text-xs sm:text-sm font-medium">Enterprise v3.0.0</div>
+                        <div class="flex items-center space-x-2">
+                            <div class="px-2 py-1 md:px-3 md:py-1.5 bg-blue-100 text-blue-800 rounded-full text-xs font-medium">v4.0.0</div>
+                        </div>
                     </div>
                 </header>
 
-                <main id="chat-messages" class="flex-1 p-4 md:p-6 overflow-y-auto custom-scrollbar">
-                </main>
+                <!-- Chat Messages -->
+                <main id="chat-messages" class="flex-1 p-3 md:p-6 overflow-y-auto custom-scrollbar"></main>
 
-                <footer class="p-2 sm:p-4 border-t border-gray-200/30 bg-white/10 shrink-0">
-                    <form id="chat-form" class="flex items-end space-x-2 sm:space-x-4">
-                        <div id="input-area" class="flex-1 flex items-center p-1 pr-2">
-                            <textarea id="message-input" placeholder="Ask me anything..." autocomplete="off" rows="1" class="w-full p-2 sm:p-2.5 bg-transparent"></textarea>
-                            <button type="submit" id="send-button" class="btn-primary h-10 w-10 sm:h-12 sm:w-12 rounded-full flex items-center justify-center shrink-0 p-0">
+                <!-- Input Area -->
+                <footer class="p-2 md:p-4 border-t shrink-0">
+                    <form id="chat-form" class="flex items-end space-x-2">
+                        <div id="input-area" class="flex-1 flex items-center p-1">
+                            <textarea id="message-input" placeholder="Ask me anything..." autocomplete="off" rows="1" class="flex-1 p-2 border-none"></textarea>
+                            <button type="submit" id="send-button" aria-label="Send message" class="btn-primary h-10 w-10 rounded-full flex items-center justify-center shrink-0">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path></svg>
                             </button>
                         </div>
@@ -239,223 +265,454 @@
         </div>
     </div>
     
-    <div id="coming-soon-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
-        <div class="bg-white rounded-lg p-8 shadow-xl text-center">
-            <h3 class="text-2xl font-bold mb-4">Feature Coming Soon!</h3>
-            <p class="text-gray-600 mb-6">We're working hard to bring this feature to you.</p>
-            <button onclick="hideComingSoon()" class="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors">Got it!</button>
+    <!-- Coming Soon Modal -->
+    <div id="feature-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50 p-4">
+        <div class="bg-white dark:bg-gray-800 rounded-lg p-6 md:p-8 shadow-xl text-center max-w-sm w-full">
+            <div class="w-16 h-16 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            </div>
+            <h3 id="modal-title" class="text-xl font-bold mb-2">Coming Soon!</h3>
+            <p id="modal-text" class="text-gray-600 dark:text-gray-300 mb-6 text-sm">We're working hard to bring this feature to you.</p>
+            <button id="modal-close-btn" class="px-6 py-2 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-lg hover:from-indigo-600 hover:to-purple-700 transition-all">Got it!</button>
         </div>
     </div>
 
-    <script>
-        // --- UI & Interactivity Logic ---
-        const sidebar = document.getElementById('sidebar');
-        const openSidebarBtn = document.getElementById('open-sidebar-btn');
-        const closeSidebarBtn = document.getElementById('close-sidebar-btn');
-        const sidebarOverlay = document.getElementById('sidebar-overlay');
+    <script type="module">
+        // --- Firebase and Gemini Integration ---
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, addDoc, collection, onSnapshot, query, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        function openSidebar() {
-            sidebar.classList.remove('-translate-x-full');
-            sidebarOverlay.classList.remove('hidden');
+        // --- App Configuration ---
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+
+        // --- UI Elements ---
+        const ui = {
+            sidebar: document.getElementById('sidebar'),
+            openSidebarBtn: document.getElementById('open-sidebar-btn'),
+            closeSidebarBtn: document.getElementById('close-sidebar-btn'),
+            sidebarOverlay: document.getElementById('sidebar-overlay'),
+            chatForm: document.getElementById('chat-form'),
+            messageInput: document.getElementById('message-input'),
+            sendButton: document.getElementById('send-button'),
+            chatMessages: document.getElementById('chat-messages'),
+            newChatBtn: document.getElementById('new-chat-btn'),
+            themeToggleBtn: document.getElementById('theme-toggle-btn'),
+            historyBtn: document.getElementById('history-btn'),
+            modal: document.getElementById('feature-modal'),
+            modalCloseBtn: document.getElementById('modal-close-btn'),
+            statusIndicator: document.getElementById('status-indicator'),
+            statusText: document.getElementById('status-text'),
+            userInfo: document.getElementById('user-info')
+        };
+
+        // --- State Management ---
+        let state = {
+            isAwaitingResponse: false,
+            isDarkMode: false,
+            userId: null,
+            chatId: null,
+            db: null,
+            auth: null,
+            unsubscribeChat: null,
+            isAuthReady: false
+        };
+
+        // --- Firebase Initialization ---
+        async function initializeFirebase() {
+            try {
+                const app = initializeApp(firebaseConfig);
+                state.db = getFirestore(app);
+                state.auth = getAuth(app);
+
+                onAuthStateChanged(state.auth, async (user) => {
+                    if (user) {
+                        console.log("User is signed in with UID:", user.uid);
+                        state.userId = user.uid;
+                        state.isAuthReady = true;
+                        ui.statusIndicator.classList.replace('bg-yellow-500', 'bg-green-500');
+                        ui.statusText.textContent = 'Online';
+                        ui.userInfo.textContent = `User ID: ${user.uid.substring(0, 12)}...`;
+                        loadOrCreateChat();
+                    } else {
+                        console.log("User is signed out. Attempting to sign in.");
+                        await authenticateUser();
+                    }
+                });
+            } catch (error) {
+                console.error("Firebase initialization failed:", error);
+                showError("Could not connect to the service. Please refresh the page.");
+            }
         }
-
-        function closeSidebar() {
-            sidebar.classList.add('-translate-x-full');
-            sidebarOverlay.classList.add('hidden');
-        }
-
-        openSidebarBtn.addEventListener('click', openSidebar);
-        closeSidebarBtn.addEventListener('click', closeSidebar);
-        sidebarOverlay.addEventListener('click', closeSidebar);
         
-        // --- Chat Application Logic ---
-        const chatForm = document.getElementById('chat-form');
-        const messageInput = document.getElementById('message-input');
-        const sendButton = document.getElementById('send-button');
-        const chatMessages = document.getElementById('chat-messages');
-        const newChatBtn = document.getElementById('new-chat-btn');
-        const modal = document.getElementById('coming-soon-modal');
+        async function authenticateUser() {
+             try {
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(state.auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(state.auth);
+                }
+            } catch (error) {
+                console.error("Authentication failed:", error);
+                showError("Authentication failed. Chat history will not be saved.");
+                ui.statusIndicator.classList.replace('bg-yellow-500', 'bg-red-500');
+                ui.statusText.textContent = 'Offline';
+            }
+        }
 
-        let conversationHistory = [];
-        let responseCounter = 0;
-        let isAwaitingResponse = false;
+        // --- Chat & Data Logic ---
+        function loadOrCreateChat() {
+            const storedChatId = localStorage.getItem('chatId');
+            if (storedChatId) {
+                state.chatId = storedChatId;
+            } else {
+                startNewChat();
+                return;
+            }
+            listenToChatMessages();
+        }
+
+        function startNewChat() {
+            if (state.unsubscribeChat) state.unsubscribeChat();
+            
+            ui.chatMessages.innerHTML = '';
+            state.chatId = doc(collection(state.db, 'chats')).id; // Generate a new ID client-side
+            localStorage.setItem('chatId', state.chatId);
+            
+            console.log(`Starting new chat with ID: ${state.chatId}`);
+            
+            loadWelcomeMessage();
+            listenToChatMessages();
+            
+            if (window.innerWidth < 768) closeSidebar();
+        }
+
+        function listenToChatMessages() {
+            if (!state.isAuthReady || !state.chatId) return;
+            if (state.unsubscribeChat) state.unsubscribeChat();
+
+            const messagesQuery = query(collection(state.db, `artifacts/${appId}/users/${state.userId}/chats/${state.chatId}/messages`));
+            
+            let isFirstLoad = true;
+            ui.chatMessages.innerHTML = ''; // Clear before loading
+            
+            state.unsubscribeChat = onSnapshot(messagesQuery, (snapshot) => {
+                const messages = [];
+                snapshot.forEach(doc => messages.push({ id: doc.id, ...doc.data() }));
+                
+                // Firestore returns docs unsorted, so we must sort by timestamp
+                messages.sort((a, b) => (a.createdAt?.toMillis() || 0) - (b.createdAt?.toMillis() || 0));
+
+                ui.chatMessages.innerHTML = ''; // Clear view to re-render sorted messages
+                
+                if (messages.length === 0 && isFirstLoad) {
+                    loadWelcomeMessage();
+                } else {
+                    messages.forEach(msg => {
+                        if (msg.role === 'user') {
+                            appendMessage(msg.content, 'user');
+                        } else if (msg.role === 'assistant') {
+                            appendMessage(msg.content, 'ai');
+                        }
+                    });
+                }
+                
+                if (isFirstLoad && messages.length > 0) {
+                     setTimeout(addQuickActions, 500);
+                }
+                
+                isFirstLoad = false;
+
+                scrollToBottom();
+            }, (error) => {
+                console.error("Error listening to chat messages:", error);
+                showError("Failed to load chat history.");
+            });
+        }
+        
+        async function saveMessage(role, content) {
+            if (!state.isAuthReady || !state.chatId) return;
+            try {
+                const messagesCol = collection(state.db, `artifacts/${appId}/users/${state.userId}/chats/${state.chatId}/messages`);
+                await addDoc(messagesCol, {
+                    role: role,
+                    content: content,
+                    createdAt: serverTimestamp()
+                });
+            } catch (error) {
+                console.error("Error saving message:", error);
+                showError("Could not save message.");
+            }
+        }
+
+        // --- Gemini API Call ---
+        async function getAIResponse() {
+            if (!state.isAuthReady) return;
+
+            const messagesCol = collection(state.db, `artifacts/${appId}/users/${state.userId}/chats/${state.chatId}/messages`);
+            const q = query(messagesCol);
+            
+            // We need to get the current history to send to Gemini.
+            // onSnapshot is async, so we can't rely on a simple global array.
+            // A better way is to fetch the current state from Firestore.
+            // For simplicity in this context, we'll build history from the UI, but in a complex app, fetching is better.
+            const chatHistory = Array.from(ui.chatMessages.querySelectorAll('.message-wrapper'))
+                .map(wrapper => ({
+                    role: wrapper.dataset.role,
+                    parts: [{ text: wrapper.dataset.content }]
+                }))
+                .filter(msg => msg.role && msg.parts[0].text); // Ensure valid messages
+
+            const payload = { contents: chatHistory };
+            const apiKey = ""; // Will be handled by the environment
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    throw new Error(`API request failed with status ${response.status}`);
+                }
+                
+                const result = await response.json();
+
+                if (result.candidates && result.candidates.length > 0) {
+                    const aiResponse = result.candidates[0].content.parts[0].text;
+                    document.getElementById('loading-indicator')?.remove();
+                    appendMessage(aiResponse, 'ai');
+                    await saveMessage('assistant', aiResponse);
+                } else {
+                    throw new Error("Invalid response structure from API.");
+                }
+
+            } catch (error) {
+                console.error("Gemini API error:", error);
+                document.getElementById('loading-indicator')?.remove();
+                showError("Sorry, I'm having trouble connecting to the AI. Please try again later.");
+            } finally {
+                state.isAwaitingResponse = false;
+                toggleUIState(false);
+                ui.messageInput.focus();
+            }
+        }
+
+        // --- UI & DOM Manipulation ---
+        function appendMessage(content, type) {
+            if (type === 'loading') {
+                const loadingIndicator = createMessageElement('', 'loading');
+                ui.chatMessages.appendChild(loadingIndicator);
+                scrollToBottom();
+                return;
+            }
+            
+            const messageElement = createMessageElement(content, type);
+            ui.chatMessages.appendChild(messageElement);
+            scrollToBottom();
+        }
 
         function createMessageElement(message, type) {
-            const messageWrapper = document.createElement('div');
-            messageWrapper.className = `flex mb-4 message-${type}`;
-            
-            const div = document.createElement('div');
-            div.textContent = message;
-            const parsedMessage = div.innerHTML.replace(/\n/g, '<br>');
+            const wrapper = document.createElement('div');
+            wrapper.className = `message-wrapper flex mb-3 md:mb-4 message-${type}`;
+            wrapper.dataset.role = type === 'ai' ? 'assistant' : type;
+            wrapper.dataset.content = message;
 
-            let messageContent = '';
-            switch (type) {
-                case 'user':
-                    messageContent = `<div class="message-bubble shadow-md"><p>${parsedMessage}</p></div>`;
-                    break;
-                case 'loading':
-                    messageWrapper.id = 'loading-indicator';
-                    messageContent = `<div class="message-bubble message-ai typing-indicator"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>`;
-                    break;
-                case 'error':
-                    messageContent = `<div class="message-bubble bg-red-100 border border-red-200 text-red-800"><p class="font-semibold text-sm">Error</p><p class="text-sm">${parsedMessage}</p></div>`;
-                    break;
+            if (type === 'loading') {
+                wrapper.id = 'loading-indicator';
+                wrapper.innerHTML = `<div class="message-bubble message-ai typing-indicator flex items-center space-x-1"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>`;
+                return wrapper;
             }
-            messageWrapper.innerHTML = messageContent;
-            return messageWrapper;
+
+            const bubble = document.createElement('div');
+            bubble.className = 'message-bubble';
+            
+            // Use marked.js for AI messages, and simple text for user messages to prevent XSS
+            if (type === 'ai') {
+                bubble.innerHTML = marked.parse(message, { breaks: true, gfm: true, headerIds: false, mangle: false });
+                
+                // Add copy button to AI messages
+                const copyBtn = document.createElement('button');
+                copyBtn.className = 'copy-btn';
+                copyBtn.setAttribute('aria-label', 'Copy message');
+                copyBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/><path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zM-1 8a.5.5 0 0 1 .5-.5h15a.5.5 0 0 1 0 1H-.5A.5.5 0 0 1-1 8z"/></svg>`;
+                copyBtn.onclick = () => copyToClipboard(message);
+                bubble.appendChild(copyBtn);
+
+            } else {
+                const p = document.createElement('p');
+                p.className = 'm-0';
+                p.textContent = message;
+                bubble.appendChild(p);
+            }
+            
+            wrapper.appendChild(bubble);
+            return wrapper;
         }
         
-        function appendAnimatedMessage(fullMessage) {
-            const messageWrapper = document.createElement('div');
-            messageWrapper.className = `flex mb-4 message-ai`;
-            const bubble = document.createElement('div');
-            bubble.className = 'message-bubble shadow-md';
-            const proseContainer = document.createElement('div');
-            proseContainer.className = 'prose prose-sm max-w-none';
-            bubble.appendChild(proseContainer);
-            messageWrapper.appendChild(bubble);
-            chatMessages.appendChild(messageWrapper);
-
-            const tempDiv = document.createElement('div');
-            tempDiv.innerHTML = marked.parse(fullMessage, { breaks: true, gfm: true });
-            
-            const elements = Array.from(tempDiv.children);
-            let i = 0;
-
-            function showNextElement() {
-                if (i < elements.length) {
-                    const el = elements[i];
-                    el.style.animationDelay = `${i * 0.05}s`;
-                    proseContainer.appendChild(el);
-                    i++;
-                    chatMessages.scrollTop = chatMessages.scrollHeight;
-                    setTimeout(showNextElement, 50);
-                }
-            }
-            showNextElement();
+        function copyToClipboard(text) {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+            // Optionally, show a "Copied!" tooltip
         }
 
-        function appendMessage(message, type) {
-            const messageElement = createMessageElement(message, type);
-            chatMessages.appendChild(messageElement);
-            requestAnimationFrame(() => {
-                chatMessages.scrollTop = chatMessages.scrollHeight;
-            });
+        function showError(message) {
+            const errorWrapper = document.createElement('div');
+            errorWrapper.className = `message-wrapper flex mb-3 md:mb-4 message-ai`;
+            errorWrapper.innerHTML = `<div class="message-bubble bg-red-100 border border-red-200 text-red-800 dark:bg-red-900/50 dark:border-red-700 dark:text-red-200"><p class="font-semibold text-sm m-0">Error</p><p class="text-sm m-0 mt-1">${message}</p></div>`;
+            ui.chatMessages.appendChild(errorWrapper);
+            scrollToBottom();
         }
 
         async function handleFormSubmit(e) {
             if (e) e.preventDefault();
-            const userMessage = messageInput.value.trim();
-            if (!userMessage || isAwaitingResponse) return;
+            const userMessage = ui.messageInput.value.trim();
+            if (!userMessage || state.isAwaitingResponse) return;
 
-            isAwaitingResponse = true;
+            state.isAwaitingResponse = true;
             toggleUIState(true);
             
-            appendMessage(userMessage, 'user');
-            conversationHistory.push({ role: "user", content: userMessage });
+            // Remove quick actions once user interacts
+            document.querySelector('.quick-actions')?.remove();
             
-            messageInput.value = '';
+            appendMessage(userMessage, 'user');
+            await saveMessage('user', userMessage);
+            
+            ui.messageInput.value = '';
             autoGrowTextarea();
             appendMessage('', 'loading');
 
-            try {
-                responseCounter++;
-                const response = await fetch('/api/chat', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ history: conversationHistory, responseCount: responseCounter })
-                });
-
-                const responseData = await response.json();
-                if (!response.ok) {
-                    throw new Error(responseData.error || 'An unknown error occurred.');
-                }
-
-                document.getElementById('loading-indicator')?.remove();
-                appendAnimatedMessage(responseData.content);
-                conversationHistory.push({ role: "assistant", content: responseData.content });
-
-            } catch (error) {
-                document.getElementById('loading-indicator')?.remove();
-                appendMessage(error.message, 'error');
-            } finally {
-                isAwaitingResponse = false;
-                toggleUIState(false);
-                messageInput.focus();
-            }
+            await getAIResponse();
         }
-        
+
         function toggleUIState(isLoading) {
-            sendButton.disabled = isLoading;
-            messageInput.disabled = isLoading;
-            if (isLoading) {
-                sendButton.classList.add('btn-primary:disabled');
-            } else {
-                sendButton.classList.remove('btn-primary:disabled');
-            }
+            ui.sendButton.disabled = isLoading;
+            ui.messageInput.disabled = isLoading;
+            ui.messageInput.placeholder = isLoading ? "Junaid AI is thinking..." : "Ask me anything...";
         }
 
         function autoGrowTextarea() {
-            const maxHeight = 128; // Max height in pixels
-            messageInput.style.height = 'auto'; // Reset height to calculate scrollHeight correctly
-            
-            const scrollHeight = messageInput.scrollHeight;
-            
-            if (scrollHeight > maxHeight) {
-                messageInput.style.height = maxHeight + 'px';
-                messageInput.style.overflowY = 'auto'; // Show scrollbar
-            } else {
-                messageInput.style.height = scrollHeight + 'px';
-                messageInput.style.overflowY = 'hidden'; // Hide scrollbar
-            }
+            const maxHeight = window.innerWidth < 768 ? 100 : 128;
+            ui.messageInput.style.height = 'auto';
+            const scrollHeight = ui.messageInput.scrollHeight;
+            ui.messageInput.style.height = (scrollHeight > maxHeight ? maxHeight : scrollHeight) + 'px';
+            ui.messageInput.style.overflowY = scrollHeight > maxHeight ? 'auto' : 'hidden';
         }
 
-        function startNewChat() {
-            conversationHistory = [];
-            responseCounter = 0;
-            chatMessages.innerHTML = '';
-            loadWelcomeMessage();
-            if (window.innerWidth < 768) {
-                closeSidebar();
-            }
+        function scrollToBottom() {
+            requestAnimationFrame(() => {
+                ui.chatMessages.scrollTop = ui.chatMessages.scrollHeight;
+            });
         }
 
-        function showComingSoon() {
-            modal.classList.remove('hidden');
+        function openSidebar() {
+            ui.sidebar.classList.remove('-translate-x-full');
+            ui.sidebarOverlay.classList.remove('hidden');
         }
 
-        function hideComingSoon() {
-            modal.classList.add('hidden');
+        function closeSidebar() {
+            ui.sidebar.classList.add('-translate-x-full');
+            ui.sidebarOverlay.classList.add('hidden');
+        }
+
+        function toggleTheme() {
+            state.isDarkMode = !state.isDarkMode;
+            document.body.classList.toggle('dark-mode', state.isDarkMode);
+            ui.themeToggleBtn.querySelector('span').textContent = state.isDarkMode ? 'Light Mode' : 'Dark Mode';
+            localStorage.setItem('darkMode', state.isDarkMode);
+        }
+
+        function showModal(title, text) {
+            ui.modal.querySelector('#modal-title').textContent = title;
+            ui.modal.querySelector('#modal-text').textContent = text;
+            ui.modal.classList.remove('hidden');
+            if (window.innerWidth < 768) closeSidebar();
+        }
+
+        function hideModal() {
+            ui.modal.classList.add('hidden');
         }
 
         function loadWelcomeMessage() {
             setTimeout(() => {
                 const welcomeMessage = "Assalam-o-Alaikum! I am Junaid AI, your enterprise-grade Pakistani AI assistant. How may I assist you today?";
-                appendAnimatedMessage(welcomeMessage);
-                conversationHistory.push({ role: 'assistant', content: welcomeMessage });
+                appendMessage(welcomeMessage, 'ai');
+                saveMessage('assistant', welcomeMessage); // Save welcome to history
+                setTimeout(addQuickActions, 500);
             }, 500);
         }
 
-        chatForm.addEventListener('submit', handleFormSubmit);
-        newChatBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            startNewChat();
-        });
+        function addQuickActions() {
+            if (document.querySelector('.quick-actions')) return; // Don't add if already present
+            const quickActionsDiv = document.createElement('div');
+            quickActionsDiv.className = 'quick-actions';
+            const actions = [
+                { text: "What can you do?", query: "What can you help me with?" },
+                { text: "About Pakistan", query: "Tell me about Pakistan" },
+                { text: "Coding Help", query: "Help me with coding" },
+                { text: "AI Concepts", query: "Explain AI concepts" },
+                { text: "Business Tips", query: "Give me some business advice" }
+            ];
+            actions.forEach(action => {
+                const button = document.createElement('button');
+                button.className = 'quick-action';
+                button.textContent = action.text;
+                button.onclick = () => handleQuickAction(action.query);
+                quickActionsDiv.appendChild(button);
+            });
+            ui.chatMessages.appendChild(quickActionsDiv);
+            scrollToBottom();
+        }
 
-        messageInput.addEventListener('keydown', function(e) {
-            if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                handleFormSubmit();
-            }
-        });
+        function handleQuickAction(message) {
+            ui.messageInput.value = message;
+            handleFormSubmit();
+        }
+
+        // --- Event Listeners ---
+        function setupEventListeners() {
+            ui.openSidebarBtn.addEventListener('click', openSidebar);
+            ui.closeSidebarBtn.addEventListener('click', closeSidebar);
+            ui.sidebarOverlay.addEventListener('click', closeSidebar);
+            ui.chatForm.addEventListener('submit', handleFormSubmit);
+            ui.newChatBtn.addEventListener('click', startNewChat);
+            ui.themeToggleBtn.addEventListener('click', toggleTheme);
+            ui.historyBtn.addEventListener('click', () => showModal("Coming Soon!", "The ability to browse and manage your past chat sessions is under development."));
+            ui.modalCloseBtn.addEventListener('click', hideModal);
+
+            ui.messageInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    handleFormSubmit();
+                }
+            });
+            ui.messageInput.addEventListener('input', autoGrowTextarea);
+        }
         
-        messageInput.addEventListener('input', autoGrowTextarea);
-
-        window.addEventListener('load', function() {
-            loadWelcomeMessage();
-            messageInput.focus();
+        // --- Initialization ---
+        window.addEventListener('load', () => {
+            setupEventListeners();
+            
+            const savedTheme = localStorage.getItem('darkMode');
+            if (savedTheme === 'true' && !state.isDarkMode) {
+                toggleTheme();
+            }
+            
+            initializeFirebase().then(() => {
+                console.log("App Initialized");
+            });
+            
             autoGrowTextarea();
+            document.body.classList.remove('opacity-0');
         });
+
     </script>
 </body>
 </html>
