@@ -1,5 +1,5 @@
-// Using require for compatibility with Vercel's Node.js environment
-const { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } = require("@google/genai");
+// Using 'import' which now works because of "type": "module" in package.json
+import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } from "@google/genai";
 
 /**
  * Vercel serverless function to handle chat requests using Google's Generative AI.
@@ -21,7 +21,6 @@ export default async function handler(request, response) {
   }
 
   // --- Environment Variable Validation ---
-  // Using the original variable names as requested.
   const { API_KEY, API_MODEL, SYSTEM_PROMPT_CONTENT } = process.env;
 
   if (!API_KEY || !API_MODEL) {
@@ -31,7 +30,6 @@ export default async function handler(request, response) {
 
   try {
     // --- Initialize Google Generative AI Client ---
-    // The API_KEY variable now holds your Google AI API Key.
     const genAI = new GoogleGenerativeAI(API_KEY);
 
     // The API_MODEL variable now holds the name of the Gemini model.
