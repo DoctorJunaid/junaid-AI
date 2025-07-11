@@ -1,4 +1,5 @@
-import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } from "@google/genai";
+// Using require for compatibility with Vercel's Node.js environment
+const { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } = require("@google/genai");
 
 /**
  * Vercel serverless function to handle chat requests using Google's Generative AI.
