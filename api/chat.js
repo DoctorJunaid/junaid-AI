@@ -1,89 +1,92 @@
-import { OpenAI } from "openai";
+import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } from "@google/genai";
 
 /**
- * Vercel serverless function to handle chat requests.
- * It acts as a secure backend proxy to an AI service.
+ * Vercel serverless function to handle chat requests using Google's Generative AI.
+ * This version uses the original environment variable names (API_KEY, API_MODEL).
  */
 export default async function handler(request, response) {
+  // Set CORS headers to allow requests from any origin
+  response.setHeader('Access-Control-Allow-Origin', '*');
+  response.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  response.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+  // Handle preflight requests
+  if (request.method === 'OPTIONS') {
+    return response.status(200).end();
+  }
+
   if (request.method !== 'POST') {
     return response.status(405).json({ error: 'Method Not Allowed' });
   }
 
-  // Environment variable validation
-  const { API_KEY, API_BASE_URL, API_MODEL, SYSTEM_PROMPT_CONTENT } = process.env;
+  // --- Environment Variable Validation ---
+  // Using the original variable names as requested.
+  const { API_KEY, API_MODEL, SYSTEM_PROMPT_CONTENT } = process.env;
 
-  if (!API_KEY || !API_BASE_URL || !API_MODEL || !SYSTEM_PROMPT_CONTENT) {
-    console.error('CRITICAL: Server is not configured. Missing one or more environment variables.');
+  if (!API_KEY || !API_MODEL) {
+    console.error('CRITICAL: Server is not configured. Missing API_KEY or API_MODEL.');
     return response.status(500).json({ error: 'Server configuration error.' });
   }
 
-  const systemPrompt = {
-    role: "system",
-    content: SYSTEM_PROMPT_CONTENT.trim()
-  };
-
   try {
-    let { history } = request.body;
+    // --- Initialize Google Generative AI Client ---
+    // The API_KEY variable now holds your Google AI API Key.
+    const genAI = new GoogleGenerativeAI(API_KEY);
 
-    if (!Array.isArray(history) || history.length === 0) {
+    // The API_MODEL variable now holds the name of the Gemini model.
+    const model = genAI.getGenerativeModel({
+      model: API_MODEL,
+      systemInstruction: SYSTEM_PROMPT_CONTENT || "You are Junaid AI, a helpful and professional AI assistant from Pakistan.",
+    });
+
+    // --- Prepare Chat History for Gemini ---
+    const { history } = request.body;
+
+    if (!Array.isArray(history)) {
       return response.status(400).json({ error: 'Invalid or empty conversation history.' });
     }
+
+    const googleFormatHistory = history.map(msg => ({
+        role: msg.role === 'assistant' ? 'model' : 'user',
+        parts: [{ text: msg.content }]
+    }));
+
+    const userPrompt = googleFormatHistory.pop(); 
     
-    const latestUserMessage = history[history.length - 1]?.content;
-    if (typeof latestUserMessage !== 'string' || latestUserMessage.length > 8192) {
-      return response.status(413).json({ error: 'Message is too long or invalid.' });
+    if (!userPrompt || userPrompt.role !== 'user') {
+        return response.status(400).json({ error: 'The last message must be from the user.' });
     }
 
-    const client = new OpenAI({
-      baseURL: API_BASE_URL,
-      apiKey: API_KEY,
-    });
-
-    const messagesForAI = [systemPrompt, ...history];
-
-    const completion = await client.chat.completions.create({
-      model: API_MODEL,
-      messages: messagesForAI,
-      temperature: 0.7,
-      top_p: 1,
-      frequency_penalty: 0.1,
-      presence_penalty: 0.1,
-      extra_headers: {
-        "HTTP-Referer": "https://junaid-ai.vercel.app",
-        "X-Title": "Junaid AI",
+    // --- Start Chat and Send Message to Gemini ---
+    const chat = model.startChat({
+      history: googleFormatHistory,
+      generationConfig: {
+        maxOutputTokens: 2048,
+        temperature: 0.7,
+        topP: 1,
       },
+      safetySettings: [
+        { category: HarmCategory.HARM_CATEGORY_HARASSMENT, threshold: HarmBlockThreshold.BLOCK_NONE },
+        { category: HarmCategory.HARM_CATEGORY_HATE_SPEECH, threshold: HarmBlockThreshold.BLOCK_NONE },
+        { category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT, threshold: HarmBlockThreshold.BLOCK_NONE },
+        { category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: HarmBlockThreshold.BLOCK_NONE },
+      ],
     });
 
-    const aiContent = completion?.choices?.[0]?.message?.content;
+    const result = await chat.sendMessage(userPrompt.parts[0].text);
+    const aiResponse = await result.response;
+    const aiContent = aiResponse.text();
 
     if (!aiContent) {
-      console.error('AI response format error. Payload:', JSON.stringify(completion));
-      throw new Error('AI returned an unexpected response format.');
+      throw new Error('AI returned an empty or invalid response.');
     }
     
-    let finalContent = aiContent;
-
-    // --- You can add custom logic here if needed in the future ---
-    // For example, adding a promotional message every 10th response.
-    // const { responseCount } = request.body;
-    // if (responseCount && responseCount % 10 === 0) {
-    //   finalContent += `\n\nBy the way, check out my creator's work! [muhammad.junaid1](https://www.instagram.com/muhammad.junaid1)`;
-    // }
-
-    response.status(200).json({ content: finalContent });
+    // --- Send the AI's Response Back to the Frontend ---
+    response.status(200).json({ content: aiContent });
 
   } catch (error) {
     console.error("Server function error:", error);
-    
-    let errorMessage = "An internal server error occurred. Please try again later.";
-    if(error.response) {
-      console.error("API Error Response:", error.response.data);
-      errorMessage = "There was an issue with the AI service.";
-    } else if (error.request) {
-      console.error("API No Response:", error.request);
-      errorMessage = "Could not connect to the AI service.";
-    }
-
+    const errorMessage = error.message || "An internal server error occurred. Please try again later.";
     response.status(500).json({ error: errorMessage });
   }
 }
