@@ -3,7 +3,7 @@ import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } from "@google/ge
 
 /**
  * Vercel serverless function to handle chat requests using Google's Generative AI.
- * This version includes a robust fix for chat history validation.
+ * This version includes a more robust, defensive fix for chat history validation.
  */
 export default async function handler(request, response) {
   // Set CORS headers to allow requests from any origin
@@ -52,29 +52,29 @@ export default async function handler(request, response) {
 
     // The rest of the array is the chat history for the session.
     // Convert it to the format Google's SDK expects.
-    const chatHistoryForSDK = history
+    const conversationHistory = history
         .filter(msg => (msg.role === 'user' || msg.role === 'assistant') && msg.content)
         .map(msg => ({
             role: msg.role === 'assistant' ? 'model' : 'user',
             parts: [{ text: msg.content }]
         }));
 
-    // --- **ROBUST HISTORY SANITIZATION** ---
-    // This logic ensures the history is valid for the SDK.
-    let sanitizedHistory = [];
-    if (chatHistoryForSDK.length > 0) {
-        // 1. Find the first message from a 'user'. The history must start with the user.
-        const firstUserIndex = chatHistoryForSDK.findIndex(msg => msg.role === 'user');
+    // --- **ULTRA-ROBUST HISTORY SANITIZATION** ---
+    // This logic rebuilds the history from scratch to guarantee correctness.
+    const sanitizedHistory = [];
+    let foundFirstUser = false;
+    
+    for (const msg of conversationHistory) {
+        // We must skip any leading 'model' messages.
+        if (!foundFirstUser && msg.role === 'user') {
+            foundFirstUser = true;
+        }
 
-        if (firstUserIndex !== -1) {
-            const slicedHistory = chatHistoryForSDK.slice(firstUserIndex);
-            
-            // 2. Enforce strict alternating roles (user, model, user, model...).
-            sanitizedHistory.push(slicedHistory[0]); // Add the first 'user' message
-            for (let i = 1; i < slicedHistory.length; i++) {
-                if (slicedHistory[i].role !== sanitizedHistory[sanitizedHistory.length - 1].role) {
-                    sanitizedHistory.push(slicedHistory[i]);
-                }
+        // Once we've found the first user message, we can start building.
+        if (foundFirstUser) {
+            // Ensure roles alternate. If the current message has the same role as the last one, skip it.
+            if (sanitizedHistory.length === 0 || msg.role !== sanitizedHistory[sanitizedHistory.length - 1].role) {
+                sanitizedHistory.push(msg);
             }
         }
     }
