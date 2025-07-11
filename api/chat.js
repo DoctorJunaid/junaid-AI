@@ -3,7 +3,7 @@ import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } from "@google/ge
 
 /**
  * Vercel serverless function to handle chat requests using Google's Generative AI.
- * This version fixes the role mapping and chat history issues.
+ * This version includes a robust fix for chat history validation.
  */
 export default async function handler(request, response) {
   // Set CORS headers to allow requests from any origin
@@ -11,7 +11,7 @@ export default async function handler(request, response) {
   response.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   response.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-  // Handle preflight requests
+  // Handle preflight requests for CORS
   if (request.method === 'OPTIONS') {
     return response.status(200).end();
   }
@@ -31,53 +31,57 @@ export default async function handler(request, response) {
   try {
     // --- Initialize Google Generative AI Client ---
     const genAI = new GoogleGenerativeAI(API_KEY);
-
-    // The API_MODEL variable now holds the name of the Gemini model.
     const model = genAI.getGenerativeModel({
       model: API_MODEL,
       systemInstruction: SYSTEM_PROMPT_CONTENT || "You are Junaid AI, a helpful and professional AI assistant from Pakistan.",
     });
 
-    // --- Prepare Chat History for Gemini ---
+    // --- Prepare and Sanitize Chat History for Gemini ---
     const { history } = request.body;
 
-    if (!Array.isArray(history)) {
+    if (!Array.isArray(history) || history.length === 0) {
       return response.status(400).json({ error: 'Invalid or empty conversation history.' });
     }
 
-    // Filter out any system messages from history since we use systemInstruction
-    const filteredHistory = history.filter(msg => msg.role !== 'system');
+    // The last message in the history is the current user prompt.
+    const currentUserPrompt = history.pop();
 
-    // Convert to Google's format, ensuring proper role mapping
-    const googleFormatHistory = filteredHistory.map(msg => ({
-        role: msg.role === 'assistant' ? 'model' : 'user',
-        parts: [{ text: msg.content }]
-    }));
+    if (!currentUserPrompt || currentUserPrompt.role !== 'user' || !currentUserPrompt.content) {
+        return response.status(400).json({ error: 'The last message must be a valid prompt from the user.' });
+    }
 
-    // Extract the last message (should be from user)
-    const userPrompt = googleFormatHistory.pop(); 
+    // The rest of the array is the chat history for the session.
+    // Convert it to the format Google's SDK expects.
+    const chatHistoryForSDK = history
+        .filter(msg => (msg.role === 'user' || msg.role === 'assistant') && msg.content)
+        .map(msg => ({
+            role: msg.role === 'assistant' ? 'model' : 'user',
+            parts: [{ text: msg.content }]
+        }));
+
+    // --- **ROBUST HISTORY SANITIZATION** ---
+    // This logic ensures the history is valid for the SDK.
+    let sanitizedHistory = [];
+    if (chatHistoryForSDK.length > 0) {
+        // 1. Find the first message from a 'user'. The history must start with the user.
+        const firstUserIndex = chatHistoryForSDK.findIndex(msg => msg.role === 'user');
+
+        if (firstUserIndex !== -1) {
+            const slicedHistory = chatHistoryForSDK.slice(firstUserIndex);
+            
+            // 2. Enforce strict alternating roles (user, model, user, model...).
+            sanitizedHistory.push(slicedHistory[0]); // Add the first 'user' message
+            for (let i = 1; i < slicedHistory.length; i++) {
+                if (slicedHistory[i].role !== sanitizedHistory[sanitizedHistory.length - 1].role) {
+                    sanitizedHistory.push(slicedHistory[i]);
+                }
+            }
+        }
+    }
     
-    if (!userPrompt || userPrompt.role !== 'user') {
-        return response.status(400).json({ error: 'The last message must be from the user.' });
-    }
-
-    // --- Fix: Ensure history starts with user message ---
-    // Google AI requires chat history to start with 'user' role
-    let validHistory = [];
-    if (googleFormatHistory.length > 0) {
-      // Find the first user message in history
-      let firstUserIndex = googleFormatHistory.findIndex(msg => msg.role === 'user');
-      
-      if (firstUserIndex !== -1) {
-        // Include history starting from first user message
-        validHistory = googleFormatHistory.slice(firstUserIndex);
-      }
-      // If no user message found in history, start with empty history
-    }
-
-    // --- Create chat session ---
+    // --- Create Chat Session ---
     const chat = model.startChat({
-      history: validHistory, // Use the validated history
+      history: sanitizedHistory, // Use the fully sanitized history
       generationConfig: {
         maxOutputTokens: 2048,
         temperature: 0.7,
@@ -92,7 +96,7 @@ export default async function handler(request, response) {
     });
 
     // --- Send Message to Gemini ---
-    const result = await chat.sendMessage(userPrompt.parts[0].text);
+    const result = await chat.sendMessage(currentUserPrompt.content);
     const aiResponse = await result.response;
     const aiContent = aiResponse.text();
 
@@ -106,17 +110,16 @@ export default async function handler(request, response) {
   } catch (error) {
     console.error("Server function error:", error);
     
-    // More specific error handling
+    // Provide more specific and helpful error messages to the client
     let errorMessage = "An internal server error occurred. Please try again later.";
-    
-    if (error.message?.includes('GoogleGenerativeAI Error')) {
-      errorMessage = "There was an issue with the AI service configuration.";
+    if (error.message?.includes('GoogleGenerativeAI')) {
+      errorMessage = "There was an issue with the AI service. Please check the server configuration.";
     } else if (error.message?.includes('API key')) {
-      errorMessage = "Authentication error with the AI service.";
+      errorMessage = "Authentication error with the AI service. The API key may be invalid.";
     } else if (error.message?.includes('quota')) {
-      errorMessage = "AI service is temporarily unavailable. Please try again later.";
+      errorMessage = "The AI service quota has been exceeded. Please try again later.";
     } else if (error.message?.includes('safety')) {
-      errorMessage = "Your message was blocked by safety filters. Please try rephrasing.";
+      errorMessage = "Your message was blocked by the AI's safety filters. Please rephrase your prompt.";
     }
     
     response.status(500).json({ error: errorMessage });
