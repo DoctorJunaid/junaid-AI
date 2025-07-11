@@ -1,10 +1,9 @@
-// Using default import for CommonJS module compatibility
-import pkg from "@google/genai";
-const { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } = pkg;
+// Using the official Google AI SDK
+import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } from "@google/generative-ai";
 
 /**
  * Vercel serverless function to handle chat requests using Google's Generative AI.
- * This version uses the original environment variable names (API_KEY, API_MODEL).
+ * This version uses the correct Google AI SDK package.
  */
 export default async function handler(request, response) {
   // Set CORS headers to allow requests from any origin
