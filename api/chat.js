@@ -61,40 +61,35 @@ export default async function handler(request, response) {
         return response.status(400).json({ error: 'The last message must be from the user.' });
     }
 
-    // --- Handle empty history case ---
-    let chat;
-    if (googleFormatHistory.length === 0) {
-      // For the first message, start chat without history
-      chat = model.startChat({
-        generationConfig: {
-          maxOutputTokens: 2048,
-          temperature: 0.7,
-          topP: 1,
-        },
-        safetySettings: [
-          { category: HarmCategory.HARM_CATEGORY_HARASSMENT, threshold: HarmBlockThreshold.BLOCK_NONE },
-          { category: HarmCategory.HARM_CATEGORY_HATE_SPEECH, threshold: HarmBlockThreshold.BLOCK_NONE },
-          { category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT, threshold: HarmBlockThreshold.BLOCK_NONE },
-          { category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: HarmBlockThreshold.BLOCK_NONE },
-        ],
-      });
-    } else {
-      // For subsequent messages, include the history
-      chat = model.startChat({
-        history: googleFormatHistory,
-        generationConfig: {
-          maxOutputTokens: 2048,
-          temperature: 0.7,
-          topP: 1,
-        },
-        safetySettings: [
-          { category: HarmCategory.HARM_CATEGORY_HARASSMENT, threshold: HarmBlockThreshold.BLOCK_NONE },
-          { category: HarmCategory.HARM_CATEGORY_HATE_SPEECH, threshold: HarmBlockThreshold.BLOCK_NONE },
-          { category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT, threshold: HarmBlockThreshold.BLOCK_NONE },
-          { category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: HarmBlockThreshold.BLOCK_NONE },
-        ],
-      });
+    // --- Fix: Ensure history starts with user message ---
+    // Google AI requires chat history to start with 'user' role
+    let validHistory = [];
+    if (googleFormatHistory.length > 0) {
+      // Find the first user message in history
+      let firstUserIndex = googleFormatHistory.findIndex(msg => msg.role === 'user');
+      
+      if (firstUserIndex !== -1) {
+        // Include history starting from first user message
+        validHistory = googleFormatHistory.slice(firstUserIndex);
+      }
+      // If no user message found in history, start with empty history
     }
+
+    // --- Create chat session ---
+    const chat = model.startChat({
+      history: validHistory, // Use the validated history
+      generationConfig: {
+        maxOutputTokens: 2048,
+        temperature: 0.7,
+        topP: 1,
+      },
+      safetySettings: [
+        { category: HarmCategory.HARM_CATEGORY_HARASSMENT, threshold: HarmBlockThreshold.BLOCK_NONE },
+        { category: HarmCategory.HARM_CATEGORY_HATE_SPEECH, threshold: HarmBlockThreshold.BLOCK_NONE },
+        { category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT, threshold: HarmBlockThreshold.BLOCK_NONE },
+        { category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: HarmBlockThreshold.BLOCK_NONE },
+      ],
+    });
 
     // --- Send Message to Gemini ---
     const result = await chat.sendMessage(userPrompt.parts[0].text);

@@ -387,312 +387,178 @@
         }
 
         // --- UI & DOM Manipulation ---
-        function appendMessage(content, type) {
-            // Add message to state history
-            if (type === 'user' || type === 'ai') {
-                state.chatHistory.push({
-                    role: type === 'ai' ? 'assistant' : 'user',
-                    content: content
-                });
-            }
-
-            if (type === 'loading') {
-                const loadingIndicator = createMessageElement('', 'loading');
-                ui.chatMessages.appendChild(loadingIndicator);
-                scrollToBottom();
-                return;
-            }
-            
-            const messageElement = createMessageElement(content, type);
-            ui.chatMessages.appendChild(messageElement);
-            scrollToBottom();
-        }
-
-        function createMessageElement(message, type) {
-            const wrapper = document.createElement('div');
-            wrapper.className = `message-wrapper flex mb-3 md:mb-4 message-${type}`;
-            
-            if (type === 'loading') {
-                wrapper.id = 'loading-indicator';
-                wrapper.innerHTML = `<div class="message-bubble message-ai typing-indicator flex items-center space-x-1"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>`;
-                return wrapper;
-            }
-
-            const bubble = document.createElement('div');
-            bubble.className = 'message-bubble';
-            
-            if (type === 'ai') {
-                bubble.innerHTML = marked.parse(message, { breaks: true, gfm: true, headerIds: false, mangle: false });
-                const copyBtn = document.createElement('button');
-                copyBtn.className = 'copy-btn';
-                copyBtn.setAttribute('aria-label', 'Copy message');
-                copyBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/><path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zM-1 8a.5.5 0 0 1 .5-.5h15a.5.5 0 0 1 0 1H-.5A.5.5 0 0 1-1 8z"/></svg>`;
-                copyBtn.onclick = () => copyToClipboard(message);
-                bubble.appendChild(copyBtn);
-            } else {
-                const p = document.createElement('p');
-                p.className = 'm-0';
-                p.textContent = message;
-                bubble.appendChild(p);
-            }
-            
-            wrapper.appendChild(bubble);
-            return wrapper;
-        }
-        
-        function copyToClipboard(text) {
-            const textarea = document.createElement('textarea');
-            textarea.value = text;
-            document.body.appendChild(textarea);
-            textarea.select();
-            document.execCommand('copy');
-            document.body.removeChild(textarea);
-        }
-
-        function showError(message) {
-            const errorWrapper = document.createElement('div');
-            errorWrapper.className = `message-wrapper flex mb-3 md:mb-4 message-ai`;
-            errorWrapper.innerHTML = `<div class="message-bubble bg-red-100 border border-red-200 text-red-800 dark:bg-red-900/50 dark:border-red-700 dark:text-red-200"><p class="font-semibold text-sm m-0">Error</p><p class="text-sm m-0 mt-1">${message}</p></div>`;
-            ui.chatMessages.appendChild(errorWrapper);
-            scrollToBottom();
-        }
-
-        async function handleFormSubmit(e) {
-            if (e) e.preventDefault();
-            const userMessage = ui.messageInput.value.trim();
-            if (!userMessage || state.isAwaitingResponse) return;
-
-            state.isAwaitingResponse = true;
-            toggleUIState(true);
-            
-            document.querySelector('.quick-actions')?.remove();
-            
-            appendMessage(userMessage, 'user');
-            
-            ui.messageInput.value = '';
-            autoGrowTextarea();
-            appendMessage('', 'loading');
-
-            await getAIResponse();
-        }
-
-        function toggleUIState(isLoading) {
-            ui.sendButton.disabled = isLoading;
-            ui.messageInput.disabled = isLoading;
-            ui.messageInput.placeholder = isLoading ? "Junaid AI is thinking..." : "Ask me anything...";
-        }
-
-        function autoGrowTextarea() {
-            const maxHeight = window.innerWidth < 768 ? 100 : 128;
-            ui.messageInput.style.height = 'auto';
-            const scrollHeight = ui.messageInput.scrollHeight;
-            ui.messageInput.style.height = (scrollHeight > maxHeight ? maxHeight : scrollHeight) + 'px';
-            ui.messageInput.style.overflowY = scrollHeight > maxHeight ? 'auto' : 'hidden';
-        }
-
-        function scrollToBottom() {
-            requestAnimationFrame(() => {
-                ui.chatMessages.scrollTop = ui.chatMessages.scrollHeight;
-            });
-        }
-
-        function openSidebar() {
-            ui.sidebar.classList.remove('-translate-x-full');
-            ui.sidebarOverlay.classList.remove('hidden');
-        }
-
-        function closeSidebar() {
-            ui.sidebar.classList.add('-translate-x-full');
-            ui.sidebarOverlay.classList.add('hidden');
-        }
-
-        function toggleTheme() {
-            state.isDarkMode = !state.isDarkMode;
-            document.body.classList.toggle('dark-mode', state.isDarkMode);
-            ui.themeToggleBtn.querySelector('span').textContent = state.isDarkMode ? 'Light Mode' : 'Dark Mode';
-            localStorage.setItem('darkMode', state.isDarkMode);
-        }
-
-        function showModal(title, text) {
-            ui.modal.querySelector('#modal-title').textContent = title;
-            ui.modal.querySelector('#modal-text').textContent = text;
-            ui.modal.classList.remove('hidden');
-            if (window.innerWidth < 768) closeSidebar();
-        }
-
-        function hideModal() {
-            ui.modal.classList.add('hidden');
-        }
-
-        function loadWelcomeMessage() {
-            setTimeout(() => {
-                const welcomeMessage = "Assalam-o-Alaikum! I am Junaid AI, your enterprise-grade Pakistani AI assistant. How may I assist you today?";
-                appendMessage(welcomeMessage, 'ai');
-                setTimeout(addQuickActions, 500);
-            }, 500);
-        }
-
-        function addQuickActions() {
-            if (document.querySelector('.quick-actions')) return;
-            const quickActionsDiv = document.createElement('div');
-            quickActionsDiv.className = 'quick-actions';
-            const actions = [
-                { text: "What can you do?", query: "What can you help me with?" },
-                { text: "About Pakistan", query: "Tell me about Pakistan" },
-                { text: "Coding Help", query: "Help me with coding" },
-                { text: "AI Concepts", query: "Explain AI concepts" },
-                { text: "Business Tips", query: "Give me some business advice" }
-            ];
-            actions.forEach(action => {
-                const button = document.createElement('button');
-                button.className = 'quick-action';
-                button.textContent = action.text;
-                button.onclick = () => handleQuickAction(action.query);
-                quickActionsDiv.appendChild(button);
-            });
-            ui.chatMessages.appendChild(quickActionsDiv);
-            scrollToBottom();
-        }
-
-        function handleQuickAction(message) {
-            ui.messageInput.value = message;
-            handleFormSubmit();
-        }
-
-        // --- Event Listeners ---
-        function setupEventListeners() {
-            ui.openSidebarBtn.addEventListener('click', openSidebar);
-            ui.closeSidebarBtn.addEventListener('click', closeSidebar);
-            ui.sidebarOverlay.addEventListener('click', closeSidebar);
-            ui.chatForm.addEventListener('submit', handleFormSubmit);
-            ui.newChatBtn.addEventListener('click', startNewChat);
-            ui.themeToggleBtn.addEventListener('click', toggleTheme);
-            ui.historyBtn.addEventListener('click', () => showModal("Chat History", "Chat history is not saved in this version. Start a new chat to clear the conversation."));
-            ui.modalCloseBtn.addEventListener('click', hideModal);
-
-            ui.messageInput.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault();
-                    handleFormSubmit();
-                }
-            });
-            ui.messageInput.addEventListener('input', autoGrowTextarea);
-        }
-        
-        // --- Initialization ---
-        window.addEventListener('load', () => {
-            setupEventListeners();
-            
-            const savedTheme = localStorage.getItem('darkMode');
-            if (savedTheme === 'true' && !state.isDarkMode) {
-                toggleTheme();
-            }
-            
-            initializeApp();
-            
-            autoGrowTextarea();
-            document.body.classList.remove('opacity-0');
+function appendMessage(content, type) {
+    // Add message to state history, but NOT for welcome messages
+    if (type === 'user' || (type === 'ai' && !content.includes('Assalam-o-Alaikum! I am Junaid AI'))) {
+        state.chatHistory.push({
+            role: type === 'ai' ? 'assistant' : 'user',
+            content: content
         });
+    }
+
+    if (type === 'loading') {
+        const loadingIndicator = createMessageElement('', 'loading');
+        ui.chatMessages.appendChild(loadingIndicator);
+        scrollToBottom();
+        return;
+    }
+    
+    const messageElement = createMessageElement(content, type);
+    ui.chatMessages.appendChild(messageElement);
+    scrollToBottom();
+}
+
+function createMessageElement(message, type) {
+    const wrapper = document.createElement('div');
+    wrapper.className = `message-wrapper flex mb-3 md:mb-4 message-${type}`;
+    
+    if (type === 'loading') {
+        wrapper.id = 'loading-indicator';
+        wrapper.innerHTML = `<div class="message-bubble message-ai typing-indicator flex items-center space-x-1"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>`;
+        return wrapper;
+    }
+
+    const bubble = document.createElement('div');
+    bubble.className = 'message-bubble';
+    
+    if (type === 'ai') {
+        bubble.innerHTML = marked.parse(message, { breaks: true, gfm: true, headerIds: false, mangle: false });
+        const copyBtn = document.createElement('button');
+        copyBtn.className = 'copy-btn';
+        copyBtn.setAttribute('aria-label', 'Copy message');
+        copyBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/><path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zM-1 8a.5.5 0 0 1 .5-.5h15a.5.5 0 0 1 0 1H-.5A.5.5 0 0 1-1 8z"/></svg>`;
+        copyBtn.onclick = () => copyToClipboard(message);
+        bubble.appendChild(copyBtn);
+    } else {
+        const p = document.createElement('p');
+        p.className = 'm-0';
+        p.textContent = message;
+        bubble.appendChild(p);
+    }
+    
+    wrapper.appendChild(bubble);
+    return wrapper;
+}
+
+function copyToClipboard(text) {
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    document.body.appendChild(textarea);
+    textarea.select();
+    document.execCommand('copy');
+    document.body.removeChild(textarea);
+}
+
+function showError(message) {
+    const errorWrapper = document.createElement('div');
+    errorWrapper.className = `message-wrapper flex mb-3 md:mb-4 message-ai`;
+    errorWrapper.innerHTML = `<div class="message-bubble bg-red-100 border border-red-200 text-red-800 dark:bg-red-900/50 dark:border-red-700 dark:text-red-200"><p class="font-semibold text-sm m-0">Error</p><p class="text-sm m-0 mt-1">${message}</p></div>`;
+    ui.chatMessages.appendChild(errorWrapper);
+    scrollToBottom();
+}
+
+async function handleFormSubmit(e) {
+    if (e) e.preventDefault();
+    const userMessage = ui.messageInput.value.trim();
+    if (!userMessage || state.isAwaitingResponse) return;
+
+    state.isAwaitingResponse = true;
+    toggleUIState(true);
+    
+    document.querySelector('.quick-actions')?.remove();
+    
+    appendMessage(userMessage, 'user');
+    
+    ui.messageInput.value = '';
+    autoGrowTextarea();
+    appendMessage('', 'loading');
+
+    await getAIResponse();
+}
+
+function toggleUIState(isLoading) {
+    ui.sendButton.disabled = isLoading;
+    ui.messageInput.disabled = isLoading;
+    ui.messageInput.placeholder = isLoading ? "Junaid AI is thinking..." : "Ask me anything...";
+}
+
+function autoGrowTextarea() {
+    const maxHeight = window.innerWidth < 768 ? 100 : 128;
+    ui.messageInput.style.height = 'auto';
+    const scrollHeight = ui.messageInput.scrollHeight;
+    ui.messageInput.style.height = (scrollHeight > maxHeight ? maxHeight : scrollHeight) + 'px';
+    ui.messageInput.style.overflowY = scrollHeight > maxHeight ? 'auto' : 'hidden';
+}
+
+function scrollToBottom() {
+    requestAnimationFrame(() => {
+        ui.chatMessages.scrollTop = ui.chatMessages.scrollHeight;
+    });
+}
+
+function openSidebar() {
+    ui.sidebar.classList.remove('-translate-x-full');
+    ui.sidebarOverlay.classList.remove('hidden');
+}
+
+function closeSidebar() {
+    ui.sidebar.classList.add('-translate-x-full');
+    ui.sidebarOverlay.classList.add('hidden');
+}
+
+function toggleTheme() {
+    state.isDarkMode = !state.isDarkMode;
+    document.body.classList.toggle('dark-mode', state.isDarkMode);
+    ui.themeToggleBtn.querySelector('span').textContent = state.isDarkMode ? 'Light Mode' : 'Dark Mode';
+    localStorage.setItem('darkMode', state.isDarkMode);
+}
+
+function showModal(title, text) {
+    ui.modal.querySelector('#modal-title').textContent = title;
+    ui.modal.querySelector('#modal-text').textContent = text;
+    ui.modal.classList.remove('hidden');
+    if (window.innerWidth < 768) closeSidebar();
+}
+
+function hideModal() {
+    ui.modal.classList.add('hidden');
+}
+
+function loadWelcomeMessage() {
+    setTimeout(() => {
+        const welcomeMessage = "Assalam-o-Alaikum! I am Junaid AI, your enterprise-grade Pakistani AI assistant. How may I assist you today?";
+        appendMessage(welcomeMessage, 'ai'); // This welcome message won't be added to history
+        setTimeout(addQuickActions, 500);
+    }, 500);
+}
+
+function addQuickActions() {
+    if (document.querySelector('.quick-actions')) return;
+    const quickActionsDiv = document.createElement('div');
+    quickActionsDiv.className = 'quick-actions';
+    const actions = [
+        { text: "What can you do?", query: "What can you help me with?" },
+        { text: "About Pakistan", query: "Tell me about Pakistan" },
+        { text: "Coding Help", query: "Help me with coding" },
+        { text: "AI Concepts", query: "Explain AI concepts" },
+        { text: "Business Tips", query: "Give me some business advice" }
+    ];
+    actions.forEach(action => {
+        const button = document.createElement('button');
+        button.className = 'quick-action';
+        button.textContent = action.text;
+        button.onclick = () => handleQuickAction(action.query);
+        quickActionsDiv.appendChild(button);
+    });
+    ui.chatMessages.appendChild(quickActionsDiv);
+    scrollToBottom();
+}
+
+function handleQuickAction(message) {
+    ui.messageInput.value = message;
+    handleFormSubmit();
+}
 
     </script>
 </body>
 </html>
-```javascript
-// /api/chat.js
-
-// This file is now correctly configured to work with the frontend.
-// No changes are needed here if your environment variables on Vercel are correct.
-
-import { OpenAI } from "openai";
-
-/**
- * Vercel serverless function to handle chat requests.
- * It acts as a secure backend proxy to an AI service.
- */
-export default async function handler(request, response) {
-  // Allow requests from all origins for development. 
-  // For production, you might want to restrict this to your domain.
-  response.setHeader('Access-Control-Allow-Origin', '*');
-  response.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  response.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-
-  // Handle preflight requests for CORS
-  if (request.method === 'OPTIONS') {
-    return response.status(200).end();
-  }
-
-  if (request.method !== 'POST') {
-    return response.status(405).json({ error: 'Method Not Allowed' });
-  }
-
-  // Environment variable validation
-  const { API_KEY, API_BASE_URL, API_MODEL, SYSTEM_PROMPT_CONTENT } = process.env;
-
-  if (!API_KEY || !API_BASE_URL || !API_MODEL || !SYSTEM_PROMPT_CONTENT) {
-    console.error('CRITICAL: Server is not configured. Missing one or more environment variables.');
-    return response.status(500).json({ error: 'Server configuration error.' });
-  }
-
-  const systemPrompt = {
-    role: "system",
-    content: SYSTEM_PROMPT_CONTENT.trim()
-  };
-
-  try {
-    let { history } = request.body;
-
-    if (!Array.isArray(history)) { // History can be empty for the first message
-      return response.status(400).json({ error: 'Invalid conversation history.' });
-    }
-    
-    const latestUserMessage = history[history.length - 1]?.content;
-    if (history.length > 0 && (typeof latestUserMessage !== 'string' || latestUserMessage.length > 8192)) {
-      return response.status(413).json({ error: 'Message is too long or invalid.' });
-    }
-
-    const client = new OpenAI({
-      baseURL: API_BASE_URL,
-      apiKey: API_KEY,
-    });
-
-    const messagesForAI = [systemPrompt, ...history];
-
-    const completion = await client.chat.completions.create({
-      model: API_MODEL,
-      messages: messagesForAI,
-      temperature: 0.7,
-      top_p: 1,
-      frequency_penalty: 0.1,
-      presence_penalty: 0.1,
-      extra_headers: {
-        "HTTP-Referer": "[https://junaid-ai.vercel.app](https://junaid-ai.vercel.app)", // Replace with your actual app URL
-        "X-Title": "Junaid AI",
-      },
-    });
-
-    const aiContent = completion?.choices?.[0]?.message?.content;
-
-    if (!aiContent) {
-      console.error('AI response format error. Payload:', JSON.stringify(completion));
-      throw new Error('AI returned an unexpected response format.');
-    }
-    
-    let finalContent = aiContent;
-
-    response.status(200).json({ content: finalContent });
-
-  } catch (error) {
-    console.error("Server function error:", error);
-    
-    let errorMessage = "An internal server error occurred. Please try again later.";
-    if(error.response) {
-      console.error("API Error Response:", error.response.data);
-      errorMessage = "There was an issue with the AI service.";
-    } else if (error.request) {
-      console.error("API No Response:", error.request);
-      errorMessage = "Could not connect to the AI service.";
-    }
-
-    response.status(500).json({ error: errorMessage });
-  }
-}
