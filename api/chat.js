@@ -3,7 +3,7 @@ import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } from "@google/ge
 
 /**
  * Vercel serverless function to handle chat requests using Google's Generative AI.
- * This version uses the correct Google AI SDK package.
+ * This version fixes the role mapping and chat history issues.
  */
 export default async function handler(request, response) {
   // Set CORS headers to allow requests from any origin
@@ -45,33 +45,58 @@ export default async function handler(request, response) {
       return response.status(400).json({ error: 'Invalid or empty conversation history.' });
     }
 
-    const googleFormatHistory = history.map(msg => ({
+    // Filter out any system messages from history since we use systemInstruction
+    const filteredHistory = history.filter(msg => msg.role !== 'system');
+
+    // Convert to Google's format, ensuring proper role mapping
+    const googleFormatHistory = filteredHistory.map(msg => ({
         role: msg.role === 'assistant' ? 'model' : 'user',
         parts: [{ text: msg.content }]
     }));
 
+    // Extract the last message (should be from user)
     const userPrompt = googleFormatHistory.pop(); 
     
     if (!userPrompt || userPrompt.role !== 'user') {
         return response.status(400).json({ error: 'The last message must be from the user.' });
     }
 
-    // --- Start Chat and Send Message to Gemini ---
-    const chat = model.startChat({
-      history: googleFormatHistory,
-      generationConfig: {
-        maxOutputTokens: 2048,
-        temperature: 0.7,
-        topP: 1,
-      },
-      safetySettings: [
-        { category: HarmCategory.HARM_CATEGORY_HARASSMENT, threshold: HarmBlockThreshold.BLOCK_NONE },
-        { category: HarmCategory.HARM_CATEGORY_HATE_SPEECH, threshold: HarmBlockThreshold.BLOCK_NONE },
-        { category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT, threshold: HarmBlockThreshold.BLOCK_NONE },
-        { category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: HarmBlockThreshold.BLOCK_NONE },
-      ],
-    });
+    // --- Handle empty history case ---
+    let chat;
+    if (googleFormatHistory.length === 0) {
+      // For the first message, start chat without history
+      chat = model.startChat({
+        generationConfig: {
+          maxOutputTokens: 2048,
+          temperature: 0.7,
+          topP: 1,
+        },
+        safetySettings: [
+          { category: HarmCategory.HARM_CATEGORY_HARASSMENT, threshold: HarmBlockThreshold.BLOCK_NONE },
+          { category: HarmCategory.HARM_CATEGORY_HATE_SPEECH, threshold: HarmBlockThreshold.BLOCK_NONE },
+          { category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT, threshold: HarmBlockThreshold.BLOCK_NONE },
+          { category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: HarmBlockThreshold.BLOCK_NONE },
+        ],
+      });
+    } else {
+      // For subsequent messages, include the history
+      chat = model.startChat({
+        history: googleFormatHistory,
+        generationConfig: {
+          maxOutputTokens: 2048,
+          temperature: 0.7,
+          topP: 1,
+        },
+        safetySettings: [
+          { category: HarmCategory.HARM_CATEGORY_HARASSMENT, threshold: HarmBlockThreshold.BLOCK_NONE },
+          { category: HarmCategory.HARM_CATEGORY_HATE_SPEECH, threshold: HarmBlockThreshold.BLOCK_NONE },
+          { category: HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT, threshold: HarmBlockThreshold.BLOCK_NONE },
+          { category: HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold: HarmBlockThreshold.BLOCK_NONE },
+        ],
+      });
+    }
 
+    // --- Send Message to Gemini ---
     const result = await chat.sendMessage(userPrompt.parts[0].text);
     const aiResponse = await result.response;
     const aiContent = aiResponse.text();
@@ -85,7 +110,20 @@ export default async function handler(request, response) {
 
   } catch (error) {
     console.error("Server function error:", error);
-    const errorMessage = error.message || "An internal server error occurred. Please try again later.";
+    
+    // More specific error handling
+    let errorMessage = "An internal server error occurred. Please try again later.";
+    
+    if (error.message?.includes('GoogleGenerativeAI Error')) {
+      errorMessage = "There was an issue with the AI service configuration.";
+    } else if (error.message?.includes('API key')) {
+      errorMessage = "Authentication error with the AI service.";
+    } else if (error.message?.includes('quota')) {
+      errorMessage = "AI service is temporarily unavailable. Please try again later.";
+    } else if (error.message?.includes('safety')) {
+      errorMessage = "Your message was blocked by safety filters. Please try rephrasing.";
+    }
+    
     response.status(500).json({ error: errorMessage });
   }
 }
