@@ -1,5 +1,6 @@
-// Using 'import' which now works because of "type": "module" in package.json
-import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } from "@google/genai";
+// Using default import for CommonJS module compatibility
+import pkg from "@google/genai";
+const { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } = pkg;
 
 /**
  * Vercel serverless function to handle chat requests using Google's Generative AI.
