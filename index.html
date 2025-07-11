@@ -18,7 +18,6 @@
             --bg-primary: #ffffff;
             --bg-secondary: #f9fafb;
             --border-color: #e5e7eb;
-            /* --app-height will be set dynamically by JavaScript */
             --app-height: 100vh;
         }
         
@@ -34,6 +33,7 @@
             background-color: #f7f8fc;
             overflow: hidden;
             touch-action: manipulation;
+            transition: opacity 0.3s;
         }
         
         .blob-container {
@@ -71,7 +71,6 @@
             position: relative;
             z-index: 1;
             width: 100%;
-            /* Use the dynamic --app-height variable */
             height: var(--app-height);
             padding: 0;
             display: flex;
@@ -94,7 +93,6 @@
         
         @media (min-width: 768px) { 
             .main-container { padding: 1rem; }
-            /* On desktop, calculate height based on --app-height and padding */
             .glass-container { max-width: 80rem; height: calc(var(--app-height) - 2rem); border-radius: 1.5rem; } 
         }
 
@@ -176,7 +174,7 @@
 
     </style>
 </head>
-<body class="transition-opacity duration-300">
+<body class="opacity-0">
     <div class="blob-container">
         <div class="blob"></div>
         <div class="blob"></div>
@@ -185,6 +183,7 @@
     
     <div class="main-container">
         <div class="glass-container">
+            <!-- Sidebar -->
             <aside id="sidebar" class="absolute md:relative inset-y-0 left-0 z-30 w-64 sidebar p-4 flex-col justify-between flex -translate-x-full md:translate-x-0">
                 <div>
                     <div class="flex items-center justify-between p-2">
@@ -200,15 +199,15 @@
                     </div>
                     
                     <nav class="mt-8 space-y-2">
-                        <button id="new-chat-btn" class="flex items-center space-x-3 px-3 py-2 font-medium rounded-lg transition-colors w-full text-left">
+                        <button id="new-chat-btn" class="flex items-center space-x-3 px-3 py-2 font-medium rounded-lg transition-colors w-full text-left hover:bg-gray-200 dark:hover:bg-gray-700">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
                             <span>New Chat</span>
                         </button>
-                        <button id="theme-toggle-btn" class="flex items-center space-x-3 px-3 py-2 font-medium rounded-lg transition-colors w-full text-left">
+                        <button id="theme-toggle-btn" class="flex items-center space-x-3 px-3 py-2 font-medium rounded-lg transition-colors w-full text-left hover:bg-gray-200 dark:hover:bg-gray-700">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
                             <span>Dark Mode</span>
                         </button>
-                        <button id="history-btn" class="flex items-center space-x-3 px-3 py-2 font-medium rounded-lg transition-colors w-full text-left">
+                        <button id="history-btn" class="flex items-center space-x-3 px-3 py-2 font-medium rounded-lg transition-colors w-full text-left hover:bg-gray-200 dark:hover:bg-gray-700">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
                             <span>Chat History</span>
                         </button>
@@ -217,39 +216,43 @@
                 
                 <div class="space-y-2">
                      <div id="user-info" class="px-3 py-2 text-xs text-gray-400 truncate"></div>
-                    <a href="https://github.com/doctorjunaid/junaid-ai" target="_blank" rel="noopener noreferrer" class="flex items-center space-x-3 px-3 py-2 rounded-lg transition-colors">
+                    <a href="https://github.com/doctorjunaid/junaid-ai" target="_blank" rel="noopener noreferrer" class="flex items-center space-x-3 px-3 py-2 rounded-lg transition-colors hover:bg-gray-200 dark:hover:bg-gray-700">
                         <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12 2C6.477 2 2 6.477 2 12c0 4.418 2.865 8.168 6.839 9.492.5.092.682-.217.682-.482 0-.237-.009-.868-.014-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.031-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.378.203 2.398.1 2.651.64.7 1.03 1.595 1.03 2.688 0 3.848-2.338 4.695-4.566 4.942.359.308.678.92.678 1.855 0 1.338-.012 2.419-.012 2.745 0 .267.18.577.688.48C19.135 20.168 22 16.418 22 12A10 10 0 0012 2z" clip-rule="evenodd" /></svg>
                         <span>View on GitHub</span>
                     </a>
                 </div>
             </aside>
             
+            <!-- Overlay for mobile sidebar -->
             <div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-20 hidden md:hidden"></div>
 
             <div class="flex-1 flex flex-col bg-transparent">
-                <header class="p-3 md:p-4 border-b shrink-0">
+                <!-- Header -->
+                <header class="p-3 md:p-4 border-b shrink-0 border-gray-200 dark:border-gray-700">
                     <div class="flex items-center justify-between">
                         <div class="flex items-center space-x-3">
-                            <button id="open-sidebar-btn" aria-label="Open sidebar" class="md:hidden p-1">
+                            <button id="open-sidebar-btn" aria-label="Open sidebar" class="md:hidden p-1 text-gray-600 dark:text-gray-300">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
                             </button>
                             <div>
                                 <h1 class="text-lg md:text-xl font-bold">Junaid AI</h1>
-                                <div class="flex items-center space-x-2 text-xs">
+                                <div class="flex items-center space-x-2 text-xs text-gray-500 dark:text-gray-400">
                                     <div id="status-indicator" class="w-2 h-2 bg-yellow-500 rounded-full"></div>
                                     <span id="status-text">Connecting...</span>
                                 </div>
                             </div>
                         </div>
                         <div class="flex items-center space-x-2">
-                            <div class="px-2 py-1 md:px-3 md:py-1.5 bg-blue-100 text-blue-800 rounded-full text-xs font-medium">v4.0.1</div>
+                            <div class="px-2 py-1 md:px-3 md:py-1.5 bg-blue-100 text-blue-800 dark:bg-blue-900/50 dark:text-blue-200 rounded-full text-xs font-medium">v4.0.2</div>
                         </div>
                     </div>
                 </header>
 
+                <!-- Chat Messages -->
                 <main id="chat-messages" class="flex-1 p-3 md:p-6 overflow-y-auto custom-scrollbar"></main>
 
-                <footer class="p-2 md:p-4 border-t shrink-0">
+                <!-- Input Area -->
+                <footer class="p-2 md:p-4 border-t shrink-0 border-gray-200 dark:border-gray-700">
                     <form id="chat-form" class="flex items-end space-x-2">
                         <div id="input-area" class="flex-1 flex items-center p-1">
                             <textarea id="message-input" placeholder="Ask me anything..." autocomplete="off" rows="1" class="flex-1 p-2 border-none"></textarea>
@@ -263,6 +266,7 @@
         </div>
     </div>
     
+    <!-- Coming Soon Modal -->
     <div id="feature-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50 p-4">
         <div class="bg-white dark:bg-gray-800 rounded-lg p-6 md:p-8 shadow-xl text-center max-w-sm w-full">
             <div class="w-16 h-16 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -276,23 +280,17 @@
 
     <script>
         // --- FIX: Mobile Viewport Height ---
-        // This function sets a CSS variable to the actual inner height of the window,
-        // avoiding the issue where the browser's bottom bar covers the UI.
         function setAppHeight() {
-            const doc = document.documentElement;
-            doc.style.setProperty('--app-height', `${window.innerHeight}px`);
+            document.documentElement.style.setProperty('--app-height', `${window.innerHeight}px`);
         }
         window.addEventListener('resize', setAppHeight);
-        setAppHeight(); // Set it on initial load
+        setAppHeight();
     </script>
 
     <script type="module">
-        // --- NOTE: Firebase is not used in this version for simplicity, ---
-        // --- focusing on the direct API call fix. You can re-integrate it ---
-        // --- if you need chat history persistence. ---
-
         // --- UI Elements ---
         const ui = {
+            body: document.body,
             sidebar: document.getElementById('sidebar'),
             openSidebarBtn: document.getElementById('open-sidebar-btn'),
             closeSidebarBtn: document.getElementById('close-sidebar-btn'),
@@ -314,36 +312,58 @@
         // --- State Management ---
         let state = {
             isAwaitingResponse: false,
-            isDarkMode: false,
-            // The history is now stored in a simple array
+            isDarkMode: localStorage.getItem('darkMode') === 'true',
             chatHistory: [] 
         };
 
         // --- Core App Logic ---
         function initializeApp() {
-            // Set initial status to Online as we are ready to chat
+            // Make body visible after setup
+            ui.body.classList.remove('opacity-0');
+
+            // Set initial theme
+            document.body.classList.toggle('dark-mode', state.isDarkMode);
+            ui.themeToggleBtn.querySelector('span').textContent = state.isDarkMode ? 'Light Mode' : 'Dark Mode';
+
+            // Set initial status
             ui.statusIndicator.classList.replace('bg-yellow-500', 'bg-green-500');
             ui.statusText.textContent = 'Online';
-            ui.userInfo.textContent = `Session: Ephemeral`; // No user login
+            ui.userInfo.textContent = `Session: Ephemeral`;
+
+            // Add all event listeners
+            setupEventListeners();
+            
+            // Load initial welcome message
             loadWelcomeMessage();
         }
         
+        function setupEventListeners() {
+            ui.openSidebarBtn.addEventListener('click', openSidebar);
+            ui.closeSidebarBtn.addEventListener('click', closeSidebar);
+            ui.sidebarOverlay.addEventListener('click', closeSidebar);
+            ui.chatForm.addEventListener('submit', handleFormSubmit);
+            ui.messageInput.addEventListener('input', autoGrowTextarea);
+            ui.messageInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    handleFormSubmit();
+                }
+            });
+            ui.newChatBtn.addEventListener('click', startNewChat);
+            ui.themeToggleBtn.addEventListener('click', toggleTheme);
+            ui.historyBtn.addEventListener('click', () => showModal('Chat History', 'This feature is coming soon!'));
+            ui.modalCloseBtn.addEventListener('click', hideModal);
+        }
+
         function startNewChat() {
             ui.chatMessages.innerHTML = '';
-            state.chatHistory = []; // Clear history
+            state.chatHistory = [];
             loadWelcomeMessage();
             if (window.innerWidth < 768) closeSidebar();
         }
 
-        // --- FIX: API Call Logic ---
-        // This function now correctly calls your Vercel serverless function (`/api/chat`)
-        // which then securely proxies the request to the AI service.
         async function getAIResponse() {
-            // The serverless function will add the system prompt.
-            // We only need to send the current conversation history.
-            const payload = {
-                history: state.chatHistory 
-            };
+            const payload = { history: state.chatHistory };
 
             try {
                 const response = await fetch('/api/chat', {
@@ -353,17 +373,15 @@
                 });
 
                 if (!response.ok) {
-                    const errorData = await response.json();
-                    // Use the specific error message from the server if available
-                    throw new Error(errorData.error || `Server responded with status ${response.status}`);
+                    const errorData = await response.json().catch(() => ({ error: `Server responded with status ${response.status}` }));
+                    throw new Error(errorData.error);
                 }
                 
                 const result = await response.json();
 
                 if (result.content) {
-                    const aiResponse = result.content;
                     document.getElementById('loading-indicator')?.remove();
-                    appendMessage(aiResponse, 'ai');
+                    appendMessage(result.content, 'ai');
                 } else {
                     throw new Error("Invalid response structure from server.");
                 }
@@ -371,7 +389,6 @@
             } catch (error) {
                 console.error("API Call error:", error);
                 document.getElementById('loading-indicator')?.remove();
-                // Display a more informative error message
                 showError(`Sorry, I'm having trouble connecting. ${error.message}`);
             } finally {
                 state.isAwaitingResponse = false;
@@ -381,177 +398,180 @@
         }
 
         // --- UI & DOM Manipulation ---
-function appendMessage(content, type) {
-    // Add message to state history, but NOT for welcome messages
-    if (type === 'user' || (type === 'ai' && !content.includes('Assalam-o-Alaikum! I am Junaid AI'))) {
-        state.chatHistory.push({
-            role: type === 'ai' ? 'assistant' : 'user',
-            content: content
-        });
-    }
+        function appendMessage(content, type) {
+            if (type === 'user' || (type === 'ai' && !content.includes('Assalam-o-Alaikum! I am Junaid AI'))) {
+                state.chatHistory.push({
+                    role: type === 'ai' ? 'assistant' : 'user',
+                    content: content
+                });
+            }
 
-    if (type === 'loading') {
-        const loadingIndicator = createMessageElement('', 'loading');
-        ui.chatMessages.appendChild(loadingIndicator);
-        scrollToBottom();
-        return;
-    }
-    
-    const messageElement = createMessageElement(content, type);
-    ui.chatMessages.appendChild(messageElement);
-    scrollToBottom();
-}
+            if (type === 'loading') {
+                const loadingIndicator = createMessageElement('', 'loading');
+                ui.chatMessages.appendChild(loadingIndicator);
+            } else {
+                const messageElement = createMessageElement(content, type);
+                ui.chatMessages.appendChild(messageElement);
+            }
+            scrollToBottom();
+        }
 
-function createMessageElement(message, type) {
-    const wrapper = document.createElement('div');
-    wrapper.className = `message-wrapper flex mb-3 md:mb-4 message-${type}`;
-    
-    if (type === 'loading') {
-        wrapper.id = 'loading-indicator';
-        wrapper.innerHTML = `<div class="message-bubble message-ai typing-indicator flex items-center space-x-1"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>`;
-        return wrapper;
-    }
+        function createMessageElement(message, type) {
+            const wrapper = document.createElement('div');
+            wrapper.className = `message-wrapper flex mb-3 md:mb-4 message-${type}`;
+            
+            if (type === 'loading') {
+                wrapper.id = 'loading-indicator';
+                wrapper.innerHTML = `<div class="message-bubble message-ai typing-indicator flex items-center space-x-1"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>`;
+                return wrapper;
+            }
 
-    const bubble = document.createElement('div');
-    bubble.className = 'message-bubble';
-    
-    if (type === 'ai') {
-        bubble.innerHTML = marked.parse(message, { breaks: true, gfm: true, headerIds: false, mangle: false });
-        const copyBtn = document.createElement('button');
-        copyBtn.className = 'copy-btn';
-        copyBtn.setAttribute('aria-label', 'Copy message');
-        copyBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/><path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zM-1 8a.5.5 0 0 1 .5-.5h15a.5.5 0 0 1 0 1H-.5A.5.5 0 0 1-1 8z"/></svg>`;
-        copyBtn.onclick = () => copyToClipboard(message);
-        bubble.appendChild(copyBtn);
-    } else {
-        const p = document.createElement('p');
-        p.className = 'm-0';
-        p.textContent = message;
-        bubble.appendChild(p);
-    }
-    
-    wrapper.appendChild(bubble);
-    return wrapper;
-}
+            const bubble = document.createElement('div');
+            bubble.className = 'message-bubble';
+            
+            if (type === 'ai') {
+                bubble.innerHTML = marked.parse(message, { breaks: true, gfm: true, headerIds: false, mangle: false });
+                const copyBtn = document.createElement('button');
+                copyBtn.className = 'copy-btn';
+                copyBtn.setAttribute('aria-label', 'Copy message');
+                copyBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/><path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zM-1 8a.5.5 0 0 1 .5-.5h15a.5.5 0 0 1 0 1H-.5A.5.5 0 0 1-1 8z"/></svg>`;
+                copyBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    copyToClipboard(message);
+                };
+                bubble.appendChild(copyBtn);
+            } else {
+                const p = document.createElement('p');
+                p.className = 'm-0';
+                p.textContent = message;
+                bubble.appendChild(p);
+            }
+            
+            wrapper.appendChild(bubble);
+            return wrapper;
+        }
 
-function copyToClipboard(text) {
-    const textarea = document.createElement('textarea');
-    textarea.value = text;
-    document.body.appendChild(textarea);
-    textarea.select();
-    document.execCommand('copy');
-    document.body.removeChild(textarea);
-}
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                // Optional: Show a "Copied!" toast/notification
+            }).catch(err => {
+                console.error('Failed to copy text: ', err);
+            });
+        }
 
-function showError(message) {
-    const errorWrapper = document.createElement('div');
-    errorWrapper.className = `message-wrapper flex mb-3 md:mb-4 message-ai`;
-    errorWrapper.innerHTML = `<div class="message-bubble bg-red-100 border border-red-200 text-red-800 dark:bg-red-900/50 dark:border-red-700 dark:text-red-200"><p class="font-semibold text-sm m-0">Error</p><p class="text-sm m-0 mt-1">${message}</p></div>`;
-    ui.chatMessages.appendChild(errorWrapper);
-    scrollToBottom();
-}
+        function showError(message) {
+            const errorWrapper = createMessageElement(message, 'ai');
+            const bubble = errorWrapper.querySelector('.message-bubble');
+            bubble.classList.add('bg-red-100', 'border', 'border-red-200', 'text-red-800', 'dark:bg-red-900/50', 'dark:border-red-700', 'dark:text-red-200');
+            bubble.innerHTML = `<p class="font-semibold text-sm m-0">Error</p><p class="text-sm m-0 mt-1">${message}</p>`;
+            ui.chatMessages.appendChild(errorWrapper);
+            scrollToBottom();
+        }
 
-async function handleFormSubmit(e) {
-    if (e) e.preventDefault();
-    const userMessage = ui.messageInput.value.trim();
-    if (!userMessage || state.isAwaitingResponse) return;
+        async function handleFormSubmit(e) {
+            if (e) e.preventDefault();
+            const userMessage = ui.messageInput.value.trim();
+            if (!userMessage || state.isAwaitingResponse) return;
 
-    state.isAwaitingResponse = true;
-    toggleUIState(true);
-    
-    document.querySelector('.quick-actions')?.remove();
-    
-    appendMessage(userMessage, 'user');
-    
-    ui.messageInput.value = '';
-    autoGrowTextarea();
-    appendMessage('', 'loading');
+            state.isAwaitingResponse = true;
+            toggleUIState(true);
+            
+            document.querySelector('.quick-actions')?.remove();
+            
+            appendMessage(userMessage, 'user');
+            
+            ui.messageInput.value = '';
+            autoGrowTextarea();
+            appendMessage('', 'loading');
 
-    await getAIResponse();
-}
+            await getAIResponse();
+        }
 
-function toggleUIState(isLoading) {
-    ui.sendButton.disabled = isLoading;
-    ui.messageInput.disabled = isLoading;
-    ui.messageInput.placeholder = isLoading ? "Junaid AI is thinking..." : "Ask me anything...";
-}
+        function toggleUIState(isLoading) {
+            ui.sendButton.disabled = isLoading;
+            ui.messageInput.disabled = isLoading;
+            ui.messageInput.placeholder = isLoading ? "Junaid AI is thinking..." : "Ask me anything...";
+        }
 
-function autoGrowTextarea() {
-    const maxHeight = window.innerWidth < 768 ? 100 : 128;
-    ui.messageInput.style.height = 'auto';
-    const scrollHeight = ui.messageInput.scrollHeight;
-    ui.messageInput.style.height = (scrollHeight > maxHeight ? maxHeight : scrollHeight) + 'px';
-    ui.messageInput.style.overflowY = scrollHeight > maxHeight ? 'auto' : 'hidden';
-}
+        function autoGrowTextarea() {
+            const maxHeight = window.innerWidth < 768 ? 100 : 128;
+            ui.messageInput.style.height = 'auto';
+            const scrollHeight = ui.messageInput.scrollHeight;
+            ui.messageInput.style.height = `${Math.min(scrollHeight, maxHeight)}px`;
+            ui.messageInput.style.overflowY = scrollHeight > maxHeight ? 'auto' : 'hidden';
+        }
 
-function scrollToBottom() {
-    requestAnimationFrame(() => {
-        ui.chatMessages.scrollTop = ui.chatMessages.scrollHeight;
-    });
-}
+        function scrollToBottom() {
+            requestAnimationFrame(() => {
+                ui.chatMessages.scrollTop = ui.chatMessages.scrollHeight;
+            });
+        }
 
-function openSidebar() {
-    ui.sidebar.classList.remove('-translate-x-full');
-    ui.sidebarOverlay.classList.remove('hidden');
-}
+        function openSidebar() {
+            ui.sidebar.classList.remove('-translate-x-full');
+            ui.sidebarOverlay.classList.remove('hidden');
+        }
 
-function closeSidebar() {
-    ui.sidebar.classList.add('-translate-x-full');
-    ui.sidebarOverlay.classList.add('hidden');
-}
+        function closeSidebar() {
+            ui.sidebar.classList.add('-translate-x-full');
+            ui.sidebarOverlay.classList.add('hidden');
+        }
 
-function toggleTheme() {
-    state.isDarkMode = !state.isDarkMode;
-    document.body.classList.toggle('dark-mode', state.isDarkMode);
-    ui.themeToggleBtn.querySelector('span').textContent = state.isDarkMode ? 'Light Mode' : 'Dark Mode';
-    localStorage.setItem('darkMode', state.isDarkMode);
-}
+        function toggleTheme() {
+            state.isDarkMode = !state.isDarkMode;
+            document.body.classList.toggle('dark-mode', state.isDarkMode);
+            ui.themeToggleBtn.querySelector('span').textContent = state.isDarkMode ? 'Light Mode' : 'Dark Mode';
+            localStorage.setItem('darkMode', state.isDarkMode);
+        }
 
-function showModal(title, text) {
-    ui.modal.querySelector('#modal-title').textContent = title;
-    ui.modal.querySelector('#modal-text').textContent = text;
-    ui.modal.classList.remove('hidden');
-    if (window.innerWidth < 768) closeSidebar();
-}
+        function showModal(title, text) {
+            ui.modal.querySelector('#modal-title').textContent = title;
+            ui.modal.querySelector('#modal-text').textContent = text;
+            ui.modal.classList.remove('hidden');
+            if (window.innerWidth < 768) closeSidebar();
+        }
 
-function hideModal() {
-    ui.modal.classList.add('hidden');
-}
+        function hideModal() {
+            ui.modal.classList.add('hidden');
+        }
 
-function loadWelcomeMessage() {
-    setTimeout(() => {
-        const welcomeMessage = "Assalam-o-Alaikum! I am Junaid AI, your enterprise-grade Pakistani AI assistant. How may I assist you today?";
-        appendMessage(welcomeMessage, 'ai'); // This welcome message won't be added to history
-        setTimeout(addQuickActions, 500);
-    }, 500);
-}
+        function loadWelcomeMessage() {
+            setTimeout(() => {
+                const welcomeMessage = "Assalam-o-Alaikum! I am Junaid AI, your enterprise-grade Pakistani AI assistant. How may I assist you today?";
+                appendMessage(welcomeMessage, 'ai');
+                setTimeout(addQuickActions, 500);
+            }, 300);
+        }
 
-function addQuickActions() {
-    if (document.querySelector('.quick-actions')) return;
-    const quickActionsDiv = document.createElement('div');
-    quickActionsDiv.className = 'quick-actions';
-    const actions = [
-        { text: "What can you do?", query: "What can you help me with?" },
-        { text: "About Pakistan", query: "Tell me about Pakistan" },
-        { text: "Coding Help", query: "Help me with coding" },
-        { text: "AI Concepts", query: "Explain AI concepts" },
-        { text: "Business Tips", query: "Give me some business advice" }
-    ];
-    actions.forEach(action => {
-        const button = document.createElement('button');
-        button.className = 'quick-action';
-        button.textContent = action.text;
-        button.onclick = () => handleQuickAction(action.query);
-        quickActionsDiv.appendChild(button);
-    });
-    ui.chatMessages.appendChild(quickActionsDiv);
-    scrollToBottom();
-}
+        function addQuickActions() {
+            if (document.querySelector('.quick-actions')) return;
+            const quickActionsDiv = document.createElement('div');
+            quickActionsDiv.className = 'quick-actions';
+            const actions = [
+                { text: "What can you do?", query: "What can you help me with?" },
+                { text: "About Pakistan", query: "Tell me about Pakistan" },
+                { text: "Coding Help", query: "Help me with coding" },
+                { text: "AI Concepts", query: "Explain AI concepts" },
+                { text: "Business Tips", query: "Give me some business advice" }
+            ];
+            actions.forEach(action => {
+                const button = document.createElement('button');
+                button.className = 'quick-action';
+                button.textContent = action.text;
+                button.onclick = () => handleQuickAction(action.query);
+                quickActionsDiv.appendChild(button);
+            });
+            ui.chatMessages.appendChild(quickActionsDiv);
+            scrollToBottom();
+        }
 
-function handleQuickAction(message) {
-    ui.messageInput.value = message;
-    handleFormSubmit();
-}
+        function handleQuickAction(message) {
+            ui.messageInput.value = message;
+            handleFormSubmit();
+        }
+
+        // --- FIX: Start the application after the DOM is fully loaded ---
+        document.addEventListener('DOMContentLoaded', initializeApp);
 
     </script>
 </body>
