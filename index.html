@@ -4,19 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     
-    <!-- SEO, Security, and Verification -->
-    <title>Junaid AI - Enterprise Pro v8.5 | Stable Chat</title>
-    <meta name="description" content="A stable, mobile-first enterprise AI solution. Featuring a redesigned chat-centric UI that is fast, responsive, and intuitive on all devices.">
-    <meta name="keywords" content="Enterprise AI, Chat UI, Mobile Responsive, Business Intelligence, AI Platform, Machine Learning, Automation, Analytics">
+    <title>Junaid AI - Enterprise Pro v9.0 | UI Polish Edition</title>
+    <meta name="description" content="A visually stunning enterprise AI solution with a new animated gradient background, polished glassmorphism UI, and live text streaming.">
+    <meta name="keywords" content="Enterprise AI, Chat UI, Glassmorphism, Animated Gradient, UI/UX, AI Platform">
     <meta name="author" content="Muhammad Junaid Aurangzeb">
     <link rel="canonical" href="https://junaid-ai.com" />
     <meta name="robots" content="index, follow">
     
-    <!-- Enhanced Favicon -->
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><defs><linearGradient id=%22g%22 x1=%220%25%22 y1=%220%25%22 x2=%22100%25%22 y2=%22100%25%22><stop offset=%220%25%22 style=%22stop-color:%234f46e5;%22 /><stop offset=%22100%25%22 style=%22stop-color:%23a855f7;%22 /></linearGradient></defs><circle cx=%2250%22 cy=%2250%22 r=%2245%22 fill=%22url(%23g)%22/><path fill=%22white%22 d=%22M25 35h50v8H25zM25 50h35v8H25zM25 65h45v8H25z%22/><circle cx=%2270%22 cy=%2230%22 r=%225%22 fill=%22white%22/></svg>">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><defs><linearGradient id=%22g%22 x1=%220%25%22 y1=%220%25%22 x2=%22100%25%22 y2=%22100%25%22><stop offset=%220%25%22 style=%22stop-color:%23be185d;%22 /><stop offset=%22100%25%22 style=%22stop-color:%234f46e5;%22 /></linearGradient></defs><circle cx=%2250%22 cy=%2250%22 r=%2245%22 fill=%22url(%23g)%22/><path fill=%22white%22 d=%22M25 35h50v8H25zM25 50h35v8H25zM25 65h45v8H25z%22/><circle cx=%2270%22 cy=%2230%22 r=%225%22 fill=%22white%22/></svg>">
 
-    <!-- Performance optimizations -->
-    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" as="style" onload="this.rel='stylesheet'">
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" as="style" onload="this.rel='stylesheet'">
     <link rel="preload" href="https://cdn.jsdelivr.net/npm/marked/marked.min.js" as="script">
     
     <script src="https://cdn.tailwindcss.com"></script>
@@ -24,179 +21,689 @@
     
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <noscript>
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     </noscript>
 
     <style>
         :root {
-            --primary-50: #eef2ff; --primary-100: #e0e7ff; --primary-200: #c7d2fe; --primary-300: #a5b4fc; --primary-400: #818cf8; --primary-500: #6366f1; --primary-600: #4f46e5; --primary-700: #4338ca; --primary-800: #3730a3; --primary-900: #312e81;
-            --slate-50: #f8fafc; --slate-100: #f1f5f9; --slate-200: #e2e8f0; --slate-300: #cbd5e1; --slate-400: #94a3b8; --slate-500: #64748b; --slate-600: #475569; --slate-700: #334155; --slate-800: #1e293b; --slate-900: #0f172a;
-            --green-500: #22c55e; --red-500: #ef4444; --amber-500: #f59e0b;
+            --primary-500: #6366f1; --primary-600: #4f46e5; --primary-700: #4338ca;
+            --pink-500: #ec4899; --pink-600: #db2777; --pink-700: #be185d;
+            --slate-100: #f1f5f9; --slate-200: #e2e8f0; --slate-300: #cbd5e1; --slate-400: #94a3b8; --slate-500: #64748b; --slate-600: #475569; --slate-700: #334155; --slate-800: #1e293b; --slate-900: #0f172a;
+            --emerald-500: #10b981; --emerald-600: #059669;
+            --red-500: #ef4444; --red-600: #dc2626;
             --app-height: 100vh;
         }
         
-        * { -webkit-tap-highlight-color: transparent; -webkit-touch-callout: none; }
+        * { 
+            -webkit-tap-highlight-color: transparent; 
+            -webkit-touch-callout: none; 
+            box-sizing: border-box;
+        }
         
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             color: var(--slate-800);
             margin: 0;
-            background-color: var(--slate-100);
             overflow: hidden;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
+            font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+        }
+        
+        #animated-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: linear-gradient(45deg, #be185d, #4f46e5, #1d4ed8, #059669);
+            background-size: 400% 400%;
+            animation: gradient-animation 20s ease infinite;
+        }
+        @keyframes gradient-animation {
+            0% { background-position: 0% 50%; }
+            25% { background-position: 100% 50%; }
+            50% { background-position: 100% 100%; }
+            75% { background-position: 0% 100%; }
+            100% { background-position: 0% 50%; }
         }
         
         #app-container { width: 100%; height: var(--app-height); }
-
         .main-container { width: 100%; height: 100%; display: flex; padding: 1rem; }
-        .main-layout { background-color: white; width: 100%; height: 100%; display: flex; border-radius: 1.5rem; overflow: hidden; border: 1px solid var(--slate-200); box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.05), 0 4px 6px -4px rgb(0 0 0 / 0.05); }
+        .main-layout { 
+            background: rgba(255, 255, 255, 0.08); 
+            backdrop-filter: blur(32px); 
+            -webkit-backdrop-filter: blur(32px); 
+            width: 100%; 
+            height: 100%; 
+            display: flex; 
+            border-radius: 1.5rem; 
+            overflow: hidden; 
+            border: 1px solid rgba(255, 255, 255, 0.15); 
+            box-shadow: 0 32px 64px -12px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+        }
         
         @media (max-width: 768px) {
             .main-container { padding: 0; }
             .main-layout { border-radius: 0; border: none; }
         }
 
-        .sidebar { background-color: var(--slate-800); border-right: 1px solid var(--slate-700); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); width: 280px; flex-shrink: 0; color: var(--slate-200); }
-        .sidebar-btn { transition: all 0.2s ease; color: var(--slate-300); }
-        .sidebar-btn:hover { color: white; background-color: var(--slate-700); }
-        .sidebar-btn.active { background-color: var(--primary-600); color: white; font-weight: 600; }
+        .sidebar { 
+            background: rgba(15, 23, 42, 0.8); 
+            border-right: 1px solid rgba(255, 255, 255, 0.1); 
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+            width: 280px; 
+            flex-shrink: 0; 
+            position: relative;
+        }
+        
+        .sidebar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(219, 39, 119, 0.1) 100%);
+            pointer-events: none;
+        }
+        
+        .sidebar-btn { 
+            transition: all 0.3s ease; 
+            color: var(--slate-300); 
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .sidebar-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .sidebar-btn:hover::before {
+            left: 100%;
+        }
+        
+        .sidebar-btn:hover { 
+            color: white; 
+            background: rgba(255, 255, 255, 0.1); 
+            transform: translateX(4px);
+        }
+        
+        .sidebar-btn.active { 
+            background: linear-gradient(135deg, var(--primary-600), var(--pink-600)); 
+            color: white; 
+            font-weight: 600; 
+            transform: translateX(4px);
+            box-shadow: 0 8px 16px rgba(99, 102, 241, 0.3);
+        }
 
-        .page-content { flex: 1; display: flex; flex-direction: column; background-color: var(--slate-100); overflow: hidden; }
-        .page-header { background-color: white; border-bottom: 1px solid var(--slate-200); padding: 1rem 1.5rem; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
+        .page-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+        .page-header { 
+            background: rgba(255, 255, 255, 0.05); 
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1); 
+            padding: 1rem 1.5rem; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            flex-shrink: 0; 
+            backdrop-filter: blur(16px); 
+            position: relative;
+        }
+        
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, rgba(99, 102, 241, 0.05) 0%, rgba(219, 39, 119, 0.05) 100%);
+            pointer-events: none;
+        }
         
         .chat-page-layout { display: flex; flex-direction: column; height: 100%; }
         #chat-messages { flex-grow: 1; overflow-y: auto; padding: 1.5rem; }
         .input-area { flex-shrink: 0; }
 
-        .message-wrapper { margin-bottom: 1.5rem; animation: slideInUp 0.3s ease-out; }
-        .message-bubble { max-width: 80%; padding: 0.75rem 1.25rem; border-radius: 1.25rem; word-wrap: break-word; line-height: 1.6; }
-        .message-bubble pre { background-color: var(--slate-800); color: var(--slate-200); padding: 1rem; border-radius: 0.5rem; overflow-x: auto; position: relative; font-size: 0.875rem; }
-        .copy-code-btn { position: absolute; top: 0.5rem; right: 0.5rem; background-color: var(--slate-600); color: white; border: none; padding: 0.25rem 0.5rem; border-radius: 0.5rem; font-size: 0.75rem; cursor: pointer; opacity: 0; transition: opacity 0.2s; }
-        .message-bubble pre:hover .copy-code-btn { opacity: 1; }
-        .copy-code-btn:hover { background-color: var(--slate-500); }
-        .message-user { display: flex; justify-content: flex-end; }
-        .message-user .message-bubble { background-color: var(--primary-600); color: white; }
-        .message-ai { display: flex; justify-content: flex-start; gap: 0.75rem; }
-        .message-ai .message-bubble { background-color: white; color: var(--slate-700); border: 1px solid var(--slate-200); }
-        .avatar { width: 2.5rem; height: 2.5rem; border-radius: 50%; background-color: var(--primary-100); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-        .avatar svg { width: 1.5rem; height: 1.5rem; color: var(--primary-600); }
-
-        .input-area { padding: 1rem 1.5rem; background-color: white; border-top: 1px solid var(--slate-200); }
-        .input-container { background-color: white; border: 1px solid var(--slate-300); border-radius: 1rem; padding: 0.5rem; display: flex; align-items: flex-end; gap: 0.5rem; transition: all 0.2s ease; }
-        .input-container:focus-within { border-color: var(--primary-500); box-shadow: 0 0 0 3px var(--primary-100); }
-        .message-input { flex: 1; background: transparent; border: none; outline: none; color: var(--slate-800); font-size: 1rem; resize: none; min-height: 28px; max-height: 120px; padding: 0.25rem 0.5rem; }
-        .message-input::placeholder { color: var(--slate-400); }
-        .send-button { background-color: var(--primary-600); color: white; border: none; border-radius: 0.75rem; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s ease; flex-shrink: 0; }
-        .send-button:hover:not(:disabled) { background-color: var(--primary-700); }
-        .send-button:disabled { background-color: var(--primary-300); cursor: not-allowed; }
+        .message-wrapper { 
+            margin-bottom: 1.5rem; 
+            animation: slideInUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
         
-        .typing-indicator { display: flex; align-items: center; gap: 0.5rem; }
-        .typing-dots { display: flex; gap: 0.25rem; }
-        .typing-dot { width: 8px; height: 8px; border-radius: 50%; background-color: var(--slate-400); animation: pulse 1.4s infinite ease-in-out; }
-        .typing-dot:nth-child(1) { animation-delay: -0.32s; }
-        .typing-dot:nth-child(2) { animation-delay: -0.16s; }
-        @keyframes pulse { 0%, 80%, 100% { transform: scale(0.6); opacity: 0.5; } 40% { transform: scale(1); opacity: 1; } }
+        .message-bubble { 
+            max-width: 85%; 
+            padding: 1rem 1.5rem; 
+            border-radius: 1.25rem; 
+            word-wrap: break-word; 
+            line-height: 1.65; 
+            position: relative;
+            backdrop-filter: blur(8px);
+        }
+        
+        .message-user { display: flex; justify-content: flex-end; }
+        .message-user .message-bubble { 
+            background: linear-gradient(135deg, var(--primary-600), var(--pink-600)); 
+            color: white; 
+            box-shadow: 0 8px 32px rgba(99, 102, 241, 0.3);
+        }
+        
+        .message-ai { display: flex; justify-content: flex-start; gap: 0.875rem; }
+        .message-ai .message-bubble { 
+            background: rgba(255, 255, 255, 0.12); 
+            color: var(--slate-100); 
+            border: 1px solid rgba(255, 255, 255, 0.2); 
+            backdrop-filter: blur(16px); 
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        }
+        
+        .avatar { 
+            width: 2.75rem; 
+            height: 2.75rem; 
+            border-radius: 50%; 
+            background: linear-gradient(135deg, var(--primary-600), var(--pink-600)); 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            flex-shrink: 0; 
+            box-shadow: 0 4px 16px rgba(99, 102, 241, 0.4);
+            position: relative;
+        }
+        
+        .avatar::before {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-500), var(--pink-500));
+            z-index: -1;
+            opacity: 0.5;
+        }
+        
+        .avatar svg { width: 1.5rem; height: 1.5rem; color: white; }
 
+        .input-area { 
+            padding: 1.5rem; 
+            background: rgba(0, 0, 0, 0.1); 
+            border-top: 1px solid rgba(255, 255, 255, 0.1); 
+            backdrop-filter: blur(16px); 
+        }
+        
+        .input-container { 
+            background: rgba(255, 255, 255, 0.12); 
+            border: 1px solid rgba(255, 255, 255, 0.2); 
+            border-radius: 1.25rem; 
+            padding: 0.75rem; 
+            display: flex; 
+            align-items: flex-end; 
+            gap: 0.75rem; 
+            transition: all 0.3s ease; 
+            backdrop-filter: blur(16px);
+        }
+        
+        .input-container:focus-within { 
+            border-color: var(--primary-500); 
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2), 0 8px 32px rgba(99, 102, 241, 0.15); 
+            background: rgba(255, 255, 255, 0.15);
+        }
+        
+        .message-input { 
+            flex: 1; 
+            background: transparent; 
+            border: none; 
+            outline: none; 
+            color: white; 
+            font-size: 1rem; 
+            resize: none; 
+            min-height: 28px; 
+            max-height: 120px; 
+            padding: 0.5rem; 
+            font-family: inherit;
+        }
+        
+        .message-input::placeholder { color: var(--slate-400); }
+        
+        .send-button { 
+            background: linear-gradient(135deg, var(--primary-600), var(--pink-600)); 
+            color: white; 
+            border: none; 
+            border-radius: 0.875rem; 
+            width: 48px; 
+            height: 48px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            cursor: pointer; 
+            transition: all 0.3s ease; 
+            flex-shrink: 0; 
+            box-shadow: 0 4px 16px rgba(99, 102, 241, 0.3);
+        }
+        
+        .send-button:hover:not(:disabled) { 
+            background: linear-gradient(135deg, var(--primary-500), var(--pink-500)); 
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(99, 102, 241, 0.4);
+        }
+        
+        .send-button:disabled { 
+            background: linear-gradient(135deg, var(--slate-600), var(--slate-700)); 
+            opacity: 0.6; 
+            cursor: not-allowed; 
+            transform: none;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-600), var(--pink-600));
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 16px rgba(99, 102, 241, 0.3);
+        }
+        
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .btn-primary:hover::before {
+            left: 100%;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(99, 102, 241, 0.4);
+        }
+        
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(8px);
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+        
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .modal-content {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(32px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 1.5rem;
+            padding: 2rem;
+            max-width: 500px;
+            width: 100%;
+            color: white;
+            box-shadow: 0 32px 64px rgba(0, 0, 0, 0.3);
+            animation: slideInUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 0;
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.2s ease;
+        }
+        
+        .modal-close:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .modal-text {
+            font-size: 1.125rem;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+            color: var(--slate-200);
+        }
+        
+        .modal-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+        }
+        
         .hidden { display: none !important; }
         .sidebar-toggle { display: none; }
+        
         @media (max-width: 768px) {
-            .sidebar { position: fixed; inset-y: 0; left: 0; z-index: 40; transform: translateX(-100%); }
+            .sidebar { 
+                position: fixed; 
+                inset-y: 0; 
+                left: 0; 
+                z-index: 40; 
+                transform: translateX(-100%); 
+                width: 280px;
+            }
             .sidebar.open { transform: translateX(0); }
             .sidebar-toggle { display: block; }
             .sidebar-overlay { position: fixed; inset: 0; background-color: rgba(0, 0, 0, 0.5); z-index: 30; }
+            .message-bubble { max-width: 90%; }
         }
 
-        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: var(--slate-200); border-radius: 3px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: var(--slate-400); border-radius: 3px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: var(--slate-500); }
+        .custom-scrollbar::-webkit-scrollbar { width: 8px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: rgba(255,255,255,0.1); border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.3); border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.5); }
 
-        @keyframes slideInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideInUp { 
+            from { opacity: 0; transform: translateY(30px); } 
+            to { opacity: 1; transform: translateY(0); } 
+        }
         
-        .modal-overlay { position: fixed; inset: 0; background-color: rgba(15, 23, 42, 0.8); backdrop-filter: blur(4px); z-index: 100; display: flex; align-items: center; justify-content: center; animation: fadeIn 0.3s ease; }
-        .modal-content { background-color: white; padding: 2rem; border-radius: 1rem; max-width: 400px; width: 90%; text-align: center; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); animation: scaleUp 0.3s ease; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes scaleUp { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        #loading-indicator .loading-text { font-weight: 500; color: var(--slate-300); }
+        #loading-indicator .spinner { 
+            width: 24px; 
+            height: 24px; 
+            border-radius: 50%; 
+            border: 3px solid var(--slate-600); 
+            border-top-color: var(--primary-500); 
+            animation: spin 1s linear infinite; 
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .blinking-cursor { 
+            display: inline-block; 
+            width: 2px; 
+            height: 1.2em; 
+            background: linear-gradient(135deg, var(--primary-500), var(--pink-500)); 
+            animation: blink 1s ease-in-out infinite; 
+            vertical-align: baseline; 
+            margin-left: 2px;
+        }
+        @keyframes blink { 
+            0%, 50% { opacity: 1; } 
+            51%, 100% { opacity: 0; } 
+        }
+        
+        .prompt-starters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-top: 1rem;
+            justify-content: center;
+        }
+        
+        .prompt-starters button {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 9999px;
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+            color: white;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            backdrop-filter: blur(8px);
+        }
+        
+        .prompt-starters button:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.25);
+            transform: translateY(-2px);
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 2rem;
+        }
+        
+        .logo {
+            width: 48px;
+            height: 48px;
+            border-radius: 0.75rem;
+            background: linear-gradient(135deg, var(--pink-600), var(--primary-600));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 16px rgba(99, 102, 241, 0.3);
+            position: relative;
+        }
+        
+        .logo::before {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            border-radius: 0.875rem;
+            background: linear-gradient(135deg, var(--pink-500), var(--primary-500));
+            z-index: -1;
+            opacity: 0.3;
+        }
+        
+        .logo svg {
+            width: 28px;
+            height: 28px;
+            color: white;
+        }
+        
+        .brand-text h1 {
+            font-size: 1.375rem;
+            font-weight: 800;
+            color: white;
+            margin: 0;
+            letter-spacing: -0.025em;
+        }
+        
+        .brand-text .tagline {
+            font-size: 0.75rem;
+            color: var(--slate-400);
+            margin: 0;
+            font-weight: 500;
+        }
+        
+        .version-badge {
+            background: linear-gradient(135deg, var(--emerald-600), var(--emerald-500));
+            color: white;
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            margin-left: auto;
+        }
+        
+        .status-online {
+            width: 8px;
+            height: 8px;
+            background: var(--emerald-500);
+            border-radius: 50%;
+            box-shadow: 0 0 0 2px var(--emerald-500);
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        }
+
+        .footer-section {
+            padding: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(0, 0, 0, 0.2);
+        }
+        
+        .auth-buttons {
+            display: flex;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+        
+        .auth-buttons button {
+            flex: 1;
+            padding: 0.75rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            font-size: 0.875rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .footer-info {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            color: var(--slate-400);
+        }
+        
+        .footer-info .left {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
     </style>
 </head>
 <body>
+    <div id="animated-bg"></div>
     <div id="app-container">
-        <!-- App content is rendered here by JS -->
+        <!-- App content will be loaded here -->
     </div>
     
-    <!-- MODAL TEMPLATE -->
     <template id="modal-template">
-        <div id="modal-overlay" class="modal-overlay">
+        <div class="modal-overlay">
             <div class="modal-content">
-                <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-primary-100 mb-4">
-                    <svg class="h-6 w-6 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                <div class="modal-header">
+                    <h3 class="modal-title" id="modal-title">Modal Title</h3>
+                    <button class="modal-close" id="modal-close-btn">×</button>
                 </div>
-                <h3 id="modal-title" class="text-lg font-bold text-slate-800 mb-2"></h3>
-                <p id="modal-text" class="text-slate-500 mb-6"></p>
-                <button id="modal-close-btn" class="w-full bg-primary-600 text-white font-semibold px-4 py-2 rounded-lg hover:bg-primary-700 transition-colors">Got it</button>
+                <p class="modal-text" id="modal-text">Modal content goes here.</p>
+                <div class="modal-actions">
+                    <button class="btn-primary" id="modal-primary-btn">Got it</button>
+                </div>
             </div>
         </div>
     </template>
 
-    <!-- MAIN APP SHELL TEMPLATE -->
     <template id="main-app-shell-template">
         <div class="main-container">
             <div class="main-layout">
                 <aside id="sidebar" class="sidebar flex flex-col justify-between">
                     <div>
                         <div class="p-6">
-                            <div class="flex items-center gap-3 mb-8">
-                                <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-primary-500 to-primary-600 flex items-center justify-center">
-                                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.373 3.373 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+                            <div class="logo-container">
+                                <div class="logo">
+                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.373 3.373 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+                                    </svg>
                                 </div>
-                                <div><h1 class="text-lg font-bold text-white">Junaid AI</h1></div>
+                                <div class="brand-text">
+                                    <h1>Junaid AI</h1>
+                                    <p class="tagline">Enterprise Pro</p>
+                                </div>
+                                <div class="version-badge">v8.9</div>
                             </div>
                         </div>
-                        <nav class="px-4 space-y-1">
-                            <button data-page="chat" class="nav-btn sidebar-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-md">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" /></svg>
+                        <nav class="px-4 space-y-2">
+                            <button data-page="chat" class="nav-btn sidebar-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                                </svg>
                                 <span>AI Chat</span>
                             </button>
-                            <button class="coming-soon-btn sidebar-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-md">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                            <button class="coming-soon-btn sidebar-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                </svg>
                                 <span>Chat History</span>
-                            </button>
-                             <button data-page="settings" class="nav-btn sidebar-btn w-full flex items-center gap-3 px-3 py-2.5 rounded-md">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
-                                <span>Settings</span>
                             </button>
                         </nav>
                     </div>
-                    <div class="p-4 space-y-2">
-                        <div class="px-3 py-2 text-xs text-slate-400 flex items-center justify-between">
-                            <span>Version <span class="version-badge">v8.4</span></span>
-                            <div id="status-indicator" class="status-indicator">
-                                <div id="status-dot" class="status-dot"></div>
-                                <span id="status-text"></span>
+                    <div class="footer-section">
+                         <div class="auth-buttons">
+                           <button class="coming-soon-btn btn-secondary">Login</button>
+                           <button class="coming-soon-btn btn-primary">Sign Up</button>
+                        </div>
+                        <div class="footer-info">
+                            <div class="left">
+                                <div class="status-online"></div>
+                                <span>API Status: Operational</span>
                             </div>
                         </div>
                     </div>
                 </aside>
                 <div id="sidebar-overlay" class="sidebar-overlay hidden"></div>
                 <div id="main-content" class="page-content">
-                    <!-- Page content will be rendered here -->
-                </div>
+                    </div>
             </div>
         </div>
     </template>
     
-    <!-- PAGE CONTENT TEMPLATES -->
     <template id="chat-page-template">
         <div class="chat-page-layout">
             <header class="page-header">
                  <div class="flex items-center gap-4">
-                    <button class="sidebar-toggle text-slate-500 p-1">
+                    <button class="sidebar-toggle text-slate-300 p-1">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"></path></svg>
                     </button>
-                    <h2 class="text-xl font-bold text-slate-800">AI Chat</h2>
+                    <h2 class="text-xl font-bold text-white">AI Chat</h2>
                 </div>
-                <button id="new-chat-btn" class="bg-primary-600 text-white font-semibold px-4 py-2 rounded-lg hover:bg-primary-700 transition-colors flex items-center gap-2 text-sm">
+                <button id="new-chat-btn" class="btn-primary flex items-center gap-2 text-sm">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
                     New Chat
                 </button>
@@ -213,32 +720,6 @@
                 </form>
             </footer>
         </div>
-    </template>
-    
-    <template id="settings-page-template">
-        <header class="page-header">
-            <div class="flex items-center gap-4">
-                <button class="sidebar-toggle text-slate-500 p-1">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"></path></svg>
-                </button>
-                <h2 class="text-xl font-bold text-slate-800">Settings</h2>
-            </div>
-        </header>
-        <main class="page-main-content custom-scrollbar">
-            <div class="max-w-4xl mx-auto space-y-8">
-                <div class="bg-white p-6 rounded-lg border border-slate-200">
-                    <h3 class="text-lg font-bold mb-2 text-slate-800">Backend Configuration</h3>
-                    <p class="text-slate-500 text-sm mb-4">The application is running on a custom-trained AI agent.</p>
-                    <div class="bg-primary-50 border border-primary-200 text-primary-700 rounded-lg p-4 flex items-center gap-4">
-                         <svg class="w-8 h-8 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
-                         <div>
-                            <h4 class="font-bold">Custom AI Agent Active</h4>
-                            <p class="text-sm">All responses are generated by your specialized agent backend.</p>
-                         </div>
-                    </div>
-                </div>
-            </div>
-        </main>
     </template>
     
     <script type="module">
@@ -262,7 +743,7 @@
             renderMainApp() {
                 const appContainer = document.getElementById('app-container');
                 const shellTemplate = document.getElementById('main-app-shell-template');
-                appContainer.innerHTML = ''; // Clear container
+                appContainer.innerHTML = '';
                 appContainer.appendChild(shellTemplate.content.cloneNode(true));
                 
                 this.navigate(this.state.currentPage);
@@ -304,7 +785,7 @@
                 
                 document.body.addEventListener('click', (e) => {
                     if (e.target.closest('.sidebar-toggle')) this.toggleSidebar();
-                    if (e.target.closest('.coming-soon-btn')) this.showModal('Feature Coming Soon', 'Please log in to access this feature. User authentication will be available in a future update.');
+                    if (e.target.closest('.coming-soon-btn')) this.showModal('Feature Coming Soon', 'This feature will be available in a future update.');
                 });
 
                 document.getElementById('sidebar-overlay').addEventListener('click', () => this.closeSidebar());
@@ -327,9 +808,6 @@
                         }
                     });
                     document.getElementById('new-chat-btn').addEventListener('click', app.startNewChat.bind(app));
-                },
-                settings: (app) => {
-                    // Placeholder for future settings
                 }
             };
 
@@ -360,12 +838,11 @@
                 });
 
                 const payload = { history: messages };
-                this.appendMessage('', 'loading');
+                const loadingElement = this.appendMessage('', 'loading');
                 const controller = new AbortController();
                 const timeoutId = setTimeout(() => controller.abort(), 30000);
 
                 try {
-                    this.updateStatus('Waiting for AI...', 'connecting');
                     const response = await fetch('/api/chat', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
@@ -374,6 +851,7 @@
                     });
                     
                     clearTimeout(timeoutId);
+                    loadingElement.remove();
 
                     if (!response.ok) {
                         const errorData = await response.json().catch(() => ({ error: `Server responded with status ${response.status}` }));
@@ -381,11 +859,12 @@
                     }
                     
                     const result = await response.json();
-                    this.appendMessage(result.content, 'ai');
-                    this.updateStatus('Online', 'success');
+                    this.streamTextResponse(result.content);
                 } catch (error) {
                     clearTimeout(timeoutId);
                     console.error("API Call error:", error);
+                    loadingElement.remove();
+                    
                     let errorMessage = `**Error:** I encountered a problem. Please try again.`;
                     if (error.name === 'AbortError') {
                          errorMessage = `**Error:** The request timed out. The server took too long to respond.`;
@@ -393,9 +872,7 @@
                          errorMessage += `\n\n*Details: ${error.message}*`;
                     }
                     this.appendMessage(errorMessage, 'ai', true);
-                    this.updateStatus('Error', 'error');
                 } finally {
-                    document.getElementById('loading-indicator')?.remove();
                     this.toggleLoading(false);
                 }
             }
@@ -404,7 +881,6 @@
                 document.getElementById('chat-messages').innerHTML = '';
                 this.showWelcomeMessage();
                 this.showPromptStarters();
-                this.showNotification('New chat started.', 'success');
             }
 
             appendMessage(content, type, isError = false) {
@@ -417,32 +893,26 @@
                     chatMessages.appendChild(messageElement);
                     this.scrollToBottom(chatMessages);
                 }
+                return messageElement;
             }
 
             createMessageElement(content, type, isError) {
                 const wrapper = document.createElement('div');
                 wrapper.className = `message-wrapper flex mb-4 message-${type}`;
-                wrapper.id = type === 'loading' ? 'loading-indicator' : '';
                 
+                if (type === 'loading') {
+                    wrapper.id = 'loading-indicator';
+                    wrapper.innerHTML = `<div class="avatar"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.373 3.373 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path></svg></div><div class="message-bubble flex items-center gap-3"><div class="spinner"></div><div class="loading-text">Junaid AI is thinking...</div></div>`;
+                    return wrapper;
+                }
+
                 const bubble = document.createElement('div');
                 bubble.className = 'message-bubble';
-                if (isError) bubble.classList.add('bg-red-100', 'border', 'border-red-200', 'text-red-800');
+                if (isError) bubble.classList.add('bg-red-500', 'text-white');
 
                 if (type === 'ai') {
-                    bubble.innerHTML = marked.parse(content, { breaks: true, gfm: true, headerIds: false, mangle: false });
                     bubble.dataset.rawContent = content;
-                    bubble.querySelectorAll('pre code').forEach((block) => {
-                        const pre = block.parentElement;
-                        const copyBtn = document.createElement('button');
-                        copyBtn.className = 'copy-code-btn';
-                        copyBtn.textContent = 'Copy';
-                        copyBtn.onclick = () => {
-                            navigator.clipboard.writeText(block.textContent);
-                            copyBtn.textContent = 'Copied!';
-                            setTimeout(() => copyBtn.textContent = 'Copy', 2000);
-                        };
-                        pre.appendChild(copyBtn);
-                    });
+                    bubble.innerHTML = isError ? marked.parse(content) : '';
                 } else {
                     const p = document.createElement('p');
                     p.className = 'm-0';
@@ -461,8 +931,35 @@
                 return wrapper;
             }
             
+            streamTextResponse(text) {
+                const aiMessageElement = this.appendMessage('', 'ai');
+                const bubble = aiMessageElement.querySelector('.message-bubble');
+                bubble.dataset.rawContent = text;
+
+                const words = text.split(' ');
+                let i = 0;
+                
+                const cursor = document.createElement('span');
+                cursor.className = 'blinking-cursor';
+                bubble.appendChild(cursor);
+
+                const intervalId = setInterval(() => {
+                    if (i < words.length) {
+                        const wordSpan = document.createElement('span');
+                        wordSpan.textContent = words[i] + ' ';
+                        bubble.insertBefore(wordSpan, cursor);
+                        this.scrollToBottom(document.getElementById('chat-messages'));
+                        i++;
+                    } else {
+                        clearInterval(intervalId);
+                        cursor.remove();
+                        bubble.innerHTML = marked.parse(text, { breaks: true, gfm: true, headerIds: false, mangle: false });
+                    }
+                }, 50);
+            }
+
             showWelcomeMessage() {
-                this.appendMessage("Assalam-o-Alaikum! I am Junaid AI, your enterprise-grade Pakistani AI assistant. How may I assist you today?", 'ai');
+                this.streamTextResponse("Assalam-o-Alaikum! I am Junaid AI, your enterprise-grade Pakistani AI assistant. How may I assist you today?");
             }
 
             showPromptStarters() {
@@ -481,7 +978,7 @@
 
                 prompts.forEach(prompt => {
                     const button = document.createElement('button');
-                    button.className = 'text-left p-4 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors';
+                    button.className = 'text-left p-4 bg-white/10 border border-white/20 rounded-lg hover:bg-white/20 transition-colors text-white';
                     button.textContent = prompt;
                     button.onclick = () => {
                         document.getElementById('message-input').value = prompt;
@@ -499,7 +996,7 @@
                 if (sendButton) sendButton.disabled = isLoading;
                 if (messageInput) {
                     messageInput.disabled = isLoading;
-                    messageInput.placeholder = isLoading ? "Junaid AI is thinking..." : "Ask me anything...";
+                    messageInput.placeholder = isLoading ? "..." : "Ask me anything...";
                 }
             }
 
@@ -507,8 +1004,7 @@
                 if (!element) return;
                 const maxHeight = 120;
                 element.style.height = 'auto';
-                const scrollHeight = element.scrollHeight;
-                element.style.height = `${Math.min(scrollHeight, maxHeight)}px`;
+                element.style.height = `${Math.min(element.scrollHeight, maxHeight)}px`;
             }
 
             scrollToBottom(element) {
@@ -516,27 +1012,6 @@
                 requestAnimationFrame(() => {
                     element.scrollTop = element.scrollHeight;
                 });
-            }
-
-            updateStatus(text, type = 'success') {
-                const statusDot = document.getElementById('status-dot');
-                const statusText = document.getElementById('status-text');
-                if (!statusDot || !statusText) return;
-
-                statusDot.className = 'status-dot';
-                statusDot.classList.add(type);
-                statusText.textContent = text;
-            }
-            
-            showNotification(message, type = 'success') {
-                const notification = document.createElement('div');
-                notification.className = `notification ${type}`;
-                const icon = type === 'success' ? 
-                    `<svg class="notification-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>` :
-                    `<svg class="notification-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>`;
-                notification.innerHTML = `${icon}<p class="notification-message">${message}</p>`;
-                document.getElementById('notification-container').appendChild(notification);
-                setTimeout(() => notification.remove(), 4000);
             }
             
             showModal(title, text) {
@@ -559,9 +1034,7 @@
             }
 
             toggleSidebar() { document.getElementById('sidebar').classList.toggle('open'); document.getElementById('sidebar-overlay').classList.toggle('hidden'); }
-            openSidebar() { document.getElementById('sidebar').classList.add('open'); document.getElementById('sidebar-overlay').classList.remove('hidden'); }
-            closeSidebar() { document.getElementById('sidebar').classList.remove('open'); document.getElementById('sidebar-overlay').classList.add('hidden'); }
-            
+
         }
     </script>
 </body>
