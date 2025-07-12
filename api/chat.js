@@ -1,15 +1,15 @@
 /**
- * Vercel serverless function to handle chat requests using a generic AI API.
- * This version abstracts away specific provider details (like Mistral)
- * and relies on generic environment variables for configuration.
+ * Vercel serverless function to handle chat requests using the Mistral AI API.
+ * This version correctly replicates the behavior of a Mistral Agent by calling
+ * the base model with a specific system prompt and temperature.
  */
 export default async function handler(request, response) {
-  // Set CORS headers to allow requests from any origin
+  // Set CORS headers
   response.setHeader('Access-Control-Allow-Origin', '*');
   response.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   response.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
-  // Handle preflight requests for CORS
+  // Handle preflight requests
   if (request.method === 'OPTIONS') {
     return response.status(200).end();
   }
@@ -18,12 +18,11 @@ export default async function handler(request, response) {
     return response.status(405).json({ error: 'Method Not Allowed' });
   }
 
-  // --- Generic Environment Variable Validation ---
-  // These are configured on the server (e.g., Vercel dashboard).
-  const { API_KEY, API_MODEL, API_ENDPOINT } = process.env;
+  // --- Environment Variable Validation ---
+  const { API_KEY, API_MODEL, AGENT_SYSTEM_PROMPT } = process.env;
 
-  if (!API_KEY || !API_MODEL || !API_ENDPOINT) {
-    console.error('CRITICAL: Server is not configured. Missing API_KEY, API_MODEL, or API_ENDPOINT.');
+  if (!API_KEY || !API_MODEL) {
+    console.error('CRITICAL: Server is not configured. Missing API_KEY or API_MODEL.');
     return response.status(500).json({ error: 'Server configuration error.' });
   }
 
@@ -35,20 +34,22 @@ export default async function handler(request, response) {
       return response.status(400).json({ error: 'Invalid or empty conversation history.' });
     }
 
-    // The message format is standard for many chat completion APIs.
-    const messages = history
-        .filter(msg => (msg.role === 'user' || msg.role === 'assistant') && msg.content)
-        .map(msg => ({
-            role: msg.role,
-            content: msg.content
-        }));
+    // Construct the message payload for the Mistral API.
+    // The system prompt is passed as the first message in the array.
+    const messages = [
+      {
+        role: 'system',
+        content: AGENT_SYSTEM_PROMPT || 'You are a helpful AI assistant.' // Default fallback
+      },
+      ...history.filter(msg => (msg.role === 'user' || msg.role === 'assistant') && msg.content)
+    ];
 
-    if (messages.length === 0 || messages[messages.length - 1].role !== 'user') {
-        return response.status(400).json({ error: 'The last message must be a valid prompt from the user.' });
+    if (messages.length < 2 || messages[messages.length - 1].role !== 'user') {
+        return response.status(400).json({ error: 'Invalid history. Must include a system prompt and a user message.' });
     }
 
-    // --- Call the configured AI API ---
-    const apiResponse = await fetch(API_ENDPOINT, {
+    // --- Call the Mistral API ---
+    const apiResponse = await fetch("https://api.mistral.ai/v1/chat/completions", {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -57,6 +58,7 @@ export default async function handler(request, response) {
         body: JSON.stringify({
             model: API_MODEL,
             messages: messages,
+            temperature: 0.77 // Using the temperature from your agent's configuration
         }),
     });
 
