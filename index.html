@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     
-    <title>Junaid AI - Enterprise Pro v9.4 | Fast Animation</title>
-    <meta name="description" content="A visually stunning and fully responsive enterprise AI solution with a polished glassmorphism UI and live text streaming.">
-    <meta name="keywords" content="Enterprise AI, Chat UI, Glassmorphism, Responsive Design, AI Platform">
+    <title>Junaid AI - Enterprise Pro v9.5 | Instant Response</title>
+    <meta name="description" content="A visually stunning and fully responsive enterprise AI solution with a polished glassmorphism UI and instant text responses.">
+    <meta name="keywords" content="Enterprise AI, Chat UI, Glassmorphism, Responsive Design, AI Platform, Optimized">
     <meta name="author" content="Muhammad Junaid Aurangzeb">
     <link rel="canonical" href="https://junaid-ai.com" />
     <meta name="robots" content="index, follow">
@@ -393,17 +393,6 @@
         }
         @keyframes spin { to { transform: rotate(360deg); } }
 
-        .blinking-cursor { 
-            display: inline-block; 
-            width: 2px; 
-            height: 1.1em;
-            background: var(--primary-color);
-            animation: blink 1s step-end infinite;
-            vertical-align: bottom;
-            margin-left: 1px;
-        }
-        @keyframes blink { 50% { opacity: 0; } }
-        
         .prompt-starters {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -568,7 +557,7 @@
                                 <div class="status-online"></div>
                                 <span>API Status: Operational</span>
                             </div>
-                            <div class="version-badge">v9.4</div>
+                            <div class="version-badge">v9.5</div>
                         </div>
                     </div>
                 </aside>
@@ -869,32 +858,13 @@
             }
             
             streamTextResponse(text) {
-                const aiMessageElement = this.appendMessage('', 'ai');
+                const aiMessageElement = this.appendMessage(text, 'ai');
                 const bubble = aiMessageElement.querySelector('.message-bubble');
                 if (!bubble) return;
-
-                bubble.dataset.rawContent = text;
-
-                let i = 0;
-                const typingSpeed = 1;
                 
-                const cursor = document.createElement('span');
-                cursor.className = 'blinking-cursor';
-                bubble.appendChild(cursor);
-
-                function type() {
-                    if (i < text.length) {
-                        const char = text.charAt(i);
-                        cursor.insertAdjacentText('beforebegin', char);
-                        this.scrollToBottom(document.getElementById('chat-messages'));
-                        i++;
-                        setTimeout(type.bind(this), typingSpeed);
-                    } else {
-                        cursor.remove();
-                        bubble.innerHTML = marked.parse(text, { breaks: true, gfm: true, headerIds: false, mangle: false });
-                    }
-                }
-                type.call(this);
+                bubble.dataset.rawContent = text;
+                bubble.innerHTML = marked.parse(text, { breaks: true, gfm: true, headerIds: false, mangle: false });
+                this.scrollToBottom(document.getElementById('chat-messages'));
             }
 
             showWelcomeMessage() {
