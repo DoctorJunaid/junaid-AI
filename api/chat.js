@@ -1,6 +1,7 @@
 /**
  * Vercel serverless function to handle chat requests using the Mistral AI API with streaming.
  * This version is required for the interactive features of the frontend to work correctly.
+ * v1.1 - Adds sanitization to prevent 422 errors.
  */
 
 // We are using the Edge runtime for best performance with streaming.
@@ -48,10 +49,16 @@ export default async function handler(request) {
         });
     }
 
+    // **FIX:** Sanitize the history to ensure only 'role' and 'content' are sent to the API.
+    const sanitizedHistory = history.map(({ role, content }) => ({
+        role,
+        content
+    }));
+
     // Construct the message payload for the Mistral API.
     const messages = [
       { role: 'system', content: AGENT_SYSTEM_PROMPT || 'You are a helpful AI assistant.' },
-      ...history,
+      ...sanitizedHistory,
     ];
 
     const payload = {
@@ -71,7 +78,13 @@ export default async function handler(request) {
     });
 
     if (!apiResponse.ok) {
-        const errorBody = await apiResponse.json();
+        // Mistral API might not return JSON for all errors, so we handle both cases.
+        let errorBody;
+        try {
+            errorBody = await apiResponse.json();
+        } catch (e) {
+            errorBody = { message: await apiResponse.text() };
+        }
         console.error("API Error:", errorBody);
         throw new Error(errorBody.message || `API responded with status ${apiResponse.status}`);
     }
