@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     
-    <title>Junaid AI - v12.0 | Modular Edition</title>
-    <meta name="description" content="A professional, interactive, and fast enterprise AI solution with a modular architecture, message reactions, and more.">
-    <meta name="keywords" content="Enterprise AI, Chat UI, Modular Architecture, Message Reactions, Performance, Dark Mode, AI Platform">
+    <title>Junaid AI - v11.4 | Stability Hotfix</title>
+    <meta name="description" content="A professional, interactive, and fast enterprise AI solution with streaming, message editing, dark mode, and improved UX.">
+    <meta name="keywords" content="Enterprise AI, Chat UI, Streaming, Message Editing, Performance, Dark Mode, AI Platform, Optimized">
     <meta name="author" content="Muhammad Junaid Aurangzeb">
     <link rel="canonical" href="https://junaid-ai.com" />
     <meta name="robots" content="index, follow">
@@ -273,7 +273,7 @@
                         </button>
                         <div class="flex items-center justify-between text-xs text-text-secondary pt-2">
                             <span>&copy; 2025 Junaid AI</span>
-                            <span>v11.3</span>
+                            <span>v11.4</span>
                         </div>
                     </div>
                 </aside>
@@ -317,8 +317,8 @@
 
                 this.cacheDOMElements();
                 this.bindMainAppEventListeners();
-                this.loadTheme();
-                this.loadChatHistory();
+                this.setTheme('light'); // Default to light mode, no storage
+                this.renderChatPage();
                 this.setAppHeight();
                 window.addEventListener('resize', this.setAppHeight);
             }
@@ -364,16 +364,14 @@
                     if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); chatForm.requestSubmit(); }
                     if (e.key === 'Escape' && this.state.editingMessageId) { this.cancelEdit(); }
                 });
-                this.renderChatHistory();
+                this.startNewChat(); // Always start with a new chat
             }
 
             // --- THEME & UI MANAGEMENT ---
             setAppHeight = () => document.documentElement.style.setProperty('--app-height', `${window.innerHeight}px`);
-            loadTheme() { this.setTheme(localStorage.getItem('junaid-ai-theme') || 'light'); }
             toggleTheme() { this.setTheme(document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'); }
             setTheme(theme) {
                 document.documentElement.setAttribute('data-theme', theme);
-                localStorage.setItem('junaid-ai-theme', theme);
                 this.dom.sunIcon?.classList.toggle('hidden', theme === 'dark');
                 this.dom.moonIcon?.classList.toggle('hidden', theme === 'light');
                 if (this.dom.themeText) this.dom.themeText.textContent = theme === 'dark' ? 'Dark Mode' : 'Light Mode';
@@ -381,15 +379,7 @@
             openSidebar() { this.dom.sidebar?.classList.add('open'); this.dom.sidebarOverlay?.classList.remove('hidden'); }
             closeSidebar() { this.dom.sidebar?.classList.remove('open'); this.dom.sidebarOverlay?.classList.add('hidden'); }
 
-            // --- CHAT HISTORY & MESSAGES ---
-            loadChatHistory() {
-                try {
-                    const saved = localStorage.getItem('junaid-ai-history');
-                    this.chatHistory = saved ? JSON.parse(saved) : [];
-                } catch (e) { this.chatHistory = []; }
-                this.renderChatPage();
-            }
-            saveChatHistory() { localStorage.setItem('junaid-ai-history', JSON.stringify(this.chatHistory)); }
+            // --- CHAT HISTORY & MESSAGES (STATELESS) ---
             renderChatHistory() {
                 if (!this.dom.chatMessages) return;
                 this.dom.chatMessages.innerHTML = '';
@@ -401,7 +391,7 @@
                     this.addCopyButtons(this.dom.chatMessages);
                 }
             }
-            startNewChat() { this.chatHistory = []; this.saveChatHistory(); this.renderChatHistory(); }
+            startNewChat() { this.chatHistory = []; this.renderChatHistory(); }
             confirmNewChat() { this.showModal('Start New Chat', 'Are you sure you want to clear this chat and start a new one?', () => this.startNewChat()); }
 
             // --- CORE CHAT LOGIC ---
@@ -421,7 +411,6 @@
                 const messageData = { role: 'user', content: userMessage, id: Date.now().toString(), timestamp: new Date().toISOString() };
                 this.chatHistory.push(messageData);
                 this.appendMessage(messageData);
-                this.saveChatHistory();
                 
                 messageInput.value = '';
                 this.autoGrowTextarea(messageInput);
@@ -429,7 +418,7 @@
                 await this.getAIResponse();
             }
 
-            async getAIResponse(isRegeneration = false) {
+            async getAIResponse() {
                 this.toggleLoading(true);
                 if (this.abortController) this.abortController.abort();
                 this.abortController = new AbortController();
@@ -475,7 +464,6 @@
                     }
                 } finally {
                     this.toggleLoading(false);
-                    this.saveChatHistory();
                 }
             }
             
@@ -569,7 +557,6 @@
                 const messageData = { role: 'user', content: newContent, id: this.state.editingMessageId, timestamp: new Date().toISOString() };
                 this.chatHistory.push(messageData);
                 this.appendMessage(messageData);
-                this.saveChatHistory();
                 
                 this.cancelEdit();
                 this.getAIResponse(true);
@@ -586,7 +573,6 @@
                 const idToDelete = msgContainer.dataset.id;
                 this.showModal('Delete Message', 'Are you sure you want to delete this message?', () => {
                     this.chatHistory = this.chatHistory.filter(m => m.id !== idToDelete);
-                    this.saveChatHistory();
                     this.renderChatHistory();
                 });
             }
@@ -598,7 +584,6 @@
                 if (!msg) return;
 
                 msg.reaction = msg.reaction === reactionType ? null : reactionType;
-                this.saveChatHistory();
                 
                 const likeBtn = msgContainer.querySelector('.like-btn');
                 const dislikeBtn = msgContainer.querySelector('.dislike-btn');
