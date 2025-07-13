@@ -26,11 +26,15 @@
 
     <style>
         :root {
-            --soft-primary: #818cf8;
-            --soft-pink: #f472b6;
-            --soft-emerald: #6ee7b7;
-            --soft-red: #fca5a5;
-            --slate-100: #f1f5f9; --slate-200: #e2e8f0; --slate-300: #cbd5e1; --slate-400: #94a3b8; --slate-500: #64748b; --slate-600: #475569; --slate-700: #334155; --slate-800: #1e293b; --slate-900: #0f172a;
+            --primary-color: #4f46e5;
+            --secondary-color: #be185d;
+            --background-start: #f3e8ff;
+            --background-end: #dbeafe;
+            --text-primary: #1f2937;
+            --text-secondary: #4b5563;
+            --glass-bg: rgba(255, 255, 255, 0.5);
+            --glass-border: rgba(255, 255, 255, 0.7);
+            --shadow-color: rgba(79, 70, 229, 0.1);
             --app-height: 100vh;
         }
         
@@ -41,13 +45,12 @@
         }
         
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            color: var(--slate-800);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            color: var(--text-primary);
             margin: 0;
             overflow: hidden;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
-            font-feature-settings: "cv02", "cv03", "cv04", "cv11";
         }
         
         #animated-bg {
@@ -57,31 +60,29 @@
             width: 100%;
             height: 100%;
             z-index: -1;
-            background: linear-gradient(45deg, #f9a8d4, #a5b4fc, #93c5fd, #6ee7b7);
-            background-size: 400% 400%;
-            animation: gradient-animation 20s ease infinite;
+            background: linear-gradient(45deg, var(--background-start), var(--background-end));
+            background-size: 200% 200%;
+            animation: gradient-animation 15s ease infinite;
         }
         @keyframes gradient-animation {
             0% { background-position: 0% 50%; }
-            25% { background-position: 100% 50%; }
-            50% { background-position: 100% 100%; }
-            75% { background-position: 0% 100%; }
+            50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
         }
         
         #app-container { width: 100%; height: var(--app-height); }
         .main-container { width: 100%; height: 100%; display: flex; padding: 1rem; }
         .main-layout { 
-            background: rgba(255, 255, 255, 0.08); 
-            backdrop-filter: blur(32px); 
-            -webkit-backdrop-filter: blur(32px); 
+            background: var(--glass-bg);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
             width: 100%; 
             height: 100%; 
             display: flex; 
-            border-radius: 1.5rem; 
+            border-radius: 2rem;
             overflow: hidden; 
-            border: 1px solid rgba(255, 255, 255, 0.15); 
-            box-shadow: 0 32px 64px -12px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 8px 32px 0 var(--shadow-color);
         }
         
         @media (max-width: 768px) {
@@ -90,83 +91,46 @@
         }
 
         .sidebar { 
-            background: rgba(15, 23, 42, 0.8); 
-            border-right: 1px solid rgba(255, 255, 255, 0.1); 
+            background: rgba(255, 255, 255, 0.3);
+            border-right: 1px solid var(--glass-border);
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
             width: 280px; 
             flex-shrink: 0; 
             position: relative;
         }
         
-        .sidebar::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(135deg, rgba(129, 140, 248, 0.1) 0%, rgba(244, 114, 182, 0.1) 100%);
-            pointer-events: none;
-        }
-        
         .sidebar-btn { 
-            transition: all 0.3s ease; 
-            color: var(--slate-300); 
+            transition: all 0.2s ease-in-out;
+            color: var(--text-secondary);
+            font-weight: 500;
             position: relative;
-            overflow: hidden;
-        }
-        
-        .sidebar-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-            transition: left 0.5s ease;
-        }
-        
-        .sidebar-btn:hover::before {
-            left: 100%;
         }
         
         .sidebar-btn:hover { 
-            color: white; 
-            background: rgba(255, 255, 255, 0.1); 
+            color: var(--primary-color);
+            background: rgba(79, 70, 229, 0.05);
             transform: translateX(4px);
         }
         
         .sidebar-btn.active { 
-            background: var(--soft-primary); 
-            color: white; 
-            font-weight: 600; 
-            transform: translateX(4px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            background: var(--primary-color);
+            color: white;
+            font-weight: 600;
+            transform: translateX(0);
+            box-shadow: 0 4px 12px var(--shadow-color);
         }
 
-        .page-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+        .page-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; background-color: rgba(255,255,255,0.2); }
         .page-header { 
-            background: rgba(255, 255, 255, 0.05); 
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1); 
+            background: rgba(255, 255, 255, 0.4);
+            border-bottom: 1px solid var(--glass-border);
             padding: 1rem 1.5rem; 
             display: flex; 
             justify-content: space-between; 
             align-items: center; 
             flex-shrink: 0; 
-            backdrop-filter: blur(16px); 
-            position: relative;
-        }
-        
-        .page-header::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(90deg, rgba(129, 140, 248, 0.05) 0%, rgba(244, 114, 182, 0.05) 100%);
-            pointer-events: none;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
         }
         
         .chat-page-layout { display: flex; flex-direction: column; height: 100%; }
@@ -175,72 +139,70 @@
 
         .message-wrapper { 
             margin-bottom: 1.5rem; 
-            animation: slideInUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            animation: slideInUp 0.3s ease-out;
         }
         
         .message-bubble { 
             max-width: 85%; 
-            padding: 1rem 1.5rem; 
-            border-radius: 1.25rem; 
+            padding: 0.875rem 1.25rem;
+            border-radius: 1.25rem;
             word-wrap: break-word; 
-            line-height: 1.65; 
+            line-height: 1.6;
             position: relative;
-            backdrop-filter: blur(8px);
         }
         
         .message-user { display: flex; justify-content: flex-end; }
         .message-user .message-bubble { 
-            background: var(--soft-primary); 
-            color: white; 
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            background: var(--primary-color);
+            color: white;
+            box-shadow: 0 4px 12px var(--shadow-color);
         }
         
-        .message-ai { display: flex; justify-content: flex-start; gap: 0.875rem; }
+        .message-ai { display: flex; justify-content: flex-start; gap: 0.75rem; }
         .message-ai .message-bubble { 
-            background: rgba(255, 255, 255, 0.12); 
-            color: var(--slate-100); 
-            border: 1px solid rgba(255, 255, 255, 0.2); 
-            backdrop-filter: blur(16px); 
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            background: white;
+            color: var(--text-primary);
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
         }
         
         .avatar { 
-            width: 2.75rem; 
-            height: 2.75rem; 
-            border-radius: 50%; 
-            background: var(--soft-primary); 
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             display: flex; 
             align-items: center; 
             justify-content: center; 
             flex-shrink: 0; 
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
         
-        .avatar svg { width: 1.5rem; height: 1.5rem; color: white; }
+        .avatar svg { width: 1.25rem; height: 1.25rem; color: white; }
 
         .input-area { 
-            padding: 1.5rem; 
-            background: rgba(0, 0, 0, 0.1); 
-            border-top: 1px solid rgba(255, 255, 255, 0.1); 
-            backdrop-filter: blur(16px); 
+            padding: 1rem 1.5rem;
+            background: rgba(255, 255, 255, 0.6);
+            border-top: 1px solid var(--glass-border);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
         }
         
         .input-container { 
-            background: rgba(255, 255, 255, 0.15); 
-            border: 1px solid rgba(255, 255, 255, 0.3); 
-            border-radius: 1.25rem; 
-            padding: 0.75rem; 
+            background: white;
+            border: 1px solid #d1d5db;
+            border-radius: 1.25rem;
+            padding: 0.5rem;
             display: flex; 
-            align-items: flex-end; 
-            gap: 0.75rem; 
-            transition: all 0.3s ease; 
-            backdrop-filter: blur(16px);
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s ease-in-out;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
         }
         
         .input-container:focus-within { 
-            border-color: var(--soft-primary); 
-            box-shadow: 0 0 0 3px rgba(129, 140, 248, 0.2), 0 8px 32px rgba(129, 140, 248, 0.15); 
-            background: rgba(255, 255, 255, 0.2);
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px var(--shadow-color);
         }
         
         .message-input { 
@@ -248,122 +210,104 @@
             background: transparent; 
             border: none; 
             outline: none; 
-            color: white; 
+            color: var(--text-primary);
             font-size: 1rem; 
             resize: none; 
             min-height: 28px; 
             max-height: 120px; 
-            padding: 0.5rem; 
-            font-family: inherit;
+            padding: 0.5rem;
         }
         
-        .message-input::placeholder { color: var(--slate-400); }
+        .message-input::placeholder { color: #9ca3af; }
         
         .send-button { 
-            background: var(--soft-primary); 
-            color: white; 
+            background: var(--primary-color);
+            color: white;
             border: none; 
-            border-radius: 0.875rem; 
-            width: 48px; 
-            height: 48px; 
+            border-radius: 1rem;
+            width: 44px;
+            height: 44px;
             display: flex; 
             align-items: center; 
             justify-content: center; 
             cursor: pointer; 
-            transition: all 0.3s ease; 
+            transition: all 0.2s ease-in-out;
             flex-shrink: 0; 
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
         
         .send-button:hover:not(:disabled) { 
-            background: #6366f1; 
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            background: #4338ca;
+            transform: scale(1.05);
         }
         
         .send-button:disabled { 
-            background: var(--slate-600); 
-            opacity: 0.6; 
+            background: #9ca3af;
+            opacity: 0.8;
             cursor: not-allowed; 
             transform: none;
         }
         
         .btn-primary {
-            background: var(--soft-primary);
+            background: var(--primary-color);
             color: white;
             border: none;
             padding: 0.75rem 1.5rem;
             border-radius: 0.75rem;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
-        
-        .btn-primary::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            transition: left 0.5s ease;
-        }
-        
-        .btn-primary:hover::before {
-            left: 100%;
+            transition: all 0.2s ease-in-out;
+            box-shadow: 0 2px 8px var(--shadow-color);
         }
         
         .btn-primary:hover {
+            background: #4338ca;
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            box-shadow: 0 4px 12px var(--shadow-color);
         }
         
         .btn-secondary {
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: white;
+            color: var(--text-primary);
+            border: 1px solid #d1d5db;
             padding: 0.75rem 1.5rem;
             border-radius: 0.75rem;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(8px);
+            transition: all 0.2s ease-in-out;
         }
         
         .btn-secondary:hover {
-            background: rgba(255, 255, 255, 0.2);
+            background: #f9fafb;
+            border-color: #adb5bd;
             transform: translateY(-2px);
-            border-color: rgba(255, 255, 255, 0.3);
         }
         
         .modal-overlay {
             position: fixed;
             inset: 0;
-            background: rgba(0, 0, 0, 0.6);
+            background: rgba(0, 0, 0, 0.3);
             backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
             z-index: 1000;
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 1rem;
-            animation: fadeIn 0.3s ease;
+            animation: fadeIn 0.2s ease-out;
         }
         
         .modal-content {
-            background: rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(32px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            background: var(--glass-bg);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--glass-border);
             border-radius: 1.5rem;
             padding: 2rem;
-            max-width: 500px;
+            max-width: 480px;
             width: 100%;
-            color: white;
-            box-shadow: 0 16px 32px rgba(0, 0, 0, 0.2);
-            animation: slideInUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            color: var(--text-primary);
+            box-shadow: 0 16px 48px rgba(0,0,0,0.1);
+            animation: slideInUp 0.3s ease-out;
         }
         
         .modal-header {
@@ -374,15 +318,15 @@
         }
         
         .modal-title {
-            font-size: 1.5rem;
-            font-weight: 700;
+            font-size: 1.25rem;
+            font-weight: 600;
             margin: 0;
         }
         
         .modal-close {
-            background: none;
+            background: rgba(0,0,0,0.05);
             border: none;
-            color: white;
+            color: var(--text-secondary);
             font-size: 1.5rem;
             cursor: pointer;
             padding: 0;
@@ -396,19 +340,20 @@
         }
         
         .modal-close:hover {
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(0,0,0,0.1);
+            color: var(--text-primary);
         }
         
         .modal-text {
-            font-size: 1.125rem;
+            font-size: 1rem;
             line-height: 1.6;
             margin-bottom: 2rem;
-            color: var(--slate-200);
+            color: var(--text-secondary);
         }
         
         .modal-actions {
             display: flex;
-            gap: 1rem;
+            gap: 0.75rem;
             justify-content: flex-end;
         }
         
@@ -423,21 +368,22 @@
                 z-index: 40; 
                 transform: translateX(-100%); 
                 width: 280px;
+                box-shadow: 0 0 40px rgba(0,0,0,0.1);
             }
             .sidebar.open { transform: translateX(0); }
             .sidebar-toggle { display: block; }
-            .sidebar-overlay { position: fixed; inset: 0; background-color: rgba(0, 0, 0, 0.5); z-index: 30; }
+            .sidebar-overlay { position: fixed; inset: 0; background-color: rgba(0, 0, 0, 0.2); backdrop-filter: blur(4px); z-index: 30; }
             .message-bubble { max-width: 90%; }
         }
 
-        .custom-scrollbar::-webkit-scrollbar { width: 8px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: rgba(255,255,255,0.1); border-radius: 4px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.3); border-radius: 4px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.5); }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.1); border-radius: 3px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.2); }
 
         @keyframes slideInUp { 
-            from { opacity: 0; transform: translateY(30px); } 
-            to { opacity: 1; transform: translateY(0); } 
+            from { opacity: 0; transform: translateY(20px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
         }
         
         @keyframes fadeIn {
@@ -445,125 +391,123 @@
             to { opacity: 1; }
         }
         
-        #loading-indicator .loading-text { font-weight: 500; color: var(--slate-300); }
+        #loading-indicator .loading-text { font-weight: 500; color: var(--text-secondary); }
         #loading-indicator .spinner { 
-            width: 24px; 
-            height: 24px; 
+            width: 20px;
+            height: 20px;
             border-radius: 50%; 
-            border: 3px solid var(--slate-600); 
-            border-top-color: var(--soft-primary); 
-            animation: spin 1s linear infinite; 
+            border: 3px solid rgba(0,0,0,0.1);
+            border-top-color: var(--primary-color);
+            animation: spin 0.8s linear infinite;
         }
         @keyframes spin { to { transform: rotate(360deg); } }
 
         .blinking-cursor { 
             display: inline-block; 
             width: 2px; 
-            height: 1.2em; 
-            background: var(--soft-primary); 
-            animation: blink 1s ease-in-out infinite; 
-            vertical-align: baseline; 
-            margin-left: 2px;
+            height: 1.1em;
+            background: var(--primary-color);
+            animation: blink 1s step-end infinite;
+            vertical-align: bottom;
+            margin-left: 1px;
         }
         @keyframes blink { 
-            0%, 50% { opacity: 1; } 
-            51%, 100% { opacity: 0; } 
+            50% { opacity: 0; }
         }
         
         .prompt-starters {
-            display: flex;
-            flex-wrap: wrap;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 0.75rem;
             margin-top: 1rem;
-            justify-content: center;
         }
         
         .prompt-starters button {
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 9999px;
-            padding: 0.5rem 1rem;
+            background: rgba(255, 255, 255, 0.6);
+            border: 1px solid var(--glass-border);
+            border-radius: 0.75rem;
+            padding: 1rem;
             font-size: 0.875rem;
-            color: white;
-            transition: all 0.3s ease;
+            color: var(--text-primary);
+            transition: all 0.2s ease-in-out;
             cursor: pointer;
-            backdrop-filter: blur(8px);
+            text-align: left;
+            font-weight: 500;
         }
         
         .prompt-starters button:hover {
-            background: rgba(255, 255, 255, 0.15);
-            border-color: rgba(255, 255, 255, 0.25);
+            background: white;
+            border-color: var(--primary-color);
             transform: translateY(-2px);
+            box-shadow: 0 4px 12px var(--shadow-color);
         }
 
         .logo-container {
             display: flex;
             align-items: center;
             gap: 0.75rem;
-            margin-bottom: 2rem;
+            padding: 1rem;
         }
         
         .logo {
-            width: 48px;
-            height: 48px;
+            width: 40px;
+            height: 40px;
             border-radius: 0.75rem;
-            background: var(--soft-primary);
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 12px var(--shadow-color);
         }
         
         .logo svg {
-            width: 28px;
-            height: 28px;
+            width: 20px;
+            height: 20px;
             color: white;
         }
         
         .brand-text h1 {
-            font-size: 1.375rem;
-            font-weight: 800;
-            color: white;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
             margin: 0;
-            letter-spacing: -0.025em;
         }
         
         .brand-text .tagline {
-            font-size: 0.75rem;
-            color: var(--slate-400);
+            font-size: 0.875rem;
+            color: var(--text-secondary);
             margin: 0;
             font-weight: 500;
         }
         
         .version-badge {
-            background: var(--soft-emerald);
+            background: var(--primary-color);
             color: white;
-            font-size: 0.75rem;
+            font-size: 0.625rem;
             font-weight: 600;
-            padding: 0.25rem 0.75rem;
-            border-radius: 1rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 9999px;
             margin-left: auto;
         }
         
         .status-online {
             width: 8px;
             height: 8px;
-            background: var(--soft-emerald);
+            background: #22c55e;
             border-radius: 50%;
-            box-shadow: 0 0 0 2px var(--soft-emerald);
+            box-shadow: 0 0 0 2px #22c55e;
             animation: pulse 2s infinite;
         }
         
         @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(110, 231, 183, 0.7); }
-            70% { box-shadow: 0 0 0 10px rgba(110, 231, 183, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(110, 231, 183, 0); }
+            0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); }
+            70% { box-shadow: 0 0 0 8px rgba(34, 197, 94, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
         }
 
         .footer-section {
             padding: 1.5rem;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            background: rgba(0, 0, 0, 0.2);
+            border-top: 1px solid var(--glass-border);
         }
         
         .auth-buttons {
@@ -574,11 +518,11 @@
         
         .auth-buttons button {
             flex: 1;
-            padding: 0.75rem;
+            padding: 0.625rem;
             border-radius: 0.75rem;
             font-weight: 600;
             font-size: 0.875rem;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease-in-out;
             cursor: pointer;
         }
         
@@ -587,7 +531,7 @@
             align-items: center;
             justify-content: space-between;
             font-size: 0.75rem;
-            color: var(--slate-400);
+            color: var(--text-secondary);
         }
         
         .footer-info .left {
@@ -621,56 +565,50 @@
     <template id="main-app-shell-template">
         <div class="main-container">
             <div class="main-layout">
-                <aside id="sidebar" class="sidebar flex flex-col justify-between">
+                <aside id="sidebar" class="sidebar flex flex-col justify-between p-4">
                     <div>
-                        <div class="p-6">
-                            <div class="logo-container">
-                                <div class="logo">
-                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.373 3.373 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
-                                    </svg>
-                                </div>
-                                <div class="brand-text">
-                                    <h1>Junaid AI</h1>
-                                    <p class="tagline">Enterprise Pro</p>
-                                </div>
-                                <div class="version-badge">v9.0</div>
+                        <div class="logo-container">
+                            <div class="logo">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.373 3.373 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+                                </svg>
+                            </div>
+                            <div class="brand-text">
+                                <h1>Junaid AI</h1>
+                                <p class="tagline">Enterprise Pro</p>
                             </div>
                         </div>
-                        <nav class="px-4 space-y-2">
-                            <button data-page="chat" class="nav-btn sidebar-btn w-full flex items-center gap-3 px-4 py-3 rounded-lg">
+                        <nav class="space-y-2">
+                            <button data-page="chat" class="nav-btn sidebar-btn w-full flex items-center gap-3 px-4 py-2.5 rounded-xl">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
                                 </svg>
                                 <span>AI Chat</span>
                             </button>
-                            <button class="coming-soon-btn sidebar-btn w-full flex items-center justify-between gap-3 px-4 py-3 rounded-lg">
-                                <div class="flex items-center gap-3">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                                    </svg>
-                                    <span>Chat History</span>
-                                </div>
-                                <span class="text-xs bg-yellow-500 text-white px-2 py-1 rounded-full">Coming Soon</span>
+                            <button id="chat-history-btn" class="sidebar-btn w-full flex items-center gap-3 px-4 py-2.5 rounded-xl">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                </svg>
+                                <span>Chat History</span>
                             </button>
                         </nav>
                     </div>
                     <div class="footer-section">
                          <div class="auth-buttons">
-                           <button class="coming-soon-btn btn-secondary">Login</button>
-                           <button class="coming-soon-btn btn-primary">Sign Up</button>
+                           <button id="login-btn" class="btn-secondary">Log In</button>
+                           <button id="signup-btn" class="btn-primary">Sign Up</button>
                         </div>
                         <div class="footer-info">
                             <div class="left">
                                 <div class="status-online"></div>
                                 <span>API Status: Operational</span>
                             </div>
+                            <div class="version-badge">v9.0</div>
                         </div>
                     </div>
                 </aside>
                 <div id="sidebar-overlay" class="sidebar-overlay hidden"></div>
-                <div id="main-content" class="page-content">
-                    </div>
+                <div id="main-content" class="page-content"></div>
             </div>
         </div>
     </template>
@@ -678,28 +616,28 @@
     <template id="chat-page-template">
         <div class="chat-page-layout">
             <header class="page-header">
-                 <div class="flex items-center gap-4">
-                    <button class="sidebar-toggle text-slate-300 p-1">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"></path></svg>
-                    </button>
-                    <h2 class="text-xl font-bold text-white">AI Chat</h2>
-                </div>
-                <button id="new-chat-btn" class="btn-primary flex items-center gap-2 text-sm">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
-                    New Chat
-                </button>
-            </header>
-            <main id="chat-messages" class="custom-scrollbar"></main>
-            <footer class="input-area">
-                <form id="chat-form">
-                    <div class="input-container">
-                        <textarea id="message-input" placeholder="Ask me anything..." rows="1" class="message-input custom-scrollbar"></textarea>
-                        <button id="send-button" type="submit" class="send-button">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path></svg>
-                        </button>
-                    </div>
-                </form>
-            </footer>
+                        <div class="flex items-center gap-3">
+                           <button class="sidebar-toggle text-slate-500 p-1 md:hidden">
+                               <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"></path></svg>
+                           </button>
+                           <h2 class="text-lg font-semibold text-text-primary">AI Chat</h2>
+                       </div>
+                       <button id="new-chat-btn" class="btn-secondary flex items-center gap-2 text-sm font-semibold">
+                           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+                           New Chat
+                       </button>
+                   </header>
+                   <main id="chat-messages" class="custom-scrollbar"></main>
+                   <footer class="input-area">
+                       <form id="chat-form" class="relative">
+                           <div class="input-container">
+                               <textarea id="message-input" placeholder="Ask me anything..." rows="1" class="message-input custom-scrollbar"></textarea>
+                               <button id="send-button" type="submit" class="send-button">
+                                   <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 19V5m0 0L5 12m7-7l7 7"></path></svg>
+                               </button>
+                           </div>
+                       </form>
+                   </footer>
         </div>
     </template>
     
@@ -766,29 +704,41 @@
                 
                 document.body.addEventListener('click', (e) => {
                     if (e.target.closest('.sidebar-toggle')) this.toggleSidebar();
-                    if (e.target.closest('.coming-soon-btn')) this.showModal('Feature Coming Soon', 'This feature will be available in a future update.');
+                    if (e.target.closest('#login-btn')) this.showTooltip('Feature coming soon.', e.target);
+                    if (e.target.closest('#signup-btn')) this.showTooltip('Feature coming soon.', e.target);
+                    if (e.target.closest('#chat-history-btn')) this.showLoginModal();
                 });
 
                 document.getElementById('sidebar-overlay').addEventListener('click', () => this.closeSidebar());
             }
 
+            showLoginModal() {
+                this.showModal(
+                    'Please log in to continue',
+                    'Access to chat history requires an account. Please log in or sign up to view your past conversations.',
+                    [
+                        { label: 'Log In', callback: () => this.showTooltip('Feature coming soon.', document.getElementById('login-btn')), primary: false },
+                        { label: 'Sign Up', callback: () => this.showTooltip('Feature coming soon.', document.getElementById('signup-btn')), primary: true }
+                    ]
+                );
+            }
+
             pageInitializers = {
                 chat: (app) => {
                     app.showWelcomeMessage();
-                    app.showPromptStarters();
                     
                     const chatForm = document.getElementById('chat-form');
                     const messageInput = document.getElementById('message-input');
                     
-                    chatForm.addEventListener('submit', app.handleFormSubmit.bind(app));
+                    chatForm.addEventListener('submit', (e) => app.handleFormSubmit(e));
                     messageInput.addEventListener('input', () => app.autoGrowTextarea(messageInput));
                     messageInput.addEventListener('keydown', (e) => {
                         if (e.key === 'Enter' && !e.shiftKey) {
                             e.preventDefault();
-                            app.handleFormSubmit();
+                            chatForm.requestSubmit();
                         }
                     });
-                    document.getElementById('new-chat-btn').addEventListener('click', app.startNewChat.bind(app));
+                    document.getElementById('new-chat-btn').addEventListener('click', () => app.startNewChat());
                 }
             };
 
@@ -796,8 +746,10 @@
                 if (e) e.preventDefault();
                 const messageInput = document.getElementById('message-input');
                 const userMessage = messageInput.value.trim();
+
                 if (!userMessage || this.state.isAwaitingResponse) return;
 
+                this.clearPrompts();
                 this.toggleLoading(true);
                 this.appendMessage(userMessage, 'user');
                 messageInput.value = '';
@@ -807,16 +759,20 @@
             }
 
             async getAIResponse() {
-                const messages = [];
-                document.querySelectorAll('#chat-messages .message-wrapper').forEach(wrapper => {
-                    const bubble = wrapper.querySelector('.message-bubble');
-                    if (!bubble) return;
-                    if (wrapper.classList.contains('message-user')) {
-                        messages.push({ role: 'user', content: bubble.textContent });
-                    } else if (wrapper.classList.contains('message-ai') && wrapper.id !== 'loading-indicator') {
-                        messages.push({ role: 'assistant', content: bubble.dataset.rawContent || bubble.textContent });
-                    }
-                });
+                const messages = Array.from(document.querySelectorAll('#chat-messages .message-wrapper'))
+                    .map(wrapper => {
+                        const bubble = wrapper.querySelector('.message-bubble');
+                        if (!bubble) return null;
+
+                        let role = '';
+                        if (wrapper.classList.contains('message-user')) role = 'user';
+                        else if (wrapper.classList.contains('message-ai')) role = 'assistant';
+
+                        const content = (role === 'assistant') ? bubble.dataset.rawContent : bubble.textContent;
+
+                        return role && content ? { role, content } : null;
+                    })
+                    .filter(Boolean);
 
                 const payload = { history: messages };
                 const loadingElement = this.appendMessage('', 'loading');
@@ -832,7 +788,7 @@
                     });
                     
                     clearTimeout(timeoutId);
-                    loadingElement.remove();
+                    if(loadingElement) loadingElement.remove();
 
                     if (!response.ok) {
                         const errorData = await response.json().catch(() => ({ error: `Server responded with status ${response.status}` }));
@@ -841,18 +797,20 @@
                     
                     const result = await response.json();
                     this.streamTextResponse(result.content);
+
                 } catch (error) {
                     clearTimeout(timeoutId);
+                    if(loadingElement) loadingElement.remove();
                     console.error("API Call error:", error);
-                    loadingElement.remove();
                     
                     let errorMessage = `**Error:** I encountered a problem. Please try again.`;
                     if (error.name === 'AbortError') {
                          errorMessage = `**Error:** The request timed out. The server took too long to respond.`;
-                    } else {
+                    } else if (error.message) {
                          errorMessage += `\n\n*Details: ${error.message}*`;
                     }
                     this.appendMessage(errorMessage, 'ai', true);
+
                 } finally {
                     this.toggleLoading(false);
                 }
@@ -861,16 +819,12 @@
             startNewChat() {
                 document.getElementById('chat-messages').innerHTML = '';
                 this.showWelcomeMessage();
-                this.showPromptStarters();
             }
 
             appendMessage(content, type, isError = false) {
                 const messageElement = this.createMessageElement(content, type, isError);
                 const chatMessages = document.getElementById('chat-messages');
                 if (chatMessages) {
-                    const promptStarters = chatMessages.querySelector('.prompt-starters');
-                    if(promptStarters) promptStarters.remove();
-                    
                     chatMessages.appendChild(messageElement);
                     this.scrollToBottom(chatMessages);
                 }
@@ -879,31 +833,32 @@
 
             createMessageElement(content, type, isError) {
                 const wrapper = document.createElement('div');
-                wrapper.className = `message-wrapper flex mb-4 message-${type}`;
+                wrapper.className = `message-wrapper flex message-${type}`;
                 
                 if (type === 'loading') {
                     wrapper.id = 'loading-indicator';
+                    wrapper.classList.add('message-ai');
                     wrapper.innerHTML = `<div class="avatar"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.373 3.373 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path></svg></div><div class="message-bubble flex items-center gap-3"><div class="spinner"></div><div class="loading-text">Junaid AI is thinking...</div></div>`;
                     return wrapper;
                 }
 
                 const bubble = document.createElement('div');
                 bubble.className = 'message-bubble';
-                if (isError) bubble.classList.add('bg-soft-red', 'text-white');
+                if (isError) {
+                    bubble.style.backgroundColor = '#fecaca';
+                    bubble.style.color = '#b91c1c';
+                }
 
                 if (type === 'ai') {
                     bubble.dataset.rawContent = content;
                     bubble.innerHTML = isError ? marked.parse(content) : '';
                 } else {
-                    const p = document.createElement('p');
-                    p.className = 'm-0';
-                    p.textContent = content;
-                    bubble.appendChild(p);
+                    bubble.textContent = content;
                 }
                 
-                const avatar = document.createElement('div');
-                avatar.className = 'avatar';
                 if (type === 'ai') {
+                    const avatar = document.createElement('div');
+                    avatar.className = 'avatar';
                     avatar.innerHTML = `<svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.373 3.373 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path></svg>`;
                     wrapper.appendChild(avatar);
                 }
@@ -915,40 +870,52 @@
             streamTextResponse(text) {
                 const aiMessageElement = this.appendMessage('', 'ai');
                 const bubble = aiMessageElement.querySelector('.message-bubble');
+                if (!bubble) return;
+
                 bubble.dataset.rawContent = text;
 
-                const words = text.split(' ');
                 let i = 0;
+                const typingSpeed = 20;
                 
                 const cursor = document.createElement('span');
                 cursor.className = 'blinking-cursor';
                 bubble.appendChild(cursor);
 
-                const intervalId = setInterval(() => {
-                    if (i < words.length) {
-                        const wordSpan = document.createElement('span');
-                        wordSpan.textContent = words[i] + ' ';
-                        bubble.insertBefore(wordSpan, cursor);
+                function type() {
+                    if (i < text.length) {
+                        const char = text.charAt(i);
+                        cursor.insertAdjacentText('beforebegin', char);
                         this.scrollToBottom(document.getElementById('chat-messages'));
                         i++;
+                        setTimeout(type.bind(this), typingSpeed);
                     } else {
-                        clearInterval(intervalId);
                         cursor.remove();
                         bubble.innerHTML = marked.parse(text, { breaks: true, gfm: true, headerIds: false, mangle: false });
                     }
-                }, 50);
+                }
+                type.call(this);
             }
 
             showWelcomeMessage() {
                 this.streamTextResponse("Assalam-o-Alaikum! I am Junaid AI, your enterprise-grade Pakistani AI assistant. How may I assist you today?");
+                this.showPromptStarters();
+            }
+
+            clearPrompts() {
+                 const chatMessages = document.getElementById('chat-messages');
+                 const starters = chatMessages.querySelector('.prompt-starters-wrapper');
+                 if(starters) starters.remove();
             }
 
             showPromptStarters() {
                 const chatMessages = document.getElementById('chat-messages');
                 if (!chatMessages) return;
 
+                const wrapper = document.createElement('div');
+                wrapper.className = 'prompt-starters-wrapper';
+
                 const startersContainer = document.createElement('div');
-                startersContainer.className = 'prompt-starters grid grid-cols-1 md:grid-cols-2 gap-3 my-4';
+                startersContainer.className = 'prompt-starters';
                 
                 const prompts = [
                     "Explain quantum computing in simple terms",
@@ -959,15 +926,15 @@
 
                 prompts.forEach(prompt => {
                     const button = document.createElement('button');
-                    button.className = 'text-left p-4 bg-white/10 border border-white/20 rounded-lg hover:bg-white/20 transition-colors text-white';
                     button.textContent = prompt;
                     button.onclick = () => {
                         document.getElementById('message-input').value = prompt;
-                        this.handleFormSubmit();
+                        document.getElementById('chat-form').requestSubmit();
                     };
                     startersContainer.appendChild(button);
                 });
-                chatMessages.appendChild(startersContainer);
+                wrapper.appendChild(startersContainer)
+                chatMessages.appendChild(wrapper);
             }
 
             toggleLoading(isLoading) {
@@ -977,7 +944,7 @@
                 if (sendButton) sendButton.disabled = isLoading;
                 if (messageInput) {
                     messageInput.disabled = isLoading;
-                    messageInput.placeholder = isLoading ? "..." : "Ask me anything...";
+                    messageInput.placeholder = isLoading ? "Junaid AI is thinking..." : "Ask me anything...";
                 }
             }
 
@@ -990,32 +957,90 @@
 
             scrollToBottom(element) {
                 if (!element) return;
-                requestAnimationFrame(() => {
-                    element.scrollTop = element.scrollHeight;
-                });
+                element.scrollTo({ top: element.scrollHeight, behavior: 'smooth' });
             }
             
-            showModal(title, text) {
+            showModal(title, text, actions = []) {
+                const existingModal = document.querySelector('.modal-overlay');
+                if(existingModal) existingModal.remove();
+
                 const modalTemplate = document.getElementById('modal-template');
                 const modalNode = modalTemplate.content.cloneNode(true);
-                modalNode.getElementById('modal-title').textContent = title;
-                modalNode.getElementById('modal-text').textContent = text;
                 
-                const closeBtn = modalNode.getElementById('modal-close-btn');
-                const overlay = modalNode.getElementById('modal-overlay');
+                modalNode.querySelector('#modal-title').textContent = title;
+                modalNode.querySelector('#modal-text').textContent = text;
                 
-                const closeModal = () => overlay.remove();
+                const modalActionsContainer = modalNode.querySelector('.modal-actions');
+                modalActionsContainer.innerHTML = '';
+
+                if (actions.length > 0) {
+                    actions.forEach(action => {
+                        const button = document.createElement('button');
+                        button.textContent = action.label;
+                        button.className = action.primary ? 'btn-primary' : 'btn-secondary';
+                        button.onclick = () => {
+                            action.callback();
+                            this.closeModal();
+                        };
+                        modalActionsContainer.appendChild(button);
+                    });
+                } else {
+                     const okButton = document.createElement('button');
+                     okButton.textContent = 'Got It';
+                     okButton.className = 'btn-primary';
+                     okButton.onclick = () => this.closeModal();
+                     modalActionsContainer.appendChild(okButton);
+                }
+
+                const closeBtn = modalNode.querySelector('#modal-close-btn');
+                const overlay = modalNode.querySelector('.modal-overlay');
                 
-                closeBtn.addEventListener('click', closeModal);
+                closeBtn.addEventListener('click', () => this.closeModal());
                 overlay.addEventListener('click', (e) => {
-                    if (e.target === overlay) closeModal();
+                    if (e.target === overlay) this.closeModal();
                 });
                 
                 document.body.appendChild(modalNode);
+                overlay.style.opacity = 0;
+                requestAnimationFrame(() => {
+                    overlay.style.opacity = 1;
+                });
             }
 
-            toggleSidebar() { document.getElementById('sidebar').classList.toggle('open'); document.getElementById('sidebar-overlay').classList.toggle('hidden'); }
+            closeModal() {
+                const overlay = document.querySelector('.modal-overlay');
+                if (overlay) {
+                    overlay.style.opacity = 0;
+                    setTimeout(() => overlay.remove(), 300);
+                }
+            }
 
+            showTooltip(text, targetElement) {
+                const tooltip = document.createElement('div');
+                tooltip.textContent = text;
+                tooltip.className = 'absolute z-10 px-3 py-2 text-sm font-medium text-white bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip';
+                document.body.appendChild(tooltip);
+
+                const { top, left, width } = targetElement.getBoundingClientRect();
+                tooltip.style.left = `${left + width / 2 - tooltip.offsetWidth / 2}px`;
+                tooltip.style.top = `${top - tooltip.offsetHeight - 8}px`;
+
+                requestAnimationFrame(() => {
+                    tooltip.style.opacity = 1;
+                });
+
+                setTimeout(() => {
+                    tooltip.style.opacity = 0;
+                    setTimeout(() => tooltip.remove(), 300);
+                }, 2000);
+            }
+
+            toggleSidebar() {
+                const sidebar = document.getElementById('sidebar');
+                const overlay = document.getElementById('sidebar-overlay');
+                const isOpen = sidebar.classList.toggle('open');
+                overlay.classList.toggle('hidden', !isOpen);
+            }
         }
     </script>
 </body>
