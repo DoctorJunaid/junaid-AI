@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     
-    <title>Junaid AI - Enterprise Pro v9.5 | Instant Response</title>
-    <meta name="description" content="A visually stunning and fully responsive enterprise AI solution with a polished glassmorphism UI and instant text responses.">
-    <meta name="keywords" content="Enterprise AI, Chat UI, Glassmorphism, Responsive Design, AI Platform, Optimized">
+    <title>Junaid AI - Enterprise Pro v9.6 | Readability Update</title>
+    <meta name="description" content="A visually stunning and fully responsive enterprise AI solution with a polished glassmorphism UI and improved text formatting for readability.">
+    <meta name="keywords" content="Enterprise AI, Chat UI, Glassmorphism, Responsive Design, AI Platform, Optimized, Readability">
     <meta name="author" content="Muhammad Junaid Aurangzeb">
     <link rel="canonical" href="https://junaid-ai.com" />
     <meta name="robots" content="index, follow">
@@ -173,6 +173,40 @@
             box-shadow: 0 2px 8px rgba(0,0,0,0.05);
         }
         
+        /* Styles for Markdown content */
+        .message-bubble p { margin-bottom: 0.75rem; }
+        .message-bubble p:last-child { margin-bottom: 0; }
+        .message-bubble ul, .message-bubble ol {
+            margin-top: 0.5rem;
+            margin-bottom: 0.75rem;
+            padding-left: 1.5rem;
+        }
+        .message-bubble ul { list-style-type: disc; }
+        .message-bubble ol { list-style-type: decimal; }
+        .message-bubble li { margin-bottom: 0.25rem; }
+        .message-bubble code {
+            background-color: rgba(0,0,0,0.05);
+            padding: 0.125rem 0.25rem;
+            border-radius: 0.25rem;
+            font-family: 'Courier New', Courier, monospace;
+        }
+        .message-bubble pre {
+            background-color: #f3f4f6;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            overflow-x: auto;
+            margin-top: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+        .message-bubble pre code { background-color: transparent; padding: 0; }
+        .message-bubble blockquote {
+            border-left: 4px solid #d1d5db;
+            padding-left: 1rem;
+            margin-left: 0;
+            font-style: italic;
+            color: var(--text-secondary);
+        }
+
         .avatar { 
             width: 2.5rem;
             height: 2.5rem;
@@ -557,7 +591,7 @@
                                 <div class="status-online"></div>
                                 <span>API Status: Operational</span>
                             </div>
-                            <div class="version-badge">v9.5</div>
+                            <div class="version-badge">v9.6</div>
                         </div>
                     </div>
                 </aside>
@@ -863,7 +897,7 @@
                 if (!bubble) return;
                 
                 bubble.dataset.rawContent = text;
-                bubble.innerHTML = marked.parse(text, { breaks: true, gfm: true, headerIds: false, mangle: false });
+                bubble.innerHTML = marked.parse(text, { gfm: true, headerIds: false, mangle: false });
                 this.scrollToBottom(document.getElementById('chat-messages'));
             }
 
