@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     
-    <title>Junaid AI - Professional Edition v2.1</title>
+    <title>Junaid AI - Professional Edition v2.3</title>
     <meta name="description" content="Professional AI assistant for Pakistani businesses and individuals. Featuring advanced chat capabilities, real-time streaming, and enterprise-grade security.">
     <meta name="keywords" content="AI Assistant, Pakistani AI, Enterprise AI, Business AI, Professional Chat, Junaid AI">
     <meta name="author" content="Muhammad Junaid Aurangzeb">
@@ -451,6 +451,51 @@
         .hidden { display: none !important; }
         .blinking-cursor { display: inline-block; width: 2px; height: 1em; background-color: var(--text-primary); animation: blink 1s step-end infinite; vertical-align: text-bottom; }
         @keyframes blink { 50% { opacity: 0; } }
+
+        /* --- RESPONSIVE STYLES --- */
+        @media (max-width: 768px) {
+            .main-container { padding: 0; }
+            .main-layout { border-radius: 0; border: none; }
+            .sidebar {
+                position: fixed;
+                inset-y: 0;
+                left: 0;
+                z-index: 50;
+                transform: translateX(-100%);
+                width: 85vw;
+                max-width: 320px;
+                box-shadow: 0 0 40px rgba(0,0,0,0.1);
+            }
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            .sidebar-toggle {
+                display: block;
+            }
+            .sidebar-overlay {
+                position: fixed;
+                inset: 0;
+                background-color: rgba(0, 0, 0, 0.3);
+                z-index: 40;
+                transition: opacity 0.3s ease;
+            }
+            .message-actions {
+                opacity: 1;
+                background: var(--bg-page-content);
+                padding: 0.25rem;
+                border-radius: 99px;
+            }
+            .message-user-container .message-actions {
+                left: 0.5rem;
+                top: -1.25rem;
+                transform: translateY(0);
+            }
+            .message-ai-container .message-actions {
+                right: 0.5rem;
+                top: -1.25rem;
+                transform: translateY(0);
+            }
+        }
     </style>
 </head>
 <body>
@@ -484,7 +529,7 @@
                         </button>
                         <div class="flex items-center justify-between text-xs text-text-secondary pt-2">
                             <span>&copy; 2025 Junaid AI</span>
-                            <span>v2.1</span>
+                            <span>v2.2</span>
                         </div>
                     </div>
                 </aside>
@@ -622,7 +667,6 @@
                     if (this.abortController) this.abortController.abort();
                     this.abortController = new AbortController();
 
-                    let currentMessageId = null;
                     let fullResponse = "";
                     let aiMessageElement = null;
 
