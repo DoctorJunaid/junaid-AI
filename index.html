@@ -645,6 +645,13 @@
         document.addEventListener('DOMContentLoaded', () => {
             const app = new JunaidAI();
             app.init();
+
+            const setAppHeight = () => {
+                const doc = document.documentElement;
+                doc.style.setProperty('--app-height', `${window.innerHeight}px`);
+            };
+            window.addEventListener('resize', setAppHeight);
+            setAppHeight();
         });
 
         class JunaidAI {
