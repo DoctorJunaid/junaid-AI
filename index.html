@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     
-    <title>Junaid AI - v11.3 | UI Hotfix</title>
-    <meta name="description" content="A professional, interactive, and fast enterprise AI solution with streaming, message editing, dark mode, and improved UX.">
-    <meta name="keywords" content="Enterprise AI, Chat UI, Streaming, Message Editing, Performance, Dark Mode, AI Platform, Optimized">
+    <title>Junaid AI - v12.0 | Modular Edition</title>
+    <meta name="description" content="A professional, interactive, and fast enterprise AI solution with a modular architecture, message reactions, and more.">
+    <meta name="keywords" content="Enterprise AI, Chat UI, Modular Architecture, Message Reactions, Performance, Dark Mode, AI Platform">
     <meta name="author" content="Muhammad Junaid Aurangzeb">
     <link rel="canonical" href="https://junaid-ai.com" />
     <meta name="robots" content="index, follow">
@@ -32,9 +32,11 @@
             --bg-input-container: #ffffff; --bg-ai-bubble: #f3f4f6;
             --bg-prompt-button: #f9fafb; --bg-prompt-button-hover: #ffffff;
             --bg-modal: rgba(255, 255, 255, 0.5); --bg-menu-popover: #ffffff;
+            --bg-reaction-active: rgba(79, 70, 229, 0.1);
 
             --text-primary: #1f2937; --text-secondary: #4b5563;
             --text-user-bubble: #ffffff; --text-timestamp: #6b7280;
+            --text-reaction-active: #4f46e5;
 
             --border-color: #e5e7eb; --border-input-focus: #4f46e5;
             
@@ -49,9 +51,11 @@
             --bg-input-container: #374151; --bg-ai-bubble: #374151;
             --bg-prompt-button: #374151; --bg-prompt-button-hover: #4b5563;
             --bg-modal: rgba(17, 24, 39, 0.5); --bg-menu-popover: #2d3748;
+            --bg-reaction-active: rgba(99, 102, 241, 0.2);
             
             --text-primary: #f9fafb; --text-secondary: #9ca3af;
             --text-user-bubble: #ffffff; --text-timestamp: #9ca3af;
+            --text-reaction-active: #818cf8;
 
             --border-color: #374151; --border-input-focus: #6366f1;
         }
@@ -187,6 +191,7 @@
             display: flex; align-items: center; justify-content: center; cursor: pointer;
         }
         .action-btn:hover { background: var(--border-color); color: var(--text-primary); }
+        .action-btn.active { background: var(--bg-reaction-active); color: var(--text-reaction-active); }
 
         /* --- RESPONSIVE & MOBILE --- */
         @media (max-width: 768px) {
@@ -257,8 +262,7 @@
                             <button id="sidebar-close-btn" class="sidebar-close-btn p-1 -mr-2 text-text-secondary hover:text-text-primary"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
                         </div>
                         <nav class="space-y-2">
-                            <button data-page="chat" class="nav-btn sidebar-btn w-full flex items-center gap-3 px-4 py-2.5 rounded-xl"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg><span>AI Chat</span></button>
-                            <button id="clear-history-btn" class="sidebar-btn w-full flex items-center gap-3 px-4 py-2.5 rounded-xl"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg><span>Clear History</span></button>
+                            <button id="new-chat-btn" class="sidebar-btn w-full flex items-center gap-3 px-4 py-2.5 rounded-xl"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg><span>New Chat</span></button>
                         </nav>
                     </div>
                     <div class="footer-section pt-4 mt-4 border-t border-border-color">
@@ -269,7 +273,7 @@
                         </button>
                         <div class="flex items-center justify-between text-xs text-text-secondary pt-2">
                             <span>&copy; 2025 Junaid AI</span>
-                            <span>v11.2</span>
+                            <span>v11.3</span>
                         </div>
                     </div>
                 </aside>
@@ -281,7 +285,7 @@
     
     <template id="chat-page-template">
         <div class="chat-page-layout">
-            <header class="page-header"><div class="flex items-center gap-3"><button class="sidebar-toggle text-text-secondary p-1 md:hidden"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"></path></svg></button><h2 class="text-lg font-semibold text-text-primary">AI Chat</h2></div><button id="new-chat-btn" class="btn-secondary flex items-center gap-2 text-sm font-semibold"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>New Chat</button></header>
+            <header class="page-header"><div class="flex items-center gap-3"><button class="sidebar-toggle text-text-secondary p-1 md:hidden"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"></path></svg></button><h2 class="text-lg font-semibold text-text-primary">AI Chat</h2></div></header>
             <main id="chat-messages" class="custom-scrollbar" role="log" aria-live="polite"></main>
             <footer class="input-area"><form id="chat-form" class="relative"><div class="input-container"><textarea id="message-input" placeholder="Ask me anything..." rows="1" class="message-input custom-scrollbar" aria-label="Chat message input"></textarea><button id="send-button" type="submit" class="send-button" aria-label="Send message"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 19V5m0 0L5 12m7-7l7 7"></path></svg></button></div></form></footer>
         </div>
@@ -290,7 +294,7 @@
     <script type="module">
         class JunaidAI {
             constructor() {
-                this.state = { isAwaitingResponse: false, currentPage: 'chat', editingMessageId: null };
+                this.state = { isAwaitingResponse: false, editingMessageId: null };
                 this.chatHistory = [];
                 this.dom = {};
                 this.abortController = null;
@@ -312,9 +316,8 @@
                 appContainer.appendChild(shellContent);
 
                 this.cacheDOMElements();
-                this.loadTheme();
                 this.bindMainAppEventListeners();
-                this.navigate(this.state.currentPage);
+                this.loadTheme();
                 this.loadChatHistory();
                 this.setAppHeight();
                 window.addEventListener('resize', this.setAppHeight);
@@ -329,19 +332,8 @@
                 this.dom.sunIcon = document.getElementById('theme-icon-sun');
                 this.dom.moonIcon = document.getElementById('theme-icon-moon');
                 this.dom.themeText = document.getElementById('theme-text');
-            }
-
-            navigate(pageId) {
-                this.state.currentPage = pageId || 'chat';
-                const template = document.getElementById(`${this.state.currentPage}-page-template`);
-                if (!this.dom.mainContent || !template) return;
-                
-                this.dom.mainContent.innerHTML = template.innerHTML;
-                this.dom.chatMessages = document.getElementById('chat-messages');
-                
-                document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.page === this.state.currentPage));
-                if (this.pageInitializers[this.state.currentPage]) this.pageInitializers[this.state.currentPage](this);
-                if (window.innerWidth <= 768) this.closeSidebar();
+                this.dom.chatPageTemplate = document.getElementById('chat-page-template');
+                this.dom.chatMessages = null; // Will be cached when chat page is rendered
             }
 
             bindMainAppEventListeners() {
@@ -350,30 +342,30 @@
                     const closest = (selector) => target.closest(selector);
                     if (closest('.sidebar-toggle')) this.openSidebar();
                     if (closest('#sidebar-close-btn') || closest('#sidebar-overlay')) this.closeSidebar();
-                    if (closest('#clear-history-btn')) this.confirmClearHistory();
+                    if (closest('#new-chat-btn')) this.confirmNewChat();
                     if (closest('#theme-toggle')) this.toggleTheme();
                     if (closest('.copy-btn')) this.copyCode(closest('.copy-btn'));
                     if (closest('.edit-btn')) this.handleEditClick(closest('.edit-btn'));
                     if (closest('.delete-btn')) this.handleDeleteClick(closest('.delete-btn'));
-                    const navBtn = closest('.nav-btn');
-                    if (navBtn) this.navigate(navBtn.dataset.page);
+                    if (closest('.like-btn')) this.handleReactionClick(closest('.like-btn'), 'like');
+                    if (closest('.dislike-btn')) this.handleReactionClick(closest('.dislike-btn'), 'dislike');
                 });
             }
 
-            pageInitializers = {
-                chat: (app) => {
-                    const chatForm = document.getElementById('chat-form');
-                    const messageInput = document.getElementById('message-input');
-                    chatForm.addEventListener('submit', (e) => app.handleFormSubmit(e));
-                    messageInput.addEventListener('input', () => app.autoGrowTextarea(messageInput));
-                    messageInput.addEventListener('keydown', (e) => {
-                        if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); chatForm.requestSubmit(); }
-                        if (e.key === 'Escape' && this.state.editingMessageId) { this.cancelEdit(); }
-                    });
-                    document.getElementById('new-chat-btn').addEventListener('click', () => app.startNewChat());
-                    this.renderChatHistory();
-                }
-            };
+            renderChatPage() {
+                if (!this.dom.mainContent || !this.dom.chatPageTemplate) return;
+                this.dom.mainContent.innerHTML = this.dom.chatPageTemplate.innerHTML;
+                this.dom.chatMessages = document.getElementById('chat-messages');
+                const chatForm = document.getElementById('chat-form');
+                const messageInput = document.getElementById('message-input');
+                chatForm.addEventListener('submit', (e) => this.handleFormSubmit(e));
+                messageInput.addEventListener('input', () => this.autoGrowTextarea(messageInput));
+                messageInput.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); chatForm.requestSubmit(); }
+                    if (e.key === 'Escape' && this.state.editingMessageId) { this.cancelEdit(); }
+                });
+                this.renderChatHistory();
+            }
 
             // --- THEME & UI MANAGEMENT ---
             setAppHeight = () => document.documentElement.style.setProperty('--app-height', `${window.innerHeight}px`);
@@ -395,7 +387,7 @@
                     const saved = localStorage.getItem('junaid-ai-history');
                     this.chatHistory = saved ? JSON.parse(saved) : [];
                 } catch (e) { this.chatHistory = []; }
-                this.renderChatHistory();
+                this.renderChatPage();
             }
             saveChatHistory() { localStorage.setItem('junaid-ai-history', JSON.stringify(this.chatHistory)); }
             renderChatHistory() {
@@ -410,7 +402,7 @@
                 }
             }
             startNewChat() { this.chatHistory = []; this.saveChatHistory(); this.renderChatHistory(); }
-            confirmClearHistory() { this.showModal('Clear History', 'Are you sure? This will delete all messages.', () => this.startNewChat()); }
+            confirmNewChat() { this.showModal('Start New Chat', 'Are you sure you want to clear this chat and start a new one?', () => this.startNewChat()); }
 
             // --- CORE CHAT LOGIC ---
             async handleFormSubmit(e) {
@@ -426,7 +418,7 @@
                 
                 if (this.chatHistory.length === 0) this.dom.chatMessages.innerHTML = '';
 
-                const messageData = { role: 'user', content: userMessage, id: Date.now().toString() };
+                const messageData = { role: 'user', content: userMessage, id: Date.now().toString(), timestamp: new Date().toISOString() };
                 this.chatHistory.push(messageData);
                 this.appendMessage(messageData);
                 this.saveChatHistory();
@@ -450,7 +442,7 @@
                     const response = await fetch('/api/chat', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ history: this.chatHistory.map(({id, ...rest}) => rest) }),
+                        body: JSON.stringify({ history: this.chatHistory.map(({id, reaction, ...rest}) => rest) }),
                         signal: this.abortController.signal,
                     });
                     
@@ -459,7 +451,7 @@
                     const decoder = new TextDecoder();
                     
                     currentMessageId = Date.now().toString();
-                    const messageData = { role: 'assistant', content: '', id: currentMessageId };
+                    const messageData = { role: 'assistant', content: '', id: currentMessageId, timestamp: new Date().toISOString(), reaction: null };
                     this.chatHistory.push(messageData);
                     aiMessageElement = this.appendMessage(messageData);
 
@@ -544,12 +536,17 @@
                 actionsWrapper.className = 'message-actions';
                 if (msg.role === 'user') {
                     actionsWrapper.innerHTML += `<button class="action-btn edit-btn" aria-label="Edit message"><svg class="w-4 h-4 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L16.732 3.732z"></path></svg></button>`;
+                } else if (msg.role === 'assistant') {
+                    const likeClass = msg.reaction === 'like' ? 'active' : '';
+                    const dislikeClass = msg.reaction === 'dislike' ? 'active' : '';
+                    actionsWrapper.innerHTML += `<button class="action-btn like-btn ${likeClass}" aria-label="Like message"><svg class="w-4 h-4 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 18.331V8.5A2.5 2.5 0 019.5 6h.085c.938 0 1.757.464 2.243 1.27l.5 1.43zM4 21V8.5A2.5 2.5 0 016.5 6H7"></path></svg></button>`;
+                    actionsWrapper.innerHTML += `<button class="action-btn dislike-btn ${dislikeClass}" aria-label="Dislike message"><svg class="w-4 h-4 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14H5.236a2 2 0 01-1.789-2.894l3.5-7A2 2 0 018.738 3h4.017c.163 0 .326.02.485.06L17 5.669V15.5A2.5 2.5 0 0114.5 18h-.085c-.938 0-1.757-.464-2.243-1.27l-.5-1.43zM20 3v12.5A2.5 2.5 0 0117.5 18H17"></path></svg></button>`;
                 }
                 actionsWrapper.innerHTML += `<button class="action-btn delete-btn" aria-label="Delete message"><svg class="w-4 h-4 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button>`;
                 return actionsWrapper;
             }
 
-            // --- EDIT & DELETE LOGIC ---
+            // --- EDIT, DELETE, REACTION LOGIC ---
             handleEditClick(btn) {
                 const msgContainer = btn.closest('.message-container');
                 this.state.editingMessageId = msgContainer.dataset.id;
@@ -566,10 +563,10 @@
                 const msgIndex = this.chatHistory.findIndex(m => m.id === this.state.editingMessageId);
                 if (msgIndex === -1) return;
                 
-                this.chatHistory.splice(msgIndex); // Remove the old message and all subsequent messages
+                this.chatHistory.splice(msgIndex);
                 this.renderChatHistory();
 
-                const messageData = { role: 'user', content: newContent, id: this.state.editingMessageId };
+                const messageData = { role: 'user', content: newContent, id: this.state.editingMessageId, timestamp: new Date().toISOString() };
                 this.chatHistory.push(messageData);
                 this.appendMessage(messageData);
                 this.saveChatHistory();
@@ -594,6 +591,21 @@
                 });
             }
 
+            handleReactionClick(btn, reactionType) {
+                const msgContainer = btn.closest('.message-container');
+                const msgId = msgContainer.dataset.id;
+                const msg = this.chatHistory.find(m => m.id === msgId);
+                if (!msg) return;
+
+                msg.reaction = msg.reaction === reactionType ? null : reactionType;
+                this.saveChatHistory();
+                
+                const likeBtn = msgContainer.querySelector('.like-btn');
+                const dislikeBtn = msgContainer.querySelector('.dislike-btn');
+                likeBtn.classList.toggle('active', msg.reaction === 'like');
+                dislikeBtn.classList.toggle('active', msg.reaction === 'dislike');
+            }
+
             // --- UTILITIES ---
             toggleLoading(isLoading) { this.state.isAwaitingResponse = isLoading; document.getElementById('send-button').disabled = isLoading; }
             autoGrowTextarea = (el) => { if (el) { el.style.height = 'auto'; el.style.height = `${Math.min(el.scrollHeight, 120)}px`; } }
@@ -601,11 +613,10 @@
             addCopyButtons(container) { container.querySelectorAll('pre').forEach(pre => { if (pre.querySelector('.copy-btn')) return; const btn = document.createElement('button'); btn.className = 'copy-btn'; btn.innerHTML = `<span>Copy</span>`; pre.appendChild(btn); }); }
             copyCode(button) { const code = button.parentElement.querySelector('code'); navigator.clipboard.writeText(code.innerText).then(() => { button.innerHTML = `<span>Copied!</span>`; setTimeout(() => { button.innerHTML = `<span>Copy</span>`; }, 2000); }); }
             showModal(title, text, onConfirm) { const t = document.getElementById('modal-template').content.cloneNode(true); t.querySelector('#modal-title').textContent = title; t.querySelector('#modal-text').textContent = text; const o = t.querySelector('.modal-overlay'); const c = () => o.remove(); t.querySelector('#modal-confirm-btn').onclick = () => { onConfirm(); c(); }; t.querySelector('#modal-cancel-btn').onclick = c; t.querySelector('#modal-close-btn').onclick = c; o.onclick = (e) => { if (e.target === o) c(); }; document.body.appendChild(t); }
-            showWelcomeMessage() { const welcomeData = { content: "Assalam-o-Alaikum! I am Junaid AI, your enterprise-grade Pakistani AI assistant. How may I assist you today?", role: 'assistant', id: 'welcome-msg' }; this.appendMessage(welcomeData); this.showPromptStarters(); }
+            showWelcomeMessage() { const welcomeData = { content: "Assalam-o-Alaikum! I am Junaid AI, your enterprise-grade Pakistani AI assistant. How may I assist you today?", role: 'assistant', id: 'welcome-msg', timestamp: new Date().toISOString() }; this.appendMessage(welcomeData); this.showPromptStarters(); }
             showPromptStarters() { if (!this.dom.chatMessages || this.chatHistory.length > 0) return; const w = document.createElement('div'); w.className = 'prompt-starters-wrapper ml-12'; const c = document.createElement('div'); c.className = 'grid grid-cols-1 md:grid-cols-2 gap-2 mt-4'; const p = ["Suggest a business plan for a tech startup in Lahore", "What are the key exports of Pakistan?", "Write a formal email in Urdu", "Explain the significance of the Karakoram Highway"]; p.forEach(prompt => { const b = document.createElement('button'); b.textContent = prompt; b.className = 'bg-prompt-button border border-border-color rounded-lg p-3 text-sm text-left text-text-primary hover:bg-prompt-button-hover hover:border-border-input-focus transition-all'; b.onclick = () => { document.getElementById('message-input').value = prompt; document.getElementById('chat-form').requestSubmit(); }; c.appendChild(b); }); w.appendChild(c); this.dom.chatMessages.appendChild(w); }
         }
 
-        // Initialize the app after the DOM is fully loaded
         document.addEventListener('DOMContentLoaded', () => {
             const app = new JunaidAI();
             app.init();
