@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     
-    <title>Junaid AI - Professional Edition v2.3</title>
+    <title>Junaid AI - Professional Edition v2.4</title>
     <meta name="description" content="Professional AI assistant for Pakistani businesses and individuals. Featuring advanced chat capabilities, real-time streaming, and enterprise-grade security.">
     <meta name="keywords" content="AI Assistant, Pakistani AI, Enterprise AI, Business AI, Professional Chat, Junaid AI">
     <meta name="author" content="Muhammad Junaid Aurangzeb">
@@ -17,7 +17,7 @@
     <!-- Performance optimizations -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" as="style">
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Naskh+Arabic:wght@400;500;600&display=swap" as="style">
     <link rel="preload" href="https://cdn.jsdelivr.net/npm/marked@12.0.0/marked.min.js" as="script">
     
     <!-- CSS and JS -->
@@ -25,7 +25,7 @@
     <script src="https://cdn.jsdelivr.net/npm/marked@12.0.0/marked.min.js" defer></script>
     
     <!-- Load fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Naskh+Arabic:wght@400;500;600&display=swap" rel="stylesheet">
 
     <style>
         /* CSS Custom Properties for Theme Management */
@@ -36,19 +36,21 @@
             --bg-main: #ffffff;
             --bg-sidebar: #f8fafc;
             --bg-page-content: #ffffff;
-            --bg-header: rgba(255, 255, 255, 0.9);
+            --bg-header: rgba(255, 255, 255, 0.85);
             --bg-input-area: rgba(255, 255, 255, 0.8);
             --bg-input-container: #ffffff;
             --bg-ai-bubble: #f1f5f9;
             --bg-user-bubble: linear-gradient(135deg, #059669, #2563eb);
             --bg-prompt-button: #f9fafb;
-            --bg-prompt-button-hover: #ffffff;
+            --bg-prompt-button-hover: #f1f5f9;
             --bg-modal: rgba(255, 255, 255, 0.95);
             --bg-menu-popover: #ffffff;
             --bg-reaction-active: rgba(37, 99, 235, 0.1);
             --bg-error: #fef2f2;
             --bg-success: #f0fdf4;
             --bg-warning: #fffbeb;
+            --bg-code: #0f172a;
+            --bg-code-header: #1e293b;
 
             --text-primary: #1f2937;
             --text-secondary: #6b7280;
@@ -59,6 +61,8 @@
             --text-error: #dc2626;
             --text-success: #059669;
             --text-warning: #d97706;
+            --text-link: #2563eb;
+            --text-code: #e2e8f0;
 
             --border-color: #e5e7eb;
             --border-input-focus: #2563eb;
@@ -80,7 +84,7 @@
             --bg-main: #1e293b;
             --bg-sidebar: #0f172a;
             --bg-page-content: #1e293b;
-            --bg-header: rgba(15, 23, 42, 0.9);
+            --bg-header: rgba(15, 23, 42, 0.85);
             --bg-input-area: rgba(15, 23, 42, 0.8);
             --bg-input-container: #334155;
             --bg-ai-bubble: #334155;
@@ -93,6 +97,8 @@
             --bg-error: #450a0a;
             --bg-success: #064e3b;
             --bg-warning: #451a03;
+            --bg-code: #1e293b;
+            --bg-code-header: #334155;
             
             --text-primary: #f8fafc;
             --text-secondary: #cbd5e1;
@@ -103,6 +109,8 @@
             --text-error: #f87171;
             --text-success: #34d399;
             --text-warning: #fbbf24;
+            --text-link: #60a5fa;
+            --text-code: #f1f5f9;
 
             --border-color: #475569;
             --border-input-focus: #3b82f6;
@@ -178,7 +186,13 @@
             display: flex;
             flex-direction: column;
             overflow: hidden;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), padding 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .main-layout.sidebar-collapsed .sidebar {
+            width: 0;
+            padding: 0;
+            border-right: none;
         }
 
         .page-content {
@@ -203,298 +217,65 @@
         }
 
         /* Chat Layout */
-        .chat-page-layout {
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-        }
-
-        #chat-messages {
-            flex: 1;
-            overflow-y: auto;
-            padding: 1.5rem;
-            scroll-behavior: smooth;
-        }
-
-        .input-area {
-            flex-shrink: 0;
-            padding: 1rem 1.5rem;
-            padding-bottom: calc(1rem + env(safe-area-inset-bottom));
-            background: var(--bg-input-area);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-top: 1px solid var(--border-color);
-        }
+        .chat-page-layout { display: flex; flex-direction: column; height: 100%; }
+        #chat-messages { flex: 1; overflow-y: auto; padding: 1.5rem; scroll-behavior: smooth; }
+        .input-area { flex-shrink: 0; padding: 1rem 1.5rem; padding-bottom: calc(1rem + env(safe-area-inset-bottom)); background: var(--bg-input-area); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-top: 1px solid var(--border-color); }
 
         /* Message Styling */
-        .message-container {
-            position: relative;
-            margin-bottom: 1rem;
-        }
-
-        .message-container:hover .message-actions {
-            opacity: 1;
-        }
-
-        .message-bubble {
-            max-width: 80%;
-            padding: 1rem 1.5rem;
-            border-radius: 1.5rem;
-            word-wrap: break-word;
-            line-height: 1.6;
-            position: relative;
-            font-size: 0.95rem;
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .message-user {
-            display: flex;
-            justify-content: flex-end;
-            margin-bottom: 0.5rem;
-        }
-
-        .message-user .message-bubble {
-            background: var(--bg-user-bubble);
-            color: var(--text-user-bubble);
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            border-bottom-right-radius: 0.5rem;
-        }
-
-        .message-ai {
-            display: flex;
-            justify-content: flex-start;
-            gap: 0.75rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .message-ai .message-bubble {
-            background: var(--bg-ai-bubble);
-            color: var(--text-primary);
-            border: 1px solid var(--border-color);
-            border-bottom-left-radius: 0.5rem;
-        }
-
-        .message-timestamp {
-            font-size: 0.75rem;
-            color: var(--text-timestamp);
-            margin-top: 0.25rem;
-            padding: 0 1.5rem;
-            font-weight: 500;
-        }
-
-        .message-user-container + .message-timestamp {
-            text-align: right;
-        }
-
-        .message-ai-container + .message-timestamp {
-            padding-left: calc(3rem + 0.75rem);
-        }
+        .message-container { display: flex; flex-direction: column; margin-bottom: 1.5rem; }
+        .message-wrapper { display: flex; max-width: 100%; }
+        .message-bubble { max-width: 85%; padding: 1rem 1.5rem; border-radius: 1.5rem; word-wrap: break-word; line-height: 1.7; position: relative; font-size: 1rem; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
+        .message-bubble a { color: var(--text-link); text-decoration: underline; text-underline-offset: 4px; }
+        .message-bubble a:hover { opacity: 0.8; }
+        .message-user { justify-content: flex-end; }
+        .message-user .message-bubble { background: var(--bg-user-bubble); color: var(--text-user-bubble); box-shadow: 0 4px 10px -2px var(--shadow-color); border-bottom-right-radius: 0.5rem; }
+        .message-ai { justify-content: flex-start; gap: 0.75rem; }
+        .message-ai .message-bubble { background: var(--bg-ai-bubble); color: var(--text-primary); border: 1px solid var(--border-color); border-bottom-left-radius: 0.5rem; }
+        .message-timestamp { font-size: 0.8rem; color: var(--text-timestamp); margin-top: 0.5rem; padding: 0 1.5rem; font-weight: 500; }
+        .message-user-container { align-items: flex-end; }
+        .message-ai-container { align-items: flex-start; }
+        .message-ai-container .message-timestamp { padding-left: calc(3rem + 0.75rem); }
+        .message-bubble[dir="rtl"] { text-align: right; font-family: 'Noto Naskh Arabic', serif; }
 
         /* Avatar Styling */
-        .avatar {
-            width: 3rem;
-            height: 3rem;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .avatar:hover {
-            transform: scale(1.05);
-        }
+        .avatar { width: 3rem; height: 3rem; border-radius: 50%; background: linear-gradient(135deg, var(--secondary-color), var(--primary-color)); display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
+        .avatar:hover { transform: scale(1.05); }
 
         /* Input Styling */
-        .input-container {
-            background: var(--bg-input-container);
-            border: 2px solid var(--border-color);
-            border-radius: 1.5rem;
-            padding: 0.75rem;
-            display: flex;
-            align-items: flex-end;
-            gap: 0.75rem;
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
-        }
-
-        .input-container:focus-within {
-            border-color: var(--border-input-focus);
-            box-shadow: 0 0 0 3px var(--shadow-color);
-        }
-
-        .message-input {
-            flex: 1;
-            background: transparent;
-            border: none;
-            outline: none;
-            color: var(--text-primary);
-            font-size: 1rem;
-            resize: none;
-            min-height: 24px;
-            max-height: 120px;
-            padding: 0.5rem 0;
-            line-height: 1.5;
-            font-family: inherit;
-        }
-
-        .message-input::placeholder {
-            color: var(--text-secondary);
-            opacity: 0.8;
-        }
-
-        .send-button {
-            background: var(--primary-color);
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 48px;
-            height: 48px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            flex-shrink: 0;
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        .send-button:hover:not(:disabled) {
-            background: var(--primary-color-hover);
-            transform: scale(1.05);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-        }
-
-        .send-button:disabled {
-            background: var(--text-secondary);
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        /* Message Actions */
-        .message-actions {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            display: flex;
-            gap: 0.5rem;
-            opacity: 0;
-            transition: opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-            z-index: 10;
-        }
-
-        .message-user-container .message-actions {
-            left: -4rem;
-        }
-
-        .message-ai-container .message-actions {
-            right: -4rem;
-        }
-
-        .action-btn {
-            background: var(--bg-ai-bubble);
-            border: 1px solid var(--border-color);
-            color: var(--text-secondary);
-            border-radius: 50%;
-            width: 36px;
-            height: 36px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        .action-btn:hover {
-            background: var(--border-color);
-            color: var(--text-primary);
-            transform: scale(1.05);
-        }
-
-        .action-btn.active {
-            background: var(--bg-reaction-active);
-            color: var(--text-reaction-active);
-            border-color: var(--text-reaction-active);
-        }
+        .input-container { background: var(--bg-input-container); border: 2px solid var(--border-color); border-radius: 1.5rem; padding: 0.75rem; display: flex; align-items: flex-end; gap: 0.75rem; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1); }
+        .input-container:focus-within { border-color: var(--border-input-focus); box-shadow: 0 0 0 3px var(--shadow-color); }
+        .message-input { flex: 1; background: transparent; border: none; outline: none; color: var(--text-primary); font-size: 1rem; resize: none; min-height: 24px; max-height: 150px; padding: 0.5rem 0; line-height: 1.5; font-family: inherit; }
+        .message-input::placeholder { color: var(--text-secondary); opacity: 0.8; }
+        .send-button { background: var(--primary-color); color: white; border: none; border-radius: 50%; width: 48px; height: 48px; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); }
+        .send-button:hover:not(:disabled) { background: var(--primary-color-hover); transform: scale(1.05); box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); }
+        .send-button:disabled { background: var(--text-secondary); opacity: 0.6; cursor: not-allowed; transform: none; }
 
         /* Sidebar Styling */
-        .sidebar-btn {
-            color: var(--text-secondary);
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-            border-radius: 0.75rem;
-            font-weight: 500;
-        }
-
-        .sidebar-btn:hover {
-            color: var(--text-primary);
-            background: var(--bg-prompt-button-hover);
-        }
+        .sidebar-btn { color: var(--text-secondary); transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); border-radius: 0.75rem; font-weight: 500; }
+        .sidebar-btn:hover { color: var(--text-primary); background: var(--bg-prompt-button-hover); }
 
         /* Code Blocks */
-        .message-bubble pre {
-            background: var(--bg-ai-bubble);
-            border: 1px solid var(--border-color);
-            border-radius: 0.75rem;
-            padding: 1rem;
-            padding-top: 2.5rem;
-            overflow-x: auto;
-            margin: 1rem 0;
-            position: relative;
-            font-size: 0.9rem;
-        }
+        .message-bubble pre { background: var(--bg-code); border-radius: 0.75rem; margin: 1rem 0; font-size: 0.9rem; overflow: hidden; }
+        .code-header { background: var(--bg-code-header); padding: 0.5rem 1rem; display: flex; justify-content: space-between; align-items: center; color: var(--text-code); font-size: 0.8rem; }
+        .code-lang { font-weight: 500; text-transform: uppercase; }
+        .copy-btn { background: none; border: 1px solid var(--border-color); color: var(--text-code); padding: 0.25rem 0.5rem; border-radius: 0.375rem; cursor: pointer; transition: all 0.2s; font-size: 0.75rem; }
+        .copy-btn:hover { background: var(--border-color); }
+        .code-body { padding: 1rem; overflow-x: auto; color: var(--text-code); }
         
+        /* General UI */
         .hidden { display: none !important; }
         .blinking-cursor { display: inline-block; width: 2px; height: 1em; background-color: var(--text-primary); animation: blink 1s step-end infinite; vertical-align: text-bottom; }
         @keyframes blink { 50% { opacity: 0; } }
+        .popover-menu { position: absolute; top: calc(100% + 0.5rem); right: 0; background: var(--bg-menu-popover); border: 1px solid var(--border-color); border-radius: 0.75rem; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); z-index: 20; padding: 0.5rem; width: 200px; }
 
         /* --- RESPONSIVE STYLES --- */
         @media (max-width: 768px) {
             .main-container { padding: 0; }
             .main-layout { border-radius: 0; border: none; }
-            .sidebar {
-                position: fixed;
-                inset-y: 0;
-                left: 0;
-                z-index: 50;
-                transform: translateX(-100%);
-                width: 85vw;
-                max-width: 320px;
-                box-shadow: 0 0 40px rgba(0,0,0,0.1);
-            }
-            .sidebar.open {
-                transform: translateX(0);
-            }
-            .sidebar-toggle {
-                display: block;
-            }
-            .sidebar-overlay {
-                position: fixed;
-                inset: 0;
-                background-color: rgba(0, 0, 0, 0.3);
-                z-index: 40;
-                transition: opacity 0.3s ease;
-            }
-            .message-actions {
-                opacity: 1;
-                background: var(--bg-page-content);
-                padding: 0.25rem;
-                border-radius: 99px;
-            }
-            .message-user-container .message-actions {
-                left: 0.5rem;
-                top: -1.25rem;
-                transform: translateY(0);
-            }
-            .message-ai-container .message-actions {
-                right: 0.5rem;
-                top: -1.25rem;
-                transform: translateY(0);
-            }
+            .sidebar { position: fixed; inset-y: 0; left: 0; z-index: 50; transform: translateX(-100%); width: 85vw; max-width: 320px; box-shadow: 0 0 40px rgba(0,0,0,0.1); }
+            .sidebar.open { transform: translateX(0); }
+            .sidebar-toggle-desktop { display: none; }
+            .sidebar-overlay { position: fixed; inset: 0; background-color: rgba(0, 0, 0, 0.3); z-index: 40; transition: opacity 0.3s ease; }
         }
     </style>
 </head>
@@ -504,9 +285,9 @@
     
     <template id="main-app-shell-template">
         <div class="main-container">
-            <div class="main-layout">
+            <div id="main-layout" class="main-layout">
                 <aside id="sidebar" class="sidebar p-4">
-                    <div class="flex-grow">
+                    <div class="flex-grow overflow-y-auto">
                         <div class="flex justify-between items-center mb-6">
                             <div class="flex items-center gap-3">
                                 <div class="avatar"><svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.373 3.373 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg></div>
@@ -515,7 +296,7 @@
                                     <p class="text-sm text-text-secondary">Professional Edition</p>
                                 </div>
                             </div>
-                            <button id="sidebar-close-btn" class="sidebar-close-btn p-1 -mr-2 text-text-secondary hover:text-text-primary hidden"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
+                            <button id="sidebar-close-btn" class="sidebar-close-btn p-1 -mr-2 text-text-secondary hover:text-text-primary hidden md:hidden"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
                         </div>
                         <nav class="space-y-2">
                             <button id="new-chat-btn" class="sidebar-btn w-full flex items-center gap-3 px-4 py-2.5 rounded-xl"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg><span>New Chat</span></button>
@@ -529,7 +310,7 @@
                         </button>
                         <div class="flex items-center justify-between text-xs text-text-secondary pt-2">
                             <span>&copy; 2025 Junaid AI</span>
-                            <span>v2.2</span>
+                            <span>v2.4</span>
                         </div>
                     </div>
                 </aside>
@@ -541,7 +322,19 @@
     
     <template id="chat-page-template">
         <div class="chat-page-layout">
-            <header class="page-header"><div class="flex items-center gap-3"><button class="sidebar-toggle text-text-secondary p-1 hidden"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"></path></svg></button><h2 class="text-lg font-semibold text-text-primary">AI Chat</h2></div></header>
+            <header class="page-header">
+                <div class="flex items-center gap-3">
+                    <button class="sidebar-toggle-mobile text-text-secondary p-1 hidden md:hidden"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"></path></svg></button>
+                    <button class="sidebar-toggle-desktop text-text-secondary p-1"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"></path></svg></button>
+                    <h2 class="text-lg font-semibold text-text-primary">AI Chat</h2>
+                </div>
+                <div class="relative">
+                    <button id="mobile-menu-btn" class="text-text-secondary p-1 md:hidden"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01"></path></svg></button>
+                    <div id="mobile-menu-popover" class="popover-menu hidden">
+                        <!-- Popover content will be injected by JS -->
+                    </div>
+                </div>
+            </header>
             <main id="chat-messages" class="custom-scrollbar" role="log" aria-live="polite"></main>
             <footer class="input-area"><form id="chat-form" class="relative"><div class="input-container"><textarea id="message-input" placeholder="Ask me anything..." rows="1" class="message-input custom-scrollbar" aria-label="Chat message input"></textarea><button id="send-button" type="submit" class="send-button" aria-label="Send message"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 19V5m0 0L5 12m7-7l7 7"></path></svg></button></div></form></footer>
         </div>
@@ -564,10 +357,8 @@
                 renderMainApp() {
                     const shellTemplate = document.getElementById('main-app-shell-template');
                     const appContainer = document.getElementById('app-container');
-                    if (!shellTemplate || !appContainer) {
-                        console.error("Fatal Error: Could not find app container or shell template.");
-                        return;
-                    }
+                    if (!shellTemplate || !appContainer) return;
+                    
                     const shellContent = shellTemplate.content.cloneNode(true);
                     appContainer.innerHTML = '';
                     appContainer.appendChild(shellContent);
@@ -575,6 +366,7 @@
                     this.cacheDOMElements();
                     this.bindEventListeners();
                     this.setTheme(localStorage.getItem('junaid-ai-theme') || 'light');
+                    this.setSidebarState(localStorage.getItem('junaid-ai-sidebar') || 'open');
                     this.renderChatPage();
                     this.setAppHeight();
                     window.addEventListener('resize', this.setAppHeight);
@@ -582,6 +374,7 @@
 
                 cacheDOMElements() {
                     this.dom.appContainer = document.getElementById('app-container');
+                    this.dom.mainLayout = document.getElementById('main-layout');
                     this.dom.mainContent = document.getElementById('main-content');
                     this.dom.sidebar = document.getElementById('sidebar');
                     this.dom.sidebarOverlay = document.getElementById('sidebar-overlay');
@@ -597,20 +390,31 @@
                         const target = e.target;
                         const closest = (selector) => target.closest(selector);
 
-                        if (closest('.sidebar-toggle')) this.openSidebar();
+                        if (closest('.sidebar-toggle-mobile')) this.openSidebar();
+                        if (closest('.sidebar-toggle-desktop')) this.toggleSidebar();
                         if (closest('#sidebar-close-btn') || closest('#sidebar-overlay')) this.closeSidebar();
                         if (closest('#new-chat-btn')) this.startNewChat();
                         if (closest('#theme-toggle')) this.toggleTheme();
                         if (closest('.copy-btn')) this.copyCode(closest('.copy-btn'));
+                        if (closest('#mobile-menu-btn')) this.toggleMobileMenu();
+                        
+                        if (!closest('#mobile-menu-btn') && !closest('#mobile-menu-popover')) {
+                            this.closeMobileMenu();
+                        }
                     });
                 },
 
                 renderChatPage() {
                     if (!this.dom.mainContent || !this.dom.chatPageTemplate) return;
-                    this.dom.mainContent.innerHTML = this.dom.chatPageTemplate.innerHTML;
+                    const chatPageContent = this.dom.chatPageTemplate.content.cloneNode(true);
+                    this.dom.mainContent.innerHTML = '';
+                    this.dom.mainContent.appendChild(chatPageContent);
+
                     this.dom.chatMessages = document.getElementById('chat-messages');
+                    this.dom.mobileMenuPopover = document.getElementById('mobile-menu-popover');
                     const chatForm = document.getElementById('chat-form');
                     const messageInput = document.getElementById('message-input');
+                    
                     chatForm.addEventListener('submit', (e) => this.handleFormSubmit(e));
                     messageInput.addEventListener('input', () => this.autoGrowTextarea(messageInput));
                     messageInput.addEventListener('keydown', (e) => {
@@ -620,6 +424,7 @@
                 },
                 
                 setAppHeight() { document.documentElement.style.setProperty('--app-height', `${window.innerHeight}px`); },
+                
                 toggleTheme() { this.setTheme(document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark'); },
                 setTheme(theme) {
                     document.documentElement.setAttribute('data-theme', theme);
@@ -627,6 +432,12 @@
                     this.dom.sunIcon?.classList.toggle('hidden', theme === 'dark');
                     this.dom.moonIcon?.classList.toggle('hidden', theme === 'light');
                     if (this.dom.themeText) this.dom.themeText.textContent = theme === 'dark' ? 'Dark Mode' : 'Light Mode';
+                },
+
+                toggleSidebar() { this.setSidebarState(this.dom.mainLayout.classList.contains('sidebar-collapsed') ? 'open' : 'collapsed'); },
+                setSidebarState(state) {
+                    this.dom.mainLayout.classList.toggle('sidebar-collapsed', state === 'collapsed');
+                    localStorage.setItem('junaid-ai-sidebar', state);
                 },
                 openSidebar() {
                     this.dom.sidebar?.classList.add('open');
@@ -637,11 +448,23 @@
                     this.dom.sidebarOverlay?.classList.add('hidden');
                 },
                 
+                toggleMobileMenu() {
+                    const isOpen = !this.dom.mobileMenuPopover.classList.contains('hidden');
+                    if (isOpen) {
+                        this.closeMobileMenu();
+                    } else {
+                        this.dom.mobileMenuPopover.innerHTML = this.dom.themeToggle.outerHTML;
+                        this.dom.mobileMenuPopover.classList.remove('hidden');
+                    }
+                },
+                closeMobileMenu() { this.dom.mobileMenuPopover?.classList.add('hidden'); },
+
                 startNewChat() {
                     this.state.chatHistory = [];
                     if (!this.dom.chatMessages) return;
                     this.dom.chatMessages.innerHTML = '';
                     this.showWelcomeMessage();
+                    this.closeSidebar();
                 },
 
                 async handleFormSubmit(e) {
@@ -679,7 +502,7 @@
                         });
                         
                         if (!response.ok) {
-                            const errorData = await response.json();
+                            const errorData = await response.json().catch(() => ({}));
                             throw new Error(errorData.message || `HTTP error! Status: ${response.status}`);
                         }
 
@@ -699,13 +522,17 @@
                             messageData.content = fullResponse;
                             this.updateMessageContent(bubble, fullResponse);
                         }
-                        this.addCopyButtons(aiMessageElement);
+                        this.enhanceCodeBlocks(aiMessageElement);
 
                     } catch (error) {
                         if (error.name === 'AbortError') return;
                         console.error("API Error:", error);
                         const errorMsg = `**Error:** I encountered a problem. Details: ${error.message}`;
-                        this.appendMessage({ role: 'assistant', content: errorMsg, isError: true });
+                        if (aiMessageElement) {
+                            this.updateMessageContent(aiMessageElement.querySelector('.message-bubble'), errorMsg, true);
+                        } else {
+                            this.appendMessage({ role: 'assistant', content: errorMsg, isError: true });
+                        }
                     } finally {
                         this.toggleLoading(false);
                     }
@@ -723,7 +550,7 @@
                     container.className = `message-container message-${msg.role}-container`;
                     
                     const wrapper = document.createElement('div');
-                    wrapper.className = `message-wrapper flex message-${msg.role}`;
+                    wrapper.className = `message-wrapper`;
                     
                     const bubble = document.createElement('div');
                     bubble.className = 'message-bubble';
@@ -732,33 +559,128 @@
                         const avatar = document.createElement('div');
                         avatar.className = 'avatar';
                         avatar.innerHTML = `<svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.373 3.373 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>`;
+                        wrapper.classList.add('message-ai');
                         wrapper.appendChild(avatar);
+                    } else {
+                         wrapper.classList.add('message-user');
                     }
                     
                     this.updateMessageContent(bubble, msg.content, msg.isError);
                     wrapper.appendChild(bubble);
                     container.appendChild(wrapper);
 
+                    const timestamp = document.createElement('div');
+                    timestamp.className = 'message-timestamp';
+                    timestamp.textContent = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                    container.appendChild(timestamp);
+
                     return container;
                 },
 
                 updateMessageContent(bubble, content, isError = false) {
                     if (!bubble) return;
-                    bubble.innerHTML = marked.parse(content || '<span class="blinking-cursor"></span>', { gfm: true, breaks: true, headerIds: false, mangle: false });
-                    if (isError) { bubble.style.color = '#ef4444'; }
-                    if (content.includes('`')) {
-                        const msgContainer = bubble.closest('.message-container');
-                        if (msgContainer) this.addCopyButtons(msgContainer);
+                    
+                    const renderer = new marked.Renderer();
+                    renderer.link = (href, title, text) => `<a href="${href}" target="_blank" rel="noopener noreferrer" title="${title || ''}">${text}</a>`;
+
+                    bubble.innerHTML = marked.parse(content || '<span class="blinking-cursor"></span>', { renderer, gfm: true, breaks: true, headerIds: false, mangle: false });
+                    
+                    // RTL/Urdu detection
+                    const urduRegex = /[\u0600-\u06FF]/;
+                    if (urduRegex.test(content)) {
+                        bubble.setAttribute('dir', 'rtl');
+                    } else {
+                        bubble.removeAttribute('dir');
                     }
+
+                    if (isError) { bubble.style.color = 'var(--text-error)'; }
+                    
+                    this.enhanceCodeBlocks(bubble);
                 },
 
                 toggleLoading(isLoading) { this.state.isAwaitingResponse = isLoading; document.getElementById('send-button').disabled = isLoading; },
-                autoGrowTextarea(el) { if (el) { el.style.height = 'auto'; el.style.height = `${Math.min(el.scrollHeight, 120)}px`; } },
+                autoGrowTextarea(el) { if (el) { el.style.height = 'auto'; el.style.height = `${Math.min(el.scrollHeight, 150)}px`; } },
                 scrollToBottom(el) { if (el) el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' }); },
-                addCopyButtons(container) { container.querySelectorAll('pre').forEach(pre => { if (pre.querySelector('.copy-btn')) return; const btn = document.createElement('button'); btn.className = 'copy-btn'; btn.innerHTML = `<span>Copy</span>`; pre.appendChild(btn); }); },
-                copyCode(button) { const code = button.parentElement.querySelector('code'); navigator.clipboard.writeText(code.innerText).then(() => { button.innerHTML = `<span>Copied!</span>`; setTimeout(() => { button.innerHTML = `<span>Copy</span>`; }, 2000); }); },
-                showWelcomeMessage() { const welcomeData = { content: "Assalam-o-Alaikum! I am Junaid AI, your enterprise-grade Pakistani AI assistant. How may I assist you today?", role: 'assistant' }; this.appendMessage(welcomeData); this.showPromptStarters(); },
-                showPromptStarters() { if (!this.dom.chatMessages || this.state.chatHistory.length > 0) return; const w = document.createElement('div'); w.className = 'prompt-starters-wrapper ml-12'; const c = document.createElement('div'); c.className = 'grid grid-cols-1 md:grid-cols-2 gap-2 mt-4'; const p = ["Suggest a business plan for a tech startup in Lahore", "What are the key exports of Pakistan?", "Write a formal email in Urdu", "Explain the significance of the Karakoram Highway"]; p.forEach(prompt => { const b = document.createElement('button'); b.textContent = prompt; b.className = 'bg-prompt-button border border-border-color rounded-lg p-3 text-sm text-left text-text-primary hover:bg-prompt-button-hover hover:border-border-input-focus transition-all'; b.onclick = () => { document.getElementById('message-input').value = prompt; document.getElementById('chat-form').requestSubmit(); }; c.appendChild(b); }); w.appendChild(c); this.dom.chatMessages.appendChild(w); }
+                
+                enhanceCodeBlocks(container) {
+                    container.querySelectorAll('pre').forEach(pre => {
+                        if (pre.querySelector('.code-header')) return; // Already enhanced
+                        
+                        const codeEl = pre.querySelector('code');
+                        const langMatch = codeEl.className.match(/language-(\S+)/);
+                        const lang = langMatch ? langMatch[1] : 'code';
+
+                        const codeBody = document.createElement('div');
+                        codeBody.className = 'code-body';
+                        codeBody.innerHTML = pre.innerHTML;
+                        
+                        pre.innerHTML = '';
+
+                        const header = document.createElement('div');
+                        header.className = 'code-header';
+                        header.innerHTML = `
+                            <span class="code-lang">${lang}</span>
+                            <button class="copy-btn">Copy</button>
+                        `;
+                        
+                        pre.appendChild(header);
+                        pre.appendChild(codeBody);
+                    });
+                },
+
+                copyCode(button) { 
+                    const pre = button.closest('pre');
+                    const code = pre.querySelector('.code-body code');
+                    if (!navigator.clipboard) {
+                        // Fallback for non-secure contexts
+                        const textArea = document.createElement("textarea");
+                        textArea.value = code.innerText;
+                        document.body.appendChild(textArea);
+                        textArea.focus();
+                        textArea.select();
+                        try {
+                            document.execCommand('copy');
+                            button.textContent = 'Copied!';
+                        } catch (err) {
+                            button.textContent = 'Failed!';
+                        }
+                        document.body.removeChild(textArea);
+                    } else {
+                        navigator.clipboard.writeText(code.innerText).then(() => { 
+                            button.textContent = 'Copied!';
+                        }, () => {
+                            button.textContent = 'Failed!';
+                        });
+                    }
+                    setTimeout(() => { button.textContent = 'Copy'; }, 2000); 
+                },
+                
+                showWelcomeMessage() { 
+                    const welcomeData = { content: "Assalam-o-Alaikum! I am Junaid AI, your enterprise-grade Pakistani AI assistant. How may I assist you today?", role: 'assistant' }; 
+                    this.appendMessage(welcomeData); 
+                    this.showPromptStarters(); 
+                },
+                
+                showPromptStarters() { 
+                    if (!this.dom.chatMessages || this.state.chatHistory.length > 0) return; 
+                    const w = document.createElement('div'); 
+                    w.className = 'prompt-starters-wrapper ml-12'; 
+                    const c = document.createElement('div'); 
+                    c.className = 'grid grid-cols-1 md:grid-cols-2 gap-3 mt-4'; 
+                    const p = ["Suggest a business plan for a tech startup in Lahore", "What are the key exports of Pakistan?", "ایک رسمی ای میل اردو میں لکھیں", "Explain the significance of the Karakoram Highway"]; 
+                    p.forEach(prompt => { 
+                        const b = document.createElement('button'); 
+                        b.textContent = prompt; 
+                        b.className = 'bg-prompt-button border border-border-color rounded-xl p-4 text-sm text-left text-text-primary hover:bg-prompt-button-hover hover:border-primary-color transition-all duration-200'; 
+                        b.onclick = () => { 
+                            document.getElementById('message-input').value = prompt; 
+                            document.getElementById('chat-form').requestSubmit(); 
+                        }; 
+                        c.appendChild(b); 
+                    }); 
+                    w.appendChild(c); 
+                    this.dom.chatMessages.appendChild(w); 
+                }
             };
 
             app.init();
