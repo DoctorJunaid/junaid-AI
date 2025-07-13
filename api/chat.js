@@ -1,65 +1,73 @@
 /**
- * Vercel serverless function to handle chat requests using the Mistral AI API.
- * This version correctly replicates the behavior of a Mistral Agent by calling
- * the base model with a specific system prompt and temperature.
+ * Vercel serverless function to handle chat requests using the Mistral AI API with streaming.
+ * This version is required for the interactive features of the frontend to work correctly.
  */
-export default async function handler(request, response) {
-  // Set CORS headers
-  response.setHeader('Access-Control-Allow-Origin', '*');
-  response.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  response.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
-  // Handle preflight requests
+// We are using the Edge runtime for best performance with streaming.
+export const config = {
+  runtime: 'edge',
+};
+
+export default async function handler(request) {
+  // Handle preflight requests for CORS
   if (request.method === 'OPTIONS') {
-    return response.status(200).end();
+    return new Response(null, {
+      status: 204,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'POST, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+      },
+    });
   }
-
+  
   if (request.method !== 'POST') {
-    return response.status(405).json({ error: 'Method Not Allowed' });
-  }
-
-  // --- Environment Variable Validation ---
-  const { API_KEY, API_MODEL, AGENT_SYSTEM_PROMPT } = process.env;
-
-  if (!API_KEY || !API_MODEL) {
-    console.error('CRITICAL: Server is not configured. Missing API_KEY or API_MODEL.');
-    return response.status(500).json({ error: 'Server configuration error.' });
+    return new Response(JSON.stringify({ error: 'Method Not Allowed' }), { 
+        status: 405, 
+        headers: { 'Access-Control-Allow-Origin': '*' } 
+    });
   }
 
   try {
-    // --- Prepare Chat History for the API ---
-    const { history } = request.body;
+    const { history } = await request.json();
 
-    if (!Array.isArray(history) || history.length === 0) {
-      return response.status(400).json({ error: 'Invalid or empty conversation history.' });
+    if (!Array.isArray(history)) {
+      return new Response(JSON.stringify({ error: 'Invalid or empty conversation history.' }), { 
+          status: 400,
+          headers: { 'Access-Control-Allow-Origin': '*' } 
+        });
+    }
+
+    const { API_KEY, API_MODEL, AGENT_SYSTEM_PROMPT } = process.env;
+
+    if (!API_KEY || !API_MODEL) {
+      console.error('CRITICAL: Server is not configured. Missing API_KEY or API_MODEL.');
+      return new Response(JSON.stringify({ error: 'Server configuration error.' }), { 
+          status: 500,
+          headers: { 'Access-Control-Allow-Origin': '*' }
+        });
     }
 
     // Construct the message payload for the Mistral API.
-    // The system prompt is passed as the first message in the array.
     const messages = [
-      {
-        role: 'system',
-        content: AGENT_SYSTEM_PROMPT || 'You are a helpful AI assistant.' // Default fallback
-      },
-      ...history.filter(msg => (msg.role === 'user' || msg.role === 'assistant') && msg.content)
+      { role: 'system', content: AGENT_SYSTEM_PROMPT || 'You are a helpful AI assistant.' },
+      ...history,
     ];
 
-    if (messages.length < 2 || messages[messages.length - 1].role !== 'user') {
-        return response.status(400).json({ error: 'Invalid history. Must include a system prompt and a user message.' });
-    }
+    const payload = {
+      model: API_MODEL,
+      messages: messages,
+      temperature: 0.7,
+      stream: true, // Enable streaming
+    };
 
-    // --- Call the Mistral API ---
     const apiResponse = await fetch("https://api.mistral.ai/v1/chat/completions", {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${API_KEY}`,
-        },
-        body: JSON.stringify({
-            model: API_MODEL,
-            messages: messages,
-            temperature: 0.77 // Using the temperature from your agent's configuration
-        }),
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${API_KEY}`,
+      },
+      body: JSON.stringify(payload),
     });
 
     if (!apiResponse.ok) {
@@ -68,30 +76,66 @@ export default async function handler(request, response) {
         throw new Error(errorBody.message || `API responded with status ${apiResponse.status}`);
     }
 
-    const result = await apiResponse.json();
-    
-    if (!result.choices || result.choices.length === 0 || !result.choices[0].message?.content) {
-        console.error("Invalid response structure from API:", result);
-        throw new Error('AI returned an empty or invalid response.');
-    }
+    // Create a ReadableStream to pipe the response to the client.
+    const stream = new ReadableStream({
+      async start(controller) {
+        const reader = apiResponse.body.getReader();
+        const decoder = new TextDecoder();
 
-    const aiContent = result.choices[0].message.content;
+        function push() {
+          reader.read().then(({ done, value }) => {
+            if (done) {
+              controller.close();
+              return;
+            }
+            // The response from Mistral comes in chunks. We process each line.
+            const chunk = decoder.decode(value);
+            const lines = chunk.split('\n').filter(line => line.trim() !== '');
+            
+            for (const line of lines) {
+                if (line.startsWith('data: ')) {
+                    const data = line.substring(6);
+                    if (data.trim() === '[DONE]') {
+                        // End of stream signal from the API
+                        continue;
+                    }
+                    try {
+                        const json = JSON.parse(data);
+                        const content = json.choices[0]?.delta?.content;
+                        if (content) {
+                            // Send just the content chunk to the client
+                            controller.enqueue(new TextEncoder().encode(content));
+                        }
+                    } catch (e) {
+                        console.error('Error parsing stream data:', e);
+                    }
+                }
+            }
+            push();
+          }).catch(err => {
+            console.error('Stream reading error:', err);
+            controller.error(err);
+          });
+        }
+        push();
+      },
+    });
 
-    // --- Send the AI's Response Back to the Frontend ---
-    response.status(200).json({ content: aiContent });
+    return new Response(stream, {
+      headers: { 
+        'Content-Type': 'text/plain; charset=utf-8',
+        'Access-Control-Allow-Origin': '*'
+      },
+    });
 
   } catch (error) {
     console.error("Server function error:", error);
-    
-    let errorMessage = "An internal server error occurred. Please try again later.";
-    if (error.message?.includes('API key')) {
-      errorMessage = "Authentication error with the AI service. The API key may be invalid.";
-    } else if (error.message?.includes('quota')) {
-      errorMessage = "The AI service quota has been exceeded. Please try again later.";
-    } else {
-        errorMessage = "There was an issue with the AI service. Please check the server configuration."
-    }
-    
-    response.status(500).json({ error: errorMessage });
+    return new Response(JSON.stringify({ error: error.message || 'An internal server error occurred.' }), { 
+        status: 500,
+        headers: { 
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*'
+        }
+    });
   }
 }
