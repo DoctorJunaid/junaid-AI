@@ -35,7 +35,11 @@
             --glass-bg: rgba(255, 255, 255, 0.5);
             --glass-border: rgba(255, 255, 255, 0.7);
             --shadow-color: rgba(79, 70, 229, 0.1);
+<<<<<<< HEAD
             --app-height: 100vh; /* Fallback */
+=======
+            --app-height: 100vh;
+>>>>>>> 01724556025c04b2ed2b29fce3c24270301b13e9
         }
         
         * { 
@@ -55,11 +59,14 @@
             margin: 0;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
+<<<<<<< HEAD
         }
 
         /* Prevent body scroll when mobile sidebar is open */
         body.sidebar-open {
             overflow: hidden;
+=======
+>>>>>>> 01724556025c04b2ed2b29fce3c24270301b13e9
         }
         
         #animated-bg {
@@ -102,8 +109,12 @@
             flex-shrink: 0; 
             position: relative;
             overflow-y: auto;
+<<<<<<< HEAD
             display: flex;
             flex-direction: column;
+=======
+            padding-bottom: 1rem;
+>>>>>>> 01724556025c04b2ed2b29fce3c24270301b13e9
         }
         
         .sidebar-btn { 
@@ -255,13 +266,20 @@
             transform: none;
         }
         
+<<<<<<< HEAD
         .btn-primary, .btn-secondary {
+=======
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+>>>>>>> 01724556025c04b2ed2b29fce3c24270301b13e9
             border: none;
             padding: 0.75rem 1.5rem;
             border-radius: 0.75rem;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s ease-in-out;
+<<<<<<< HEAD
         }
         
         .btn-primary {
@@ -269,6 +287,11 @@
             color: white;
             box-shadow: 0 2px 8px var(--shadow-color);
         }
+=======
+            box-shadow: 0 2px 8px var(--shadow-color);
+        }
+        
+>>>>>>> 01724556025c04b2ed2b29fce3c24270301b13e9
         .btn-primary:hover {
             background: #4338ca;
             transform: translateY(-2px);
@@ -279,6 +302,14 @@
             background: white;
             color: var(--text-primary);
             border: 1px solid #d1d5db;
+<<<<<<< HEAD
+=======
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+>>>>>>> 01724556025c04b2ed2b29fce3c24270301b13e9
         }
         .btn-secondary:hover {
             background: #f9fafb;
@@ -321,7 +352,15 @@
             margin-bottom: 1.5rem;
         }
         
+<<<<<<< HEAD
         .modal-title { font-size: 1.25rem; font-weight: 600; margin: 0; }
+=======
+        .modal-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin: 0;
+        }
+>>>>>>> 01724556025c04b2ed2b29fce3c24270301b13e9
         
         .modal-close {
             background: rgba(0,0,0,0.05);
@@ -340,8 +379,28 @@
         }
         .modal-close:hover { background: rgba(0,0,0,0.1); color: var(--text-primary); }
         
+<<<<<<< HEAD
         .modal-text { font-size: 1rem; line-height: 1.6; margin-bottom: 2rem; color: var(--text-secondary); }
         .modal-actions { display: flex; gap: 0.75rem; justify-content: flex-end; }
+=======
+        .modal-close:hover {
+            background: rgba(0,0,0,0.1);
+            color: var(--text-primary);
+        }
+        
+        .modal-text {
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+            color: var(--text-secondary);
+        }
+        
+        .modal-actions {
+            display: flex;
+            gap: 0.75rem;
+            justify-content: flex-end;
+        }
+>>>>>>> 01724556025c04b2ed2b29fce3c24270301b13e9
         
         .hidden { display: none !important; }
         
@@ -358,6 +417,7 @@
                 left: 0; 
                 z-index: 50; 
                 transform: translateX(-100%); 
+<<<<<<< HEAD
                 width: 85vw;
                 max-width: 320px;
                 box-shadow: 0 0 40px rgba(0,0,0,0.1);
@@ -367,6 +427,14 @@
             .sidebar.open { transform: translateX(0); }
             .sidebar-toggle, .sidebar-close-btn { display: block; }
             .sidebar-overlay { position: fixed; inset: 0; background-color: rgba(0, 0, 0, 0.2); backdrop-filter: blur(4px); z-index: 40; transition: opacity 0.3s ease; }
+=======
+                width: 280px;
+                box-shadow: 0 0 40px rgba(0,0,0,0.1);
+            }
+            .sidebar.open { transform: translateX(0); }
+            .sidebar-toggle { display: block; }
+            .sidebar-overlay { position: fixed; inset: 0; background-color: rgba(0, 0, 0, 0.2); backdrop-filter: blur(4px); z-index: 30; }
+>>>>>>> 01724556025c04b2ed2b29fce3c24270301b13e9
             .message-bubble { max-width: 90%; }
         }
 
@@ -401,6 +469,12 @@
             animation: blink 1s step-end infinite;
             vertical-align: bottom;
             margin-left: 1px;
+<<<<<<< HEAD
+=======
+        }
+        @keyframes blink { 
+            50% { opacity: 0; }
+>>>>>>> 01724556025c04b2ed2b29fce3c24270301b13e9
         }
         @keyframes blink { 50% { opacity: 0; } }
         
@@ -435,6 +509,10 @@
             display: flex;
             align-items: center;
             gap: 0.75rem;
+<<<<<<< HEAD
+=======
+            padding: 1rem;
+>>>>>>> 01724556025c04b2ed2b29fce3c24270301b13e9
         }
         
         .logo {
@@ -446,10 +524,20 @@
             align-items: center;
             justify-content: center;
             box-shadow: 0 4px 12px var(--shadow-color);
+<<<<<<< HEAD
             flex-shrink: 0;
         }
         
         .logo svg { width: 20px; height: 20px; color: white; }
+=======
+        }
+        
+        .logo svg {
+            width: 20px;
+            height: 20px;
+            color: white;
+        }
+>>>>>>> 01724556025c04b2ed2b29fce3c24270301b13e9
         
         .brand-text h1 {
             font-size: 1.25rem;
@@ -495,10 +583,42 @@
             border-top: 1px solid var(--glass-border);
         }
         
+<<<<<<< HEAD
         .auth-buttons { display: flex; gap: 0.75rem; margin-bottom: 1rem; }
         .auth-buttons button { flex: 1; padding: 0.625rem; border-radius: 0.75rem; font-weight: 600; font-size: 0.875rem; }
         .footer-info { display: flex; align-items: center; justify-content: space-between; font-size: 0.75rem; color: var(--text-secondary); }
         .footer-info .left { display: flex; align-items: center; gap: 0.5rem; }
+=======
+        .auth-buttons {
+            display: flex;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+        
+        .auth-buttons button {
+            flex: 1;
+            padding: 0.625rem;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            font-size: 0.875rem;
+            transition: all 0.2s ease-in-out;
+            cursor: pointer;
+        }
+        
+        .footer-info {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+        
+        .footer-info .left {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+>>>>>>> 01724556025c04b2ed2b29fce3c24270301b13e9
     </style>
 </head>
 <body>
@@ -525,6 +645,7 @@
     <template id="main-app-shell-template">
         <div class="main-container">
             <div class="main-layout">
+<<<<<<< HEAD
                 <aside id="sidebar" class="sidebar p-4">
                     <div class="flex-grow">
                         <div class="flex justify-between items-center mb-6">
@@ -538,6 +659,19 @@
                                     <h1>Junaid AI</h1>
                                     <p class="tagline">Enterprise Pro</p>
                                 </div>
+=======
+                <aside id="sidebar" class="sidebar flex flex-col justify-between p-4">
+                    <div>
+                        <div class="logo-container">
+                            <div class="logo">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.373 3.373 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+                                </svg>
+                            </div>
+                            <div class="brand-text">
+                                <h1>Junaid AI</h1>
+                                <p class="tagline">Enterprise Pro</p>
+>>>>>>> 01724556025c04b2ed2b29fce3c24270301b13e9
                             </div>
                              <button id="sidebar-close-btn" class="sidebar-close-btn p-1 -mr-2">
                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
@@ -568,7 +702,11 @@
                                 <div class="status-online"></div>
                                 <span>API Status: Operational</span>
                             </div>
+<<<<<<< HEAD
                             <div class="version-badge">v9.1</div>
+=======
+                            <div class="version-badge">v9.0</div>
+>>>>>>> 01724556025c04b2ed2b29fce3c24270301b13e9
                         </div>
                     </div>
                 </aside>
@@ -581,6 +719,7 @@
     <template id="chat-page-template">
         <div class="chat-page-layout">
             <header class="page-header">
+<<<<<<< HEAD
                 <div class="flex items-center gap-3">
                    <button class="sidebar-toggle text-slate-500 p-1 md:hidden">
                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"></path></svg>
@@ -603,6 +742,30 @@
                    </div>
                </form>
             </footer>
+=======
+                        <div class="flex items-center gap-3">
+                           <button class="sidebar-toggle text-slate-500 p-1 md:hidden">
+                               <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"></path></svg>
+                           </button>
+                           <h2 class="text-lg font-semibold text-text-primary">AI Chat</h2>
+                       </div>
+                       <button id="new-chat-btn" class="btn-secondary flex items-center gap-2 text-sm font-semibold">
+                           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+                           New Chat
+                       </button>
+                   </header>
+                   <main id="chat-messages" class="custom-scrollbar"></main>
+                   <footer class="input-area">
+                       <form id="chat-form" class="relative">
+                           <div class="input-container">
+                               <textarea id="message-input" placeholder="Ask me anything..." rows="1" class="message-input custom-scrollbar"></textarea>
+                               <button id="send-button" type="submit" class="send-button">
+                                   <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 19V5m0 0L5 12m7-7l7 7"></path></svg>
+                               </button>
+                           </div>
+                       </form>
+                   </footer>
+>>>>>>> 01724556025c04b2ed2b29fce3c24270301b13e9
         </div>
     </template>
     
@@ -610,6 +773,13 @@
         document.addEventListener('DOMContentLoaded', () => {
             const app = new JunaidAI();
             app.init();
+
+            const setAppHeight = () => {
+                const doc = document.documentElement;
+                doc.style.setProperty('--app-height', `${window.innerHeight}px`);
+            };
+            window.addEventListener('resize', setAppHeight);
+            setAppHeight();
         });
 
         class JunaidAI {
@@ -677,9 +847,13 @@
                 
                 // Use a single event listener on the body for efficiency
                 document.body.addEventListener('click', (e) => {
+<<<<<<< HEAD
                     if (e.target.closest('.sidebar-toggle')) this.openSidebar();
                     if (e.target.closest('#sidebar-close-btn')) this.closeSidebar();
                     if (e.target.closest('#sidebar-overlay')) this.closeSidebar();
+=======
+                    if (e.target.closest('.sidebar-toggle')) this.toggleSidebar();
+>>>>>>> 01724556025c04b2ed2b29fce3c24270301b13e9
                     if (e.target.closest('#login-btn')) this.showTooltip('Feature coming soon.', e.target);
                     if (e.target.closest('#signup-btn')) this.showTooltip('Feature coming soon.', e.target);
                     if (e.target.closest('#chat-history-btn')) this.showLoginModal();
@@ -704,6 +878,17 @@
                     overlay.classList.add('hidden');
                     document.body.classList.remove('sidebar-open');
                 }
+            }
+
+            showLoginModal() {
+                this.showModal(
+                    'Please log in to continue',
+                    'Access to chat history requires an account. Please log in or sign up to view your past conversations.',
+                    [
+                        { label: 'Log In', callback: () => this.showTooltip('Feature coming soon.', document.getElementById('login-btn')), primary: false },
+                        { label: 'Sign Up', callback: () => this.showTooltip('Feature coming soon.', document.getElementById('signup-btn')), primary: true }
+                    ]
+                );
             }
 
             showLoginModal() {
@@ -995,13 +1180,21 @@
                 });
                 
                 document.body.appendChild(modalNode);
+                overlay.style.opacity = 0;
+                requestAnimationFrame(() => {
+                    overlay.style.opacity = 1;
+                });
             }
 
             closeModal() {
                 const overlay = document.querySelector('.modal-overlay');
                 if (overlay) {
+<<<<<<< HEAD
                     overlay.style.animation = 'fadeOut 0.2s ease-out forwards';
                     overlay.querySelector('.modal-content').style.animation = 'slideOutDown 0.3s ease-out forwards';
+=======
+                    overlay.style.opacity = 0;
+>>>>>>> 01724556025c04b2ed2b29fce3c24270301b13e9
                     setTimeout(() => overlay.remove(), 300);
                 }
             }
@@ -1009,7 +1202,11 @@
             showTooltip(text, targetElement) {
                 const tooltip = document.createElement('div');
                 tooltip.textContent = text;
+<<<<<<< HEAD
                 tooltip.className = 'absolute z-50 px-3 py-2 text-sm font-medium text-white bg-gray-900 rounded-lg shadow-sm opacity-0 transition-opacity';
+=======
+                tooltip.className = 'absolute z-10 px-3 py-2 text-sm font-medium text-white bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip';
+>>>>>>> 01724556025c04b2ed2b29fce3c24270301b13e9
                 document.body.appendChild(tooltip);
 
                 const { top, left, width } = targetElement.getBoundingClientRect();
@@ -1025,6 +1222,16 @@
                     setTimeout(() => tooltip.remove(), 300);
                 }, 2000);
             }
+<<<<<<< HEAD
+=======
+
+            toggleSidebar() {
+                const sidebar = document.getElementById('sidebar');
+                const overlay = document.getElementById('sidebar-overlay');
+                const isOpen = sidebar.classList.toggle('open');
+                overlay.classList.toggle('hidden', !isOpen);
+            }
+>>>>>>> 01724556025c04b2ed2b29fce3c24270301b13e9
         }
     </script>
 </body>
